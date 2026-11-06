@@ -66,6 +66,11 @@
   transition: opacity 0.15s ease;
 }
 
+/* The trip card overlaps the banner's bottom 28px, so lift the controls clear of it */
+.trip-cover-head.has-cover .cover-band__controls {
+  bottom: 42px;
+}
+
 .cover-band:hover .cover-band__controls,
 .cover-band:focus-within .cover-band__controls {
   opacity: 1;
@@ -153,7 +158,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* Stay above the 28px the trip card overlaps */
+  bottom: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -416,15 +422,6 @@
     height: 120px;
   }
 
-  /* No hover on touch: the controls are always available */
-  .cover-band__controls {
-    opacity: 1;
-  }
-
-  .cover-add-btn {
-    opacity: 1;
-  }
-
   .cover-picker__backdrop {
     align-items: flex-end;
     padding: 0;
@@ -440,6 +437,15 @@
   .cover-picker__foot button,
   .cover-btn {
     min-height: var(--tap);
+  }
+}
+
+/* Touch screens have no hover, so the controls are always shown there. This keys off
+   the input device, not the window width, so a narrow desktop window stays hover-only. */
+@media (hover: none) {
+  .cover-band__controls,
+  .cover-add-btn {
+    opacity: 1;
   }
 }
 

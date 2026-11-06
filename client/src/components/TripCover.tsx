@@ -52,6 +52,20 @@ export default function TripCover({
     setBroken(false)
   }, [cover?.key])
 
+  // The post-create nudge is one-time: any click or key press, or the end of the pulse, ends it
+  useEffect(() => {
+    if (!nudged) return
+    const dismiss = () => setNudged(false)
+    const timer = window.setTimeout(dismiss, 7000)
+    window.addEventListener('pointerdown', dismiss)
+    window.addEventListener('keydown', dismiss)
+    return () => {
+      window.clearTimeout(timer)
+      window.removeEventListener('pointerdown', dismiss)
+      window.removeEventListener('keydown', dismiss)
+    }
+  }, [nudged])
+
   // Keyboard path for reposition (N5): land on the slider, where arrow keys move the focal point
   useEffect(() => {
     if (repositioning) sliderRef.current?.focus()

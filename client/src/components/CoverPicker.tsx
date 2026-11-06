@@ -33,17 +33,48 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
 
   const authHeaders = { Authorization: `Bearer ${token}` }
 
+  // The parent passes a fresh onClose on every render. Keep it in a ref so this effect runs once:
+  // depending on it would abort an in-flight upload whenever the parent re-renders (e.g. when
+  // the cover-updated socket event arrives).
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
+  const dialogRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null
     closeRef.current?.focus()
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onCloseRef.current()
+        return
+      }
+      // Keep Tab inside the dialog while it is open
+      if (e.key === 'Tab' && dialogRef.current) {
+        const items = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([hidden]):not([disabled])')
+        )
+        if (!items.length) return
+        const first = items[0]
+        const last = items[items.length - 1]
+        const active = document.activeElement
+        if (e.shiftKey && (active === first || !dialogRef.current.contains(active))) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && (active === last || !dialogRef.current.contains(active))) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => {
       window.removeEventListener('keydown', onKey)
       abortRef.current?.abort()
+      // Hand focus back to whatever opened the dialog
+      if (opener && document.contains(opener)) opener.focus()
     }
-  }, [onClose])
+  }, [])
 
   const message = (err: unknown, fallback: string) => {
     const data = (err as any)?.response?.data
@@ -83,10 +114,13 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
     setFileName(file.name)
     setProgress(0)
 
+    // Created before the resize so Cancel / closing the sheet also stops that step
+    const controller = new AbortController()
+    abortRef.current = controller
+
     try {
       const prepared = await prepareCoverImage(file)
-      const controller = new AbortController()
-      abortRef.current = controller
+      if (controller.signal.aborted) return
 
       const params = new URLSearchParams({
         w: String(prepared.width),
@@ -109,9 +143,8 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
       onApplied(data)
       onClose()
     } catch (err) {
-      if (!axios.isCancel(err)) {
-        setError(message(err, 'That image could not be uploaded. Try again.'))
-      }
+      if (controller.signal.aborted) return
+      setError(message(err, 'That image could not be uploaded. Try again.'))
       setBusy(false)
       setProgress(null)
       setFileName(null)
@@ -147,7 +180,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div className="cover-picker" role="dialog" aria-modal="true" aria-label="Trip cover">
+      <div ref={dialogRef} className="cover-picker" role="dialog" aria-modal="true" aria-label="Trip cover">
         <div className="cover-picker__head">
           <h2>Trip cover</h2>
           <button ref={closeRef} type="button" className="cover-picker__close" aria-label="Close" onClick={onClose}>

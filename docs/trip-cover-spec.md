@@ -192,9 +192,19 @@ Wide images crop differently on phone and desktop — the sample banner loses ha
 
 ## 11. Build status (2026-11-06)
 
-**Verified with an API script against a local server + MongoDB (22/22 checks):** AC2, AC5 (server side), AC8 (persist), AC11, AC12 (socket broadcast to a second member, including removal), AC13 (log written), AC14 (403 for non-members on PUT/POST/DELETE, 401 without a token), AC16 (deleted asset returns 404), F10. Also checked: unknown gallery keys rejected, focal point clamped to 0–100, the 2 MB server cap, rate-limit headers, a replaced upload deleting its old asset, and a deleted trip deleting its uploaded cover. The client type-checks and production-builds.
+**Verified.** Server: an API script against a local server and MongoDB (22/22 checks) covering AC2, AC5, AC8, AC11, AC12 (including removal), AC13 (log written), AC14, AC16 and F10, plus the 2 MB cap, rate-limit headers, focal clamping, asset replacement and trip-delete cleanup. Browser QA (desktop 1280px, mobile 375px, dark and light): AC1 (hover-only on desktop, always visible on touch), AC4 (a 3.8 MB JPEG uploaded as a 273 KB WebP), AC5, AC6, AC7 (cancel or close at 5, 80 and 300 ms leaves the cover unchanged), AC10, AC11, AC16 (a broken image falls back to the default gradient), AC18 (focus lands in the dialog, Tab stays inside it, focus returns to the opener, a slider moves the focal point), the post-create nudge, trip-list thumbnails (96px, flush to the card) and mobile layout (no horizontal scroll). N2: layout shift 0.016, none from the cover. N1: the cover image is the LCP element, 484 ms locally. N4: contrast 4.85 (light) and 6.67 (dark) on the Add cover button.
 
-**Not yet verified in a browser:** AC1, AC3, AC4, AC6, AC7, AC9, AC10, AC15, AC17, AC18, AC19, plus N1 (LCP), N2 (CLS) and N4 (contrast). The code paths exist (in-browser resize, cancel on close, Esc and Cancel in reposition, keyboard slider, reduced-motion CSS, default-gradient fallback on a broken image), but nobody has exercised them.
+**Bugs found in QA and fixed**
+
+| Bug | Fix |
+|---|---|
+| Change cover / Reposition buttons were half-hidden under the trip card, which overlaps the banner by 28px. The reposition bar's Save and Cancel had the same problem. | Controls and bar are lifted clear of the overlap. |
+| Add cover was visible without hovering: the post-create nudge never ended until the picker opened, and any window under 768px counted as touch. | The nudge ends on any click or key press, or after 7 seconds. Always-visible now keys off `(hover: none)`, not window width. |
+| An in-flight upload was aborted whenever the parent re-rendered, including when the cover-updated socket event arrived, so the picker stayed open after a successful upload. | `onClose` is held in a ref so the effect runs once. |
+| Cancel or closing the picker during the in-browser resize did not stop the upload. | The abort controller is created before the resize and checked after it. |
+| The picker did not return focus to its opener and let Tab leave the dialog. | Focus is restored on close and Tab is trapped inside. |
+
+**Not verified:** AC3, AC9, AC15 and AC19 (reduced-motion CSS exists but was not exercised), and a real phone or touch device.
 
 **Open items**
 
@@ -204,3 +214,4 @@ Wide images crop differently on phone and desktop — the sample banner loses ha
 | O2 | Mobile uses always-visible `Change cover` / `Reposition` buttons rather than the tap-to-open action sheet in §4.1 / wireframe frame 7. |
 | O3 | AC3: gallery picks aren't optimistic, so there is no visible change to revert. A failed save shows an inline error in the picker. |
 | O4 | Gallery is 9 of ~16; *Pixel cities* and *Travel* need commissioned art. |
+| O5 | The pod-gathering artwork is a 3:1 banner with text at its top and bottom edges, so the title and date are partly cropped at every banner height. `focalY` only moves it vertically. Worth a taller crop of the art, or a different default focal point. |
