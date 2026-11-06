@@ -58,6 +58,9 @@ const expensesRouter = require('./routes/expenses');
 expensesRouter.setIO(io);
 
 app.use('/api/auth', require('./routes/auth'));
+// Cover images are fetched by <img>, which cannot send an auth header: the
+// unguessable GridFS id is the capability. See routes/covers.js.
+app.use('/api/covers', require('./routes/covers'));
 app.use('/api/trips', authMiddleware, tripsRouter);
 app.use('/api/groups', authMiddleware, require('./routes/groups'));
 app.use('/api/comments', authMiddleware, require('./routes/comments'));

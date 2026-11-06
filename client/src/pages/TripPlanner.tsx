@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import './TripPlanner.css'
+import '../components/TripCover.css'
+import { TripCoverData, coverBackground, coverImageSrc, defaultGradient } from '../covers'
 
 interface Trip {
   _id: string
   name: string
   groupId: string
+  cover?: TripCoverData | null
   destination: { address: string }
   origin: { address: string }
   startDate: string
@@ -68,6 +71,8 @@ export default function TripPlanner() {
       setFormData({ name: '', destination: '', origin: '', startDate: '' })
       setFormOpen(false)
       setError(null)
+      // Land on the new trip, where the cover affordance gets its one nudge
+      navigate(`/trips/${response.data.groupId}`, { state: { justCreated: true } })
     } catch (err) {
       setError('Failed to create trip')
       console.error(err)
@@ -154,6 +159,26 @@ export default function TripPlanner() {
         ) : (
           trips.map((trip) => (
             <div key={trip._id} className="trip-card">
+              <div
+                className="trip-card__cover"
+                style={{ background: coverBackground(trip.cover ?? null, trip.groupId) }}
+                onClick={() => navigate(`/trips/${trip.groupId}`)}
+              >
+                {coverImageSrc(apiUrl, trip.cover) && (
+                  <img
+                    src={coverImageSrc(apiUrl, trip.cover) as string}
+                    alt=""
+                    loading="lazy"
+                    style={{ objectPosition: `50% ${trip.cover?.focalY ?? 50}%` }}
+                    onError={(e) => {
+                      // Missing asset: fall back to the trip's default gradient, never a broken icon
+                      const strip = e.currentTarget.parentElement
+                      if (strip) strip.style.background = defaultGradient(trip.groupId)
+                      e.currentTarget.remove()
+                    }}
+                  />
+                )}
+              </div>
               <div className="trip-info" onClick={() => navigate(`/trips/${trip.groupId}`)}>
                 <h3>{trip.name}</h3>
                 <p>{trip.origin?.address || 'Unknown'} → {trip.destination?.address || 'Unknown'}</p>

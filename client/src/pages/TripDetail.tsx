@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { io, Socket } from 'socket.io-client'
 import './TripDetail.css'
+import TripCover from '../components/TripCover'
+import { TripCoverData } from '../covers'
 import Polls from '../components/Polls'
 import Expenses from '../components/Expenses'
 import LiveLocationMap from '../components/LiveLocationMap'
@@ -30,6 +32,7 @@ interface Trip {
   members: Array<{ userId?: string; email?: string; role: string; status?: string }>
   travelSuggestions?: any
   accommodation?: { name?: string; address?: string }
+  cover?: TripCoverData | null
 }
 
 function transportIcon(transport: string): string {
@@ -56,6 +59,16 @@ interface Comment {
 export default function TripDetail() {
   const { groupId } = useParams<{ groupId: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
+  // Set when we arrive straight from creating the trip, to nudge the cover once
+  // Captured once, then cleared from history so a reload does not nudge again
+  const [justCreated] = useState(() =>
+    Boolean((location.state as { justCreated?: boolean } | null)?.justCreated)
+  )
+  useEffect(() => {
+    if (justCreated) navigate(location.pathname, { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [trip, setTrip] = useState<Trip | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -140,6 +153,10 @@ export default function TripDetail() {
           itinerary: prev.itinerary.filter((item) => item._id !== data.itemId),
         }
       })
+    })
+
+    socketInstance.on('trip:coverUpdated', (data) => {
+      setTrip((prev) => (prev ? { ...prev, cover: data.cover ?? null } : prev))
     })
 
     setSocket(socketInstance)
@@ -387,7 +404,15 @@ export default function TripDetail() {
         ← Back to Trips
       </button>
 
-      <div className="trip-header">
+      <TripCover
+        apiUrl={apiUrl}
+        token={token}
+        groupId={trip.groupId}
+        tripName={trip.name}
+        cover={trip.cover ?? null}
+        nudge={justCreated}
+        onChange={(cover) => setTrip((prev) => (prev ? { ...prev, cover } : prev))}
+      >
         <div className="trip-title-row">
           <h1>{trip.name}</h1>
           {(push.status === 'off' || push.status === 'denied') && (
@@ -524,7 +549,7 @@ export default function TripDetail() {
               : '✨ Generating AI travel suggestions...'}
           </p>
         )}
-      </div>
+      </TripCover>
 
       {conflictError && (
         <div className="conflict-banner">
