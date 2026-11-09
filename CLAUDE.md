@@ -6,7 +6,7 @@ This file is read by both Claude Code (engineering) and the Claude Cowork projec
 
 ## Layout
 
-- `server/`: Node.js + Express API, Socket.io (optional Redis adapter), MongoDB via Mongoose, Firebase Auth. Entry point is `server/index.js`. Code is split into `config/`, `middleware/`, `models/`, `routes/` and `services/`.
+- `server/`: Node.js + Express API, Socket.io (optional Redis adapter), MongoDB via Mongoose. Sign-in is our own JWT (`services/auth.js`); Firebase Admin is used only for push notifications. Entry point is `server/index.js`. Code is split into `config/`, `middleware/`, `models/`, `routes/` and `services/`.
 - `client/`: React 18 + TypeScript, built with Vite. Uses React Router, Leaflet maps and socket.io-client.
 - `docs/`: product docs and feature specs. See [docs/README.md](docs/README.md).
 
@@ -36,8 +36,14 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 - When a spec ships, update the spec, `features.md`, `roadmap.md` and the specs table in the same PR as the feature.
 - Write plainly: short sentences, tables where they help, no marketing tone. Items waiting on the product owner are marked **TBD**.
 
+## Working across computers
+
+- Pull `main` and your working branch at the start of every session.
+- Commit and push at the end of every session, even for docs-only work. Uncommitted edits on one computer are invisible on the other.
+- Shared tooling (such as the `/feature` command in `.claude/commands/`) lives in the repo. See "Working across accounts and computers" in [docs/README.md](docs/README.md).
+
 ## Who does what
 
-- **Product (Cowork project):** edits only `docs/product/` and draft specs in `docs/specs/`. Reads code to check facts but never edits code and never runs git. It doesn't make up answers to TBDs.
+- **Product (Cowork project):** edits only `docs/product/`, `docs/brand/`, `docs/README.md` and draft specs in `docs/specs/`. Reads code to check facts but never edits code and never runs git. It doesn't make up answers to TBDs.
 - **Engineering (Claude Code):** builds features from specs, owns all code and `docs/features.md`, and handles branches, commits and PRs.
 - Work on a branch, never directly on `main`. PRs go to `main` on GitHub (`barry-dempsey/trip-planner`).
