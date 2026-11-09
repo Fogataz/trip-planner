@@ -2,6 +2,7 @@ const express = require('express');
 const TripComment = require('../models/TripComment');
 const Trip = require('../models/Trip');
 const { generateText } = require('../services/ai');
+const { requestLanguage } = require('../services/language');
 const User = require('../models/User');
 const { notifyTrip } = require('../services/notifications');
 
@@ -63,7 +64,7 @@ User's question: ${question}
 
 Provide a helpful, concise answer about their trip. Keep it to 2-3 sentences.`;
 
-      const answer = await generateText(prompt);
+      const answer = await generateText(prompt, { language: requestLanguage(req) });
 
       comment.answer = answer;
       comment.answeredAt = new Date();

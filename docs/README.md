@@ -25,6 +25,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | # | Spec | Status | Shipped | PR |
 |---|---|---|---|---|
 | 001 | [Trip covers](specs/001-trip-covers.md) | shipped | 2026-11-06 | [#3](https://github.com/barry-dempsey/trip-planner/pull/3) |
+| 003 | [Localization (EN/PT/ES)](specs/003-localization.md) | shipped | 2026-11-09 | [#5](https://github.com/barry-dempsey/trip-planner/pull/5) |
 
 ## How to write a spec
 

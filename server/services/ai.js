@@ -1,8 +1,9 @@
 const OpenAI = require('openai');
+const { languageInstruction } = require('./language');
 
 let client;
 
-async function generateText(prompt, { json = false } = {}) {
+async function generateText(prompt, { json = false, language = 'en' } = {}) {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error('OPENAI_API_KEY is not set');
   }
@@ -10,7 +11,10 @@ async function generateText(prompt, { json = false } = {}) {
 
   const response = await client.chat.completions.create({
     model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
+    messages: [
+      { role: 'system', content: languageInstruction(language) },
+      { role: 'user', content: prompt },
+    ],
     temperature: 0.4, // lower = fewer invented places
     ...(json && { response_format: { type: 'json_object' } }),
   });

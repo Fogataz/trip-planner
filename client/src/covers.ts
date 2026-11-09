@@ -1,3 +1,6 @@
+import type { TFunction } from 'i18next'
+import i18n from './i18n'
+
 // Cover gallery and image helpers.
 //
 // The gallery lives here rather than behind an API call so a cover paints on
@@ -76,8 +79,12 @@ export function coverBackground(cover: TripCoverData | null | undefined, seed: s
   return defaultGradient(seed)
 }
 
-export function coverAlt(cover: TripCoverData | null | undefined, tripName: string): string {
-  return cover?.alt?.trim() || `Cover image for ${tripName}`
+export function coverAlt(
+  cover: TripCoverData | null | undefined,
+  tripName: string,
+  t: TFunction
+): string {
+  return cover?.alt?.trim() || t('cover.defaultAlt', { name: tripName })
 }
 
 export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024
@@ -126,7 +133,7 @@ export async function prepareCoverImage(file: File): Promise<PreparedCover> {
     const image = await new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image()
       img.onload = () => resolve(img)
-      img.onerror = () => reject(new Error('That image could not be opened.'))
+      img.onerror = () => reject(new Error(i18n.t('cover.errors.cannotOpen')))
       img.src = url
     })
 
@@ -149,12 +156,12 @@ export async function prepareCoverImage(file: File): Promise<PreparedCover> {
       canvas.width = width
       canvas.height = height
       const ctx = canvas.getContext('2d')
-      if (!ctx) throw new Error('That image could not be processed in this browser.')
+      if (!ctx) throw new Error(i18n.t('cover.errors.cannotProcess'))
       ctx.drawImage(image, 0, 0, width, height)
 
       let blob = await encode(canvas, 0.85)
       if (blob && blob.size > TARGET_BYTES) blob = (await encode(canvas, 0.7)) || blob
-      if (!blob) throw new Error('That image could not be processed in this browser.')
+      if (!blob) throw new Error(i18n.t('cover.errors.cannotProcess'))
 
       // Still over budget (very detailed photo): shrink and try again, a couple of times at most
       if (blob.size > TARGET_BYTES && attempt < 2) {

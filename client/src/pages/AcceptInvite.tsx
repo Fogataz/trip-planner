@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import { Trans } from 'react-i18next'
 
 export default function AcceptInvite() {
+  const { t } = useTranslation()
   const { token } = useParams<{ token: string }>()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
@@ -18,7 +21,7 @@ export default function AcceptInvite() {
   const acceptInvite = async () => {
     try {
       if (!token) {
-        setError('Invalid invitation link')
+        setError(t('invite.invalidLink'))
         setLoading(false)
         return
       }
@@ -43,7 +46,7 @@ export default function AcceptInvite() {
       }, 2000)
     } catch (err: any) {
       console.error('Accept error:', err)
-      setError(err.response?.data?.error || 'Failed to accept invitation')
+      setError(err.response?.data?.error || t('invite.acceptFailed'))
       setLoading(false)
     }
   }
@@ -53,26 +56,26 @@ export default function AcceptInvite() {
       <div className="invite-card">
         {loading && !error ? (
           <>
-            <h2>Accepting Invitation...</h2>
+            <h2>{t('invite.accepting')}</h2>
             <div className="emoji">⏳</div>
-            <p>Please wait while we add you to the trip</p>
+            <p>{t('invite.wait')}</p>
           </>
         ) : error ? (
           <>
-            <h2 className="text-error">❌ Oops!</h2>
+            <h2 className="text-error">{t('invite.oops')}</h2>
             <p>{error}</p>
             <button onClick={() => navigate('/trips')}>
-              Back to Trips
+              {t('invite.backToTrips')}
             </button>
           </>
         ) : (
           <>
-            <h2 style={{ color: 'var(--success)' }}>✅ Success!</h2>
+            <h2 style={{ color: 'var(--success)' }}>{t('invite.success')}</h2>
             <p>
-              You've been added to <strong>{tripName}</strong>
+              <Trans i18nKey="invite.added" values={{ name: tripName }} components={{ b: <strong /> }} />
             </p>
             <p className="small">
-              Redirecting to your trips...
+              {t('invite.redirecting')}
             </p>
           </>
         )}

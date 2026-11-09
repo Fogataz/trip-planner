@@ -1,7 +1,7 @@
 const { generateText } = require('./ai');
 const { locationContext, CONCRETE_RULES } = require('./tripContext');
 
-async function generateTravelSuggestions(trip) {
+async function generateTravelSuggestions(trip, language = 'en') {
   try {
     console.log('Starting travel suggestions generation...');
     const prompt = `You are a local travel expert. Generate concrete travel suggestions for this trip:
@@ -25,10 +25,10 @@ Nearest stations/stops, lines to use, and typical fares or passes.
 Keep every bullet specific and short.`;
 
     console.log('Calling OpenAI API...');
-    const text = await generateText(prompt);
+    const text = await generateText(prompt, { language });
     console.log('OpenAI response received');
 
-    return { raw_suggestions: text };
+    return { raw_suggestions: text, language, generatedAt: new Date() };
   } catch (error) {
     console.error('Error generating travel suggestions:', error.message);
     return { error: error.message || 'Could not generate suggestions' };

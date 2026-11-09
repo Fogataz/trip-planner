@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { useSocket } from './hooks/useSocket'
 import { useAuth } from './hooks/useAuth'
@@ -6,6 +7,7 @@ import Auth from './pages/Auth'
 import TripPlanner from './pages/TripPlanner'
 import TripDetail from './pages/TripDetail'
 import AcceptInvite from './pages/AcceptInvite'
+import LanguageSwitcher from './components/LanguageSwitcher'
 import './App.css'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -14,6 +16,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppHeader() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { logout } = useAuth()
   const [isConnected, setIsConnected] = useState(false)
@@ -46,17 +49,23 @@ function AppHeader() {
   return (
     <header>
       <div className="header-content">
-        <h1>Trip Planner</h1>
-        {token && (
-          <div className="header-actions">
-            <div className={`status ${isConnected ? 'connected' : 'disconnected'}`}>
-              {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
-            </div>
-            <button onClick={handleLogout} className="logout-button">
-              Logout
-            </button>
-          </div>
-        )}
+        <h1>{t('app.title')}</h1>
+        <div className="header-actions">
+          {token && (
+            <>
+              <span
+                className={`status-dot ${isConnected ? 'connected' : 'disconnected'}`}
+                role="status"
+                title={isConnected ? t('app.connected') : t('app.disconnected')}
+                aria-label={isConnected ? t('app.connected') : t('app.disconnected')}
+              />
+              <button onClick={handleLogout} className="logout-button">
+                {t('app.logout')}
+              </button>
+            </>
+          )}
+          <LanguageSwitcher />
+        </div>
       </div>
     </header>
   )

@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 import CoverPicker from './CoverPicker'
 import { TripCoverData, coverAlt, coverBackground, coverImageSrc, defaultGradient } from '../covers'
 import './TripCover.css'
@@ -26,6 +27,7 @@ export default function TripCover({
   nudge = false,
   children,
 }: Props) {
+  const { t } = useTranslation()
   const [pickerOpen, setPickerOpen] = useState(false)
   const [repositioning, setRepositioning] = useState(false)
   const [focalY, setFocalY] = useState(cover?.focalY ?? 50)
@@ -41,7 +43,7 @@ export default function TripCover({
   const imageSrc = broken ? null : coverImageSrc(apiUrl, cover)
   const background = broken ? defaultGradient(groupId) : coverBackground(cover, groupId)
   // Gradient-only covers have no <img>, so the band itself carries the alt text (N3)
-  const bandLabel = cover && !imageSrc ? coverAlt(cover, tripName) : undefined
+  const bandLabel = cover && !imageSrc ? coverAlt(cover, tripName, t) : undefined
 
   useEffect(() => {
     setFocalY(cover?.focalY ?? 50)
@@ -114,7 +116,7 @@ export default function TripCover({
       setRepositioning(false)
       setError(null)
     } catch {
-      setError('That position could not be saved. Try again.')
+      setError(t('cover.positionSaveFailed'))
       cancelReposition()
     }
   }
@@ -141,7 +143,7 @@ export default function TripCover({
           <img
             className={`cover-band__img${loaded ? ' is-loaded' : ''}`}
             src={imageSrc}
-            alt={coverAlt(cover, tripName)}
+            alt={coverAlt(cover, tripName, t)}
             style={{ objectPosition: `50% ${focalY}%` }}
             onLoad={() => setLoaded(true)}
             onError={() => setBroken(true)}
@@ -155,10 +157,10 @@ export default function TripCover({
         {cover && !repositioning && (
           <div className="cover-band__controls">
             <button type="button" className="cover-btn" onClick={openPicker}>
-              Change cover
+              {t('cover.change')}
             </button>
             <button type="button" className="cover-btn" onClick={() => setRepositioning(true)}>
-              Reposition
+              {t('cover.reposition')}
             </button>
           </div>
         )}
@@ -166,7 +168,7 @@ export default function TripCover({
         {repositioning && (
           <div className="cover-reposition-bar">
             <label>
-              Vertical position
+              {t('cover.verticalPosition')}
               <input
                 ref={sliderRef}
                 type="range"
@@ -178,10 +180,10 @@ export default function TripCover({
               />
             </label>
             <button type="button" className="cover-btn cover-btn--ghost" onClick={cancelReposition}>
-              Cancel
+              {t('common.cancel')}
             </button>
             <button type="button" className="cover-btn" onClick={saveFocal}>
-              Save position
+              {t('cover.savePosition')}
             </button>
           </div>
         )}
@@ -195,7 +197,7 @@ export default function TripCover({
               className={`cover-add-btn${nudged ? ' is-nudged' : ''}`}
               onClick={openPicker}
             >
-              <span aria-hidden="true">🖼</span> Add cover
+              <span aria-hidden="true">🖼</span> {t('cover.add')}
             </button>
           </div>
         )}
