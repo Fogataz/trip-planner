@@ -1,6 +1,27 @@
 const mongoose = require('mongoose');
 
+// A trip cover is either a curated gallery entry (key = gallery slug) or an
+// uploaded image (key = GridFS file id). focalY is the point every crop centres on.
+const coverSchema = new mongoose.Schema(
+  {
+    source: { type: String, enum: ['gallery', 'upload'], required: true },
+    key: { type: String, required: true },
+    focalY: { type: Number, default: 50, min: 0, max: 100 },
+    dominantColor: String,
+    alt: String,
+    width: Number,
+    height: Number,
+    setBy: String,
+    setAt: Date,
+  },
+  { _id: false }
+);
+
 const tripSchema = new mongoose.Schema({
+  cover: {
+    type: coverSchema,
+    default: null,
+  },
   name: {
     type: String,
     required: true,

@@ -77,6 +77,8 @@ main {
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
+  /* Full-bleed children (the trip cover) cancel this out with negative margins */
+  --page-gutter: 20px;
   padding: 24px 20px 48px;
   padding-left: max(20px, env(safe-area-inset-left));
   padding-right: max(20px, env(safe-area-inset-right));
@@ -89,6 +91,7 @@ main {
   }
 
   main {
+    --page-gutter: 12px;
     padding: 16px 12px 40px;
   }
 

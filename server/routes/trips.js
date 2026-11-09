@@ -1,10 +1,14 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const rateLimit = require('express-rate-limit');
 const { v4: uuidv4 } = require('uuid');
 const Trip = require('../models/Trip');
 const User = require('../models/User');
+const crypto = require('crypto');
+const { GALLERY, isGalleryKey, isCoverAssetId } = require('../config/coverGallery');
 const { generateTravelSuggestions } = require('../services/travelSuggestions');
 const { generateItinerary } = require('../services/itineraryBuilder');
-const { logItineraryChange } = require('../services/activityLogger');
+const { logItineraryChange, logTripUpdate } = require('../services/activityLogger');
 const { notifyTrip } = require('../services/notifications');
 
 const router = express.Router();
@@ -140,6 +144,7 @@ router.delete('/:groupId', async (req, res) => {
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
     if (denyUnlessMember(trip, req, res, { organizerOnly: true })) return;
     await Trip.deleteOne({ groupId: req.params.groupId });
+    await deleteUploadedAsset(trip.cover);
     res.json({ message: 'Trip deleted' });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -164,6 +169,184 @@ router.put('/:groupId/accommodation', async (req, res) => {
 
     if (io) io.to(`trip:${trip.groupId}`).emit('trip:accommodationUpdated', { accommodation: trip.accommodation });
     res.json(trip.accommodation);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// ---------- Trip cover ----------
+
+const MAX_COVER_BYTES = 2 * 1024 * 1024;
+
+// Uploads are already resized in the browser, so the cap here is a backstop, not a budget
+const coverUploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 10,
+  keyGenerator: (req) => req.user?.uid || 'anonymous',
+  message: { error: 'Too many cover uploads. Try again in a little while.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const rawImageBody = express.raw({
+  type: ['image/webp', 'image/jpeg', 'image/png'],
+  limit: MAX_COVER_BYTES,
+});
+
+// Translate body-parser failures into the JSON shape the client shows inline
+function readImageBody(req, res, next) {
+  rawImageBody(req, res, (err) => {
+    if (!err) return next();
+    if (err.type === 'entity.too.large') {
+      return res.status(413).json({ error: 'That image is too large. Keep it under 2 MB.' });
+    }
+    return res.status(400).json({ error: 'Could not read that image.' });
+  });
+}
+
+// Trust the bytes, not the file name: a PDF renamed to .jpg fails here
+function sniffImageType(buf) {
+  if (!Buffer.isBuffer(buf) || buf.length < 12) return null;
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg';
+  if (buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) {
+    return 'image/png';
+  }
+  if (buf.subarray(0, 4).toString('ascii') === 'RIFF' && buf.subarray(8, 12).toString('ascii') === 'WEBP') {
+    return 'image/webp';
+  }
+  return null;
+}
+
+const coverBucket = () =>
+  new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: 'covers' });
+
+// Uploaded covers are stored under a random 128-bit id rather than an ObjectId.
+// ObjectIds are timestamp + counter, so neighbouring ones can be guessed; this id
+// is what makes the unauthenticated GET /api/covers/:id safe (see routes/covers.js).
+const newCoverAssetId = () => crypto.randomBytes(16).toString('hex');
+
+// Replacing or removing a cover drops the asset it was using, so GridFS never collects orphans
+async function deleteUploadedAsset(cover) {
+  if (!cover || cover.source !== 'upload' || !isCoverAssetId(cover.key)) return;
+  try {
+    await coverBucket().delete(cover.key);
+  } catch (err) {
+    console.warn('Could not delete previous cover asset:', err.message);
+  }
+}
+
+function clampFocal(value, fallback = 50) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(100, Math.max(0, Math.round(n)));
+}
+
+function memberEmail(trip, uid) {
+  return trip.members.find((m) => m.userId === uid)?.email || null;
+}
+
+async function persistCover(trip, req, description) {
+  trip.updatedAt = new Date();
+  await trip.save();
+  if (io) io.to(`trip:${trip.groupId}`).emit('trip:coverUpdated', { cover: trip.cover });
+  logTripUpdate(trip._id, trip.groupId, req.user.uid, memberEmail(trip, req.user.uid), null, trip.cover, description);
+  return trip.cover;
+}
+
+// Set a gallery cover, or update the focal point / alt text of the current one
+router.put('/:groupId/cover', async (req, res) => {
+  try {
+    const trip = await Trip.findOne({ groupId: req.params.groupId });
+    if (!trip) return res.status(404).json({ error: 'Trip not found' });
+    if (denyUnlessMember(trip, req, res)) return;
+
+    const { source, key, focalY, alt } = req.body || {};
+
+    if (source === 'gallery') {
+      if (!isGalleryKey(key)) return res.status(400).json({ error: 'Unknown gallery cover' });
+      const entry = GALLERY[key];
+      await deleteUploadedAsset(trip.cover);
+      trip.cover = {
+        source: 'gallery',
+        key,
+        focalY: clampFocal(focalY, entry.focalY),
+        dominantColor: entry.dominantColor,
+        alt: typeof alt === 'string' && alt.trim() ? alt.trim().slice(0, 200) : entry.alt,
+        setBy: req.user.uid,
+        setAt: new Date(),
+      };
+      return res.json(await persistCover(trip, req, 'changed the trip cover'));
+    }
+
+    if (!trip.cover) return res.status(404).json({ error: 'This trip has no cover yet' });
+
+    if (focalY !== undefined) trip.cover.focalY = clampFocal(focalY, trip.cover.focalY);
+    if (typeof alt === 'string') trip.cover.alt = alt.trim().slice(0, 200);
+    trip.cover.setBy = req.user.uid;
+    trip.cover.setAt = new Date();
+
+    res.json(await persistCover(trip, req, 'repositioned the trip cover'));
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Upload a cover. The browser has already resized it; the body is the raw image.
+router.post('/:groupId/cover/upload', coverUploadLimiter, readImageBody, async (req, res) => {
+  try {
+    const trip = await Trip.findOne({ groupId: req.params.groupId });
+    if (!trip) return res.status(404).json({ error: 'Trip not found' });
+    if (denyUnlessMember(trip, req, res)) return;
+
+    const contentType = sniffImageType(req.body);
+    if (!contentType) {
+      return res.status(415).json({ error: "That file isn't an image we can use. Try JPG, PNG or WebP." });
+    }
+
+    const previous = trip.cover;
+    const bucket = coverBucket();
+    const upload = bucket.openUploadStreamWithId(newCoverAssetId(), `${trip.groupId}-cover`, {
+      metadata: { groupId: trip.groupId, uploadedBy: req.user.uid, contentType },
+    });
+
+    await new Promise((resolve, reject) => {
+      upload.on('error', reject);
+      upload.on('finish', resolve);
+      upload.end(req.body);
+    });
+
+    trip.cover = {
+      source: 'upload',
+      key: upload.id,
+      focalY: clampFocal(req.query.focalY, 50),
+      dominantColor: /^#[0-9a-f]{6}$/i.test(String(req.query.color || '')) ? String(req.query.color) : null,
+      alt: String(req.query.alt || '').trim().slice(0, 200) || `Cover image for ${trip.name}`,
+      width: Number(req.query.w) || null,
+      height: Number(req.query.h) || null,
+      setBy: req.user.uid,
+      setAt: new Date(),
+    };
+
+    const saved = await persistCover(trip, req, 'changed the trip cover');
+    await deleteUploadedAsset(previous);
+    res.status(201).json(saved);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Remove the cover and its asset; the trip falls back to its default gradient
+router.delete('/:groupId/cover', async (req, res) => {
+  try {
+    const trip = await Trip.findOne({ groupId: req.params.groupId });
+    if (!trip) return res.status(404).json({ error: 'Trip not found' });
+    if (denyUnlessMember(trip, req, res)) return;
+
+    const previous = trip.cover;
+    trip.cover = null;
+    await persistCover(trip, req, 'removed the trip cover');
+    await deleteUploadedAsset(previous);
+    res.status(204).end();
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
