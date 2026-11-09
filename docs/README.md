@@ -11,6 +11,8 @@ This folder holds product documentation for the Trip Planner: strategy, roadmap 
 | [product-strategy.md](product-strategy.md) | Why the product exists, who it serves, and where it is heading |
 | [roadmap.md](roadmap.md) | Planned phases, current status and next priorities |
 | [features.md](features.md) | What the product does today, based on the current code |
+| [trip-cover-spec.md](trip-cover-spec.md) | Trip covers: spec, acceptance criteria and build status |
+| [localization-spec.md](localization-spec.md) | English, Portuguese and Spanish support: language choice, AI output and known gaps |
 
 ## How to update
 

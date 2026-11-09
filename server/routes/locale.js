@@ -1,5 +1,5 @@
 const express = require('express');
-const geoip = require('geoip-lite');
+const geoip = require('geoip-country');
 
 const router = express.Router();
 

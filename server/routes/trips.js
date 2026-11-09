@@ -112,7 +112,7 @@ router.get('/:groupId', async (req, res) => {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
     if (denyUnlessMember(trip, req, res)) return;
-    ensureSuggestions(trip);
+    ensureSuggestions(trip, requestLanguage(req));
     res.json(trip);
   } catch (error) {
     res.status(400).json({ error: error.message });
