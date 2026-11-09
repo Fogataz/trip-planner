@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CircleMarker, MapContainer, Popup, TileLayer, Tooltip, useMap } from 'react-leaflet'
+import { useTranslation } from 'react-i18next'
 import type { Socket } from 'socket.io-client'
 import 'leaflet/dist/leaflet.css'
 
@@ -35,6 +36,7 @@ function FitBounds({ points }: { points: Array<[number, number]> }) {
 }
 
 export default function LiveLocationMap({ groupId, socket, currentUid, destination }: Props) {
+  const { t } = useTranslation()
   const [locations, setLocations] = useState<Record<string, SharedLocation>>({})
   const [sharing, setSharing] = useState(false)
   const [geoError, setGeoError] = useState<string | null>(null)
@@ -79,7 +81,7 @@ export default function LiveLocationMap({ groupId, socket, currentUid, destinati
   const startSharing = () => {
     if (!socket) return
     if (!('geolocation' in navigator)) {
-      setGeoError('Your browser does not support location sharing')
+      setGeoError(t('location.unsupported'))
       return
     }
     setGeoError(null)
@@ -94,8 +96,8 @@ export default function LiveLocationMap({ groupId, socket, currentUid, destinati
       (err) => {
         setGeoError(
           err.code === err.PERMISSION_DENIED
-            ? 'Location permission was denied. Allow it in your browser settings to share.'
-            : 'Could not get your location'
+            ? t('location.denied')
+            : t('location.failed')
         )
         stopSharing()
       },
@@ -121,16 +123,16 @@ export default function LiveLocationMap({ groupId, socket, currentUid, destinati
   return (
     <div className="qa-section">
       <div className="section-header">
-        <h2>Live locations</h2>
+        <h2>{t('location.title')}</h2>
         <button type="button" onClick={sharing ? stopSharing : startSharing} disabled={!socket}>
-          {sharing ? '⏹ Stop sharing my location' : '📍 Share my location'}
+          {sharing ? t('location.stop') : t('location.share')}
         </button>
       </div>
 
       <p className="hint">
         {sharing
-          ? 'You are sharing your live location with this trip’s members. It is never stored.'
-          : 'Sharing is off. Turn it on to show where you are to this trip’s members. It is never stored.'}
+          ? t('location.hintOn')
+          : t('location.hintOff')}
       </p>
       {geoError && <p className="text-error">{geoError}</p>}
 
@@ -150,7 +152,7 @@ export default function LiveLocationMap({ groupId, socket, currentUid, destinati
             radius={10}
             pathOptions={{ color: '#fff', weight: 2, fillColor: '#d32f2f', fillOpacity: 1 }}
           >
-            <Popup>{destination?.address || 'Destination'}</Popup>
+            <Popup>{destination?.address || t('location.destination')}</Popup>
           </CircleMarker>
         )}
         {list.map((loc) => {
@@ -165,8 +167,8 @@ export default function LiveLocationMap({ groupId, socket, currentUid, destinati
               pathOptions={{ color: '#fff', weight: 2, fillColor: color, fillOpacity: 1 }}
             >
               <Tooltip permanent direction="top" offset={[0, -8]}>
-                {mine ? 'You' : loc.userEmail || 'Member'}
-                {stale ? ' (last seen a while ago)' : ''}
+                {mine ? t('location.you') : loc.userEmail || t('location.member')}
+                {stale ? ` ${t('location.stale')}` : ''}
               </Tooltip>
             </CircleMarker>
           )
@@ -175,8 +177,8 @@ export default function LiveLocationMap({ groupId, socket, currentUid, destinati
 
       <p className="hint">
         {list.length === 0
-          ? 'Nobody is sharing their location right now.'
-          : `${list.length} ${list.length === 1 ? 'person is' : 'people are'} sharing their location.`}
+          ? t('location.nobody')
+          : t('location.sharingCount', { count: list.length })}
       </p>
     </div>
   )

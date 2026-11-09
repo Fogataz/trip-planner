@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 import {
   COVER_GALLERY,
   COVER_GROUPS,
@@ -21,6 +22,7 @@ interface Props {
 type Tab = 'gallery' | 'upload'
 
 export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, onClose }: Props) {
+  const { t } = useTranslation()
   const [tab, setTab] = useState<Tab>('gallery')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -93,7 +95,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
       onApplied(data)
       onClose()
     } catch (err) {
-      setError(message(err, 'That cover could not be saved. Try again.'))
+      setError(message(err, t('cover.errors.applyFailed')))
       setBusy(false)
     }
   }
@@ -102,11 +104,11 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
     setError(null)
 
     if (file.size > MAX_UPLOAD_BYTES) {
-      setError('That file is over 8 MB. Pick a smaller image.')
+      setError(t('cover.errors.tooLarge'))
       return
     }
     if (!(await sniffImageType(file))) {
-      setError("That file isn't an image we can use. Try JPG, PNG or WebP.")
+      setError(t('cover.errors.notImage'))
       return
     }
 
@@ -144,7 +146,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
       onClose()
     } catch (err) {
       if (controller.signal.aborted) return
-      setError(message(err, 'That image could not be uploaded. Try again.'))
+      setError(message(err, t('cover.errors.uploadFailed')))
       setBusy(false)
       setProgress(null)
       setFileName(null)
@@ -160,7 +162,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
       onApplied(null)
       onClose()
     } catch (err) {
-      setError(message(err, 'The cover could not be removed. Try again.'))
+      setError(message(err, t('cover.errors.removeFailed')))
       setBusy(false)
     }
   }
@@ -180,10 +182,10 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div ref={dialogRef} className="cover-picker" role="dialog" aria-modal="true" aria-label="Trip cover">
+      <div ref={dialogRef} className="cover-picker" role="dialog" aria-modal="true" aria-label={t('cover.title')}>
         <div className="cover-picker__head">
-          <h2>Trip cover</h2>
-          <button ref={closeRef} type="button" className="cover-picker__close" aria-label="Close" onClick={onClose}>
+          <h2>{t('cover.title')}</h2>
+          <button ref={closeRef} type="button" className="cover-picker__close" aria-label={t('common.close')} onClick={onClose}>
             ✕
           </button>
         </div>
@@ -196,7 +198,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
             aria-selected={tab === 'gallery'}
             onClick={() => setTab('gallery')}
           >
-            Gallery
+            {t('cover.gallery')}
           </button>
           <button
             type="button"
@@ -205,7 +207,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
             aria-selected={tab === 'upload'}
             onClick={() => setTab('upload')}
           >
-            Upload
+            {t('cover.upload')}
           </button>
           {/* Generate (AI covers) is hidden until v2 — wireframe review, spec §4.2 */}
         </div>
@@ -215,14 +217,14 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
             <>
               {COVER_GROUPS.map((group) => (
                 <div className="cover-group" key={group}>
-                  <h3>{group}</h3>
+                  <h3>{t(`cover.groups.${group}`)}</h3>
                   <div className="cover-grid">
                     {COVER_GALLERY.filter((entry) => entry.group === group).map((entry) => (
                       <button
                         key={entry.key}
                         type="button"
                         className="cover-swatch"
-                        aria-label={entry.label}
+                        aria-label={t(`cover.gallery_${entry.key}`)}
                         aria-pressed={cover?.source === 'gallery' && cover.key === entry.key}
                         disabled={busy}
                         onClick={() => applyGallery(entry.key)}
@@ -232,7 +234,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
                             : { backgroundImage: `url(${entry.value})` }
                         }
                       >
-                        <span className="cover-swatch__label">{entry.label}</span>
+                        <span className="cover-swatch__label">{t(`cover.gallery_${entry.key}`)}</span>
                       </button>
                     ))}
                   </div>
@@ -258,16 +260,16 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
                     if (file) upload(file)
                   }}
                 >
-                  <strong>Drop an image here</strong>
+                  <strong>{t('cover.drop')}</strong>
                   <button
                     type="button"
                     className="cover-tab"
                     disabled={busy}
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    Choose a file
+                    {t('cover.chooseFile')}
                   </button>
-                  <small>JPG, PNG or WebP · up to 8 MB · wide images work best</small>
+                  <small>{t('cover.formats')}</small>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -287,15 +289,15 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
                     <span style={{ width: `${progress}%` }} />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10 }}>
-                    <span className="cover-hint">Resized in your browser · {progress}%</span>
+                    <span className="cover-hint">{t('cover.resized', { progress })}</span>
                     <button type="button" className="cover-tab" onClick={cancelUpload}>
-                      Cancel
+                      {t('common.cancel')}
                     </button>
                   </div>
                 </div>
               )}
               <p className="cover-hint" style={{ marginTop: 12 }}>
-                Images are resized to 1600px before they leave your device, so uploads stay small.
+                {t('cover.resizeNote')}
               </p>
             </>
           )}
@@ -306,12 +308,12 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
         <div className="cover-picker__foot">
           {cover ? (
             <button type="button" className="cover-tab" disabled={busy} onClick={removeCover}>
-              Remove cover
+              {t('cover.remove')}
             </button>
           ) : (
-            <span className="cover-hint">No cover set yet</span>
+            <span className="cover-hint">{t('cover.none')}</span>
           )}
-          <span className="cover-hint">Tap a cover to apply</span>
+          <span className="cover-hint">{t('cover.tapToApply')}</span>
         </div>
       </div>
     </div>

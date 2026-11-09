@@ -43,6 +43,14 @@ This page describes what the product does today, based on the server code in `se
 - **Presence:** see who is currently viewing a trip
 - **Live location:** opt in to share your location with trip members. It is not saved, and it expires after 5 minutes without an update
 
+## Languages
+
+- The app is available in English, Portuguese (pt-BR) and Spanish (es-ES). Details in [localization-spec.md](localization-spec.md)
+- Language precedence: the choice saved from the header dropdown, then the visitor's country from their IP (`GET /api/locale`, offline lookup), then the browser language, then English
+- The client sends its language in the `X-Language` header, and AI answers, itineraries and travel suggestions are written in it
+- Set `TRUST_PROXY` when running behind a proxy so IP detection sees the real client IP
+- Still English: server error messages and push notification text
+
 ## Notifications
 
 - Register and unregister a device for push notifications

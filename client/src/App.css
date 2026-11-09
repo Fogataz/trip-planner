@@ -42,24 +42,19 @@ header h1 {
   gap: 10px;
 }
 
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 999px;
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
 }
 
-.status.connected {
-  background: var(--success-soft);
-  color: var(--success);
+.status-dot.connected {
+  background: var(--success);
 }
 
-.status.disconnected {
-  background: var(--danger-soft);
-  color: var(--danger);
+.status-dot.disconnected {
+  background: var(--danger);
 }
 
 .logout-button {
@@ -94,23 +89,22 @@ main {
     --page-gutter: 12px;
     padding: 16px 12px 40px;
   }
+}
 
-  /* Keep the header compact: show just the status dot */
-  .status {
-    font-size: 0;
-    gap: 0;
-    padding: 0;
-    width: 12px;
-    height: 12px;
-    min-height: 0;
-    border-radius: 50%;
-  }
-
-  .status.connected {
-    background: var(--success);
-  }
-
-  .status.disconnected {
-    background: var(--danger);
-  }
+.language-switcher {
+  width: auto;
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 8px 34px 8px 14px;
+  font-size: 14px;
+  line-height: 1.2;
+  border-radius: 999px;
+  cursor: pointer;
+  /* Custom arrow so it sits clear of the rounded edge (the native one hugs the border) */
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 8px;
 }

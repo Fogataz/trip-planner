@@ -12,7 +12,7 @@
 | 4. Location tracking | Opt-in live location shared within a trip | **In place** (in-memory only) |
 | 5. Transport API integration | Live transport delays and updates | **Not started** |
 | 6. Notifications | Push notifications through Firebase Cloud Messaging | **Partly in place.** Token registration exists. Triggers **TBD** |
-| 7. Frontend and polish | Full web client and UX polish | **In progress** (React client exists) |
+| 7. Frontend and polish | Full web client and UX polish | **In progress** (React client exists). Trip covers shipped. EN/PT/ES localization in review ([spec](localization-spec.md)). Server errors and push text still English |
 
 The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:updated`, `location:update`, `transport:update`) are partly implemented. `join-trip`, `leave-trip` and `location:update` exist. `trip:updated` and `transport:update` should be confirmed.
 

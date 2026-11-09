@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 import { io, Socket } from 'socket.io-client'
 import './TripDetail.css'
 import TripCover from '../components/TripCover'
@@ -37,15 +38,15 @@ interface Trip {
 
 function transportIcon(transport: string): string {
   const t = transport.toLowerCase()
-  if (/\b(walk|on foot|stroll)/.test(t)) return '🚶'
-  if (/\b(bus|coach)\b/.test(t)) return '🚌'
-  if (/\b(train|rail|tram|luas|dart)\b/.test(t)) return '🚆'
-  if (/\b(metro|tube|underground|subway|line)\b/.test(t)) return '🚇'
-  if (/\b(flight|fly|plane|airport)\b/.test(t)) return '✈️'
-  if (/\b(ferry|boat|ship)\b/.test(t)) return '⛴️'
-  if (/\b(bike|bicycle|cycle)\b/.test(t)) return '🚲'
-  if (/\b(taxi|uber|cab)\b/.test(t)) return '🚕'
-  if (/\b(car|drive|driving)\b/.test(t)) return '🚗'
+  if (/\b(walk|on foot|stroll|caminh|a pé|a pie|pasear)/.test(t)) return '🚶'
+  if (/\b(bus|coach|ônibus|onibus|autocarro|autobús|autobus)\b/.test(t)) return '🚌'
+  if (/\b(train|rail|tram|luas|dart|trem|comboio|tren|bonde|eléctrico)\b/.test(t)) return '🚆'
+  if (/\b(metro|metrô|tube|underground|subway|line)\b/.test(t)) return '🚇'
+  if (/\b(flight|fly|plane|airport|voo|avião|aeroporto|vuelo|avión|aeropuerto)\b/.test(t)) return '✈️'
+  if (/\b(ferry|boat|ship|balsa|barco|barca|ferri)\b/.test(t)) return '⛴️'
+  if (/\b(bike|bicycle|cycle|bicicleta|bici)\b/.test(t)) return '🚲'
+  if (/\b(taxi|táxi|uber|cab)\b/.test(t)) return '🚕'
+  if (/\b(car|drive|driving|carro|coche|dirigir|conduc\w*)\b/.test(t)) return '🚗'
   return '🧭'
 }
 
@@ -57,6 +58,8 @@ interface Comment {
 }
 
 export default function TripDetail() {
+  const { t, i18n } = useTranslation()
+  const locale = i18n.resolvedLanguage || 'en'
   const { groupId } = useParams<{ groupId: string }>()
   const navigate = useNavigate()
   const location = useLocation()
@@ -172,12 +175,18 @@ export default function TripDetail() {
   useEffect(() => {
     fetchTrip()
 
-    // Poll for suggestions every 2 seconds if not available yet
-    if (!trip?.travelSuggestions?.raw_suggestions) {
-      const interval = setInterval(fetchTrip, 2000)
+    // Poll every 2 seconds until suggestions exist, or (for up to a minute) until they match the UI language
+    const suggestions = trip?.travelSuggestions
+    const wrongLanguage = !!suggestions?.raw_suggestions && (suggestions.language || 'en') !== locale
+    if (!suggestions?.raw_suggestions || wrongLanguage) {
+      let polls = 0
+      const interval = setInterval(() => {
+        if (wrongLanguage && ++polls > 30) return clearInterval(interval)
+        fetchTrip()
+      }, 2000)
       return () => clearInterval(interval)
     }
-  }, [groupId, trip?.travelSuggestions?.raw_suggestions])
+  }, [groupId, trip?.travelSuggestions?.raw_suggestions, trip?.travelSuggestions?.language, locale])
 
   useEffect(() => {
     if (trip?._id) {
@@ -195,10 +204,10 @@ export default function TripDetail() {
       const status = err.response?.status
       setError(
         status === 403
-          ? "You're not a member of this trip. Ask the organizer for an invite."
+          ? t('detail.notMember')
           : status === 404
-            ? 'Trip not found'
-            : 'Failed to load trip'
+            ? t('detail.notFound')
+            : t('detail.loadFailed')
       )
       console.error(err)
     } finally {
@@ -238,10 +247,7 @@ export default function TripDetail() {
   }
 
   const handleGenerateItinerary = async () => {
-    const preferences = window.prompt(
-      'Any preferences for the AI? (e.g. budget, food, relaxed pace). Leave blank to skip.',
-      ''
-    )
+    const preferences = window.prompt(t('detail.aiPreferencesPrompt'), '')
     if (preferences === null) return
     setGeneratingItinerary(true)
     try {
@@ -252,7 +258,7 @@ export default function TripDetail() {
       )
       fetchTrip()
     } catch (err: any) {
-      alert(`Error: ${err.response?.data?.error || 'Failed to generate itinerary'}`)
+      alert(t('common.errorPrefix', { message: err.response?.data?.error || t('detail.generateFailed') }))
     } finally {
       setGeneratingItinerary(false)
     }
@@ -270,14 +276,14 @@ export default function TripDetail() {
       setEditingStay(false)
       fetchTrip()
     } catch (err: any) {
-      alert(`Error: ${err.response?.data?.error || 'Failed to save accommodation'}`)
+      alert(t('common.errorPrefix', { message: err.response?.data?.error || t('detail.saveStayFailed') }))
     } finally {
       setSavingStay(false)
     }
   }
 
   const handleRemoveMember = async (member: { userId?: string; email?: string }) => {
-    if (!confirm(`Remove ${member.email || 'this member'} from the trip?`)) return
+    if (!confirm(t('detail.confirmRemove', { name: member.email || t('detail.thisMember') }))) return
     try {
       await axios.delete(`${apiUrl}/api/groups/${groupId}/members`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -285,7 +291,7 @@ export default function TripDetail() {
       })
       fetchTrip()
     } catch (err: any) {
-      alert(`Error: ${err.response?.data?.error || 'Failed to remove member'}`)
+      alert(t('common.errorPrefix', { message: err.response?.data?.error || t('detail.removeFailed') }))
     }
   }
 
@@ -304,7 +310,7 @@ export default function TripDetail() {
       setInviteEmail('')
       fetchTrip()
     } catch (err: any) {
-      alert(`Error: ${err.response?.data?.error || 'Failed to send invite'}`)
+      alert(t('common.errorPrefix', { message: err.response?.data?.error || t('detail.inviteFailed') }))
       console.error('Failed to invite member:', err)
     } finally {
       setInviting(false)
@@ -344,9 +350,9 @@ export default function TripDetail() {
           expectedVersion: err.response.data.expectedVersion,
           itemId: editingItemId,
         })
-        setError('This item was updated by another user. Reload to see changes.')
+        setError(t('detail.conflictError'))
       } else {
-        setError('Failed to save itinerary item')
+        setError(t('detail.saveItemFailed'))
       }
       console.error(err)
     }
@@ -359,7 +365,7 @@ export default function TripDetail() {
       })
       fetchTrip()
     } catch (err) {
-      setError('Failed to delete itinerary item')
+      setError(t('detail.deleteItemFailed'))
       console.error(err)
     }
   }
@@ -394,14 +400,14 @@ export default function TripDetail() {
     }
   }
 
-  if (loading) return <div className="loading">Loading trip...</div>
+  if (loading) return <div className="loading">{t('detail.loading')}</div>
   if (error) return <div className="error">{error}</div>
-  if (!trip) return <div className="error">Trip not found</div>
+  if (!trip) return <div className="error">{t('detail.notFound')}</div>
 
   return (
     <div className="trip-detail">
       <button className="back-button" onClick={() => navigate('/trips')}>
-        ← Back to Trips
+        {t('detail.back')}
       </button>
 
       <TripCover
@@ -419,16 +425,16 @@ export default function TripDetail() {
             <button
               type="button"
               disabled={push.status === 'denied'}
-              title={push.status === 'denied' ? 'Notifications are blocked in your browser settings' : ''}
+              title={push.status === 'denied' ? t('detail.notificationsBlocked') : ''}
               onClick={push.enable}
             >
-              🔔 Enable notifications
+              {t('detail.enableNotifications')}
             </button>
           )}
-          {push.status === 'on' && <span className="push-on">🔔 Notifications on</span>}
+          {push.status === 'on' && <span className="push-on">{t('detail.notificationsOn')}</span>}
           {activeUsers.length > 0 && (
             <div className="presence-indicator">
-              <span>Active:</span>
+              <span>{t('detail.active')}</span>
               {activeUsers.map((user) => (
                 <span key={user.userId} className="presence-user">
                   <span className={`presence-dot${user.status === 'editing' ? ' editing' : ''}`} />
@@ -440,18 +446,18 @@ export default function TripDetail() {
         </div>
         <div className="trip-meta">
           <p>
-            <strong>From:</strong> {trip.origin?.address || 'Unknown'}
+            <strong>{t('detail.from')}</strong> {trip.origin?.address || t('common.unknown')}
           </p>
           <p>
-            <strong>To:</strong> {trip.destination?.address || 'Unknown'}
+            <strong>{t('detail.to')}</strong> {trip.destination?.address || t('common.unknown')}
           </p>
           <p>
-            <strong>Dates:</strong>{' '}
-            {new Date(trip.startDate).toLocaleDateString()} -{' '}
-            {trip.endDate ? new Date(trip.endDate).toLocaleDateString() : 'TBD'}
+            <strong>{t('detail.dates')}</strong>{' '}
+            {new Date(trip.startDate).toLocaleDateString(locale)} -{' '}
+            {trip.endDate ? new Date(trip.endDate).toLocaleDateString(locale) : t('detail.tbd')}
           </p>
           <p>
-            <strong>Members:</strong> {trip.members.length}
+            <strong>{t('detail.members')}</strong> {trip.members.length}
           </p>
         </div>
 
@@ -461,31 +467,31 @@ export default function TripDetail() {
               <input
                 value={stayName}
                 onChange={(e) => setStayName(e.target.value)}
-                placeholder="Where are you staying? e.g. Premier Inn London Southwark"
+                placeholder={t('detail.stayNamePlaceholder')}
                 maxLength={200}
               />
               <input
                 value={stayAddress}
                 onChange={(e) => setStayAddress(e.target.value)}
-                placeholder="Address or area, e.g. 34 Park St, London SE1 9EF"
+                placeholder={t('detail.stayAddressPlaceholder')}
                 maxLength={300}
               />
               <div className="row-actions">
                 <button type="submit" className="btn-sm" disabled={savingStay || !(stayName.trim() || stayAddress.trim())}>
-                  {savingStay ? 'Saving...' : 'Save'}
+                  {savingStay ? t('common.saving') : t('common.save')}
                 </button>
                 <button type="button" className="btn-secondary btn-sm" onClick={() => setEditingStay(false)}>
-                  Cancel
+                  {t('common.cancel')}
                 </button>
               </div>
             </form>
           ) : (
             <div className="stay-summary">
               <span>
-                <strong>🏨 Staying at:</strong>{' '}
+                <strong>{t('detail.stayingAt')}</strong>{' '}
                 {trip.accommodation?.name || trip.accommodation?.address
                   ? [trip.accommodation?.name, trip.accommodation?.address].filter(Boolean).join(', ')
-                  : <span className="muted">Not set - add it so AI suggestions are close to you</span>}
+                  : <span className="muted">{t('detail.stayNotSet')}</span>}
               </span>
               <button
                 type="button"
@@ -496,7 +502,7 @@ export default function TripDetail() {
                   setEditingStay(true)
                 }}
               >
-                {trip.accommodation?.name || trip.accommodation?.address ? 'Edit' : 'Add'}
+                {trip.accommodation?.name || trip.accommodation?.address ? t('common.edit') : t('common.add')}
               </button>
             </div>
           )}
@@ -504,8 +510,8 @@ export default function TripDetail() {
 
         {trip.travelSuggestions?.raw_suggestions && (
           <div className="travel-suggestions">
-            <h3>✈️ AI Travel Suggestions</h3>
-            <p className="hint">AI-generated, no sources. Prices, hours and availability may be wrong - verify before booking.</p>
+            <h3>{t('detail.suggestionsTitle')}</h3>
+            <p className="hint">{t('detail.suggestionsDisclaimer')}</p>
             {trip.travelSuggestions.raw_suggestions && (
               <div className="suggestion-content">
                 {trip.travelSuggestions.raw_suggestions
@@ -536,7 +542,7 @@ export default function TripDetail() {
             )}
             {trip.travelSuggestions.transportation_options && !trip.travelSuggestions.raw_suggestions && (
               <div className="suggestion-item">
-                <h4>Transportation Options</h4>
+                <h4>{t('detail.transportOptions')}</h4>
                 <p>{trip.travelSuggestions.transportation_options}</p>
               </div>
             )}
@@ -545,15 +551,15 @@ export default function TripDetail() {
         {!trip.travelSuggestions?.raw_suggestions && (
           <p className="suggestions-loading">
             {trip.travelSuggestions?.error
-              ? `⚠️ Couldn't generate suggestions (${trip.travelSuggestions.error}). Retrying...`
-              : '✨ Generating AI travel suggestions...'}
+              ? t('detail.suggestionsError', { error: trip.travelSuggestions.error })
+              : t('detail.suggestionsLoading')}
           </p>
         )}
       </TripCover>
 
       {conflictError && (
         <div className="conflict-banner">
-          <strong>⚠️ Conflict Detected:</strong> This item was updated by another user.
+          <strong>{t('detail.conflictTitle')}</strong> {t('detail.conflictBody')}
           <button
             className="btn-link"
             onClick={() => {
@@ -561,21 +567,21 @@ export default function TripDetail() {
               setConflictError(null)
             }}
           >
-            Reload to see changes
+            {t('detail.reload')}
           </button>
         </div>
       )}
 
       <div className="itinerary-section">
         <div className="section-header">
-          <h2>Itinerary</h2>
+          <h2>{t('detail.itinerary')}</h2>
           <div className="section-actions">
           <button
             className="add-button"
             onClick={handleGenerateItinerary}
             disabled={generatingItinerary}
           >
-            {generatingItinerary ? '✨ Generating...' : '✨ Generate with AI'}
+            {generatingItinerary ? t('detail.generating') : t('detail.generate')}
           </button>
           <button
             className="add-button"
@@ -587,28 +593,28 @@ export default function TripDetail() {
               }
             }}
           >
-            {showItineraryForm ? 'Cancel' : '+ Add Stop'}
+            {showItineraryForm ? t('common.cancel') : t('detail.addStop')}
           </button>
           </div>
         </div>
 
-        <p className="hint">AI-generated stops may contain errors (hours, days open, prices). Check each before relying on it.</p>
+        <p className="hint">{t('detail.itineraryDisclaimer')}</p>
 
         {showItineraryForm && (
           <form className="itinerary-form" onSubmit={handleAddItinerary}>
             <div className="form-group">
-              <label>Stop/Location</label>
+              <label>{t('detail.stop')}</label>
               <input
                 type="text"
                 value={itineraryForm.stop}
                 onChange={(e) => setItineraryForm({ ...itineraryForm, stop: e.target.value })}
-                placeholder="e.g., Eiffel Tower"
+                placeholder={t('detail.stopPlaceholder')}
                 required
               />
             </div>
 
             <div className="form-group">
-              <label>Date & Time</label>
+              <label>{t('detail.dateTime')}</label>
               <input
                 type="datetime-local"
                 value={itineraryForm.time}
@@ -618,31 +624,31 @@ export default function TripDetail() {
             </div>
 
             <div className="form-group">
-              <label>Transport</label>
+              <label>{t('detail.transport')}</label>
               <input
                 type="text"
                 value={itineraryForm.transport}
                 onChange={(e) => setItineraryForm({ ...itineraryForm, transport: e.target.value })}
-                placeholder="e.g., Metro, Flight, Car"
+                placeholder={t('detail.transportPlaceholder')}
               />
             </div>
 
             <div className="form-group">
-              <label>Notes</label>
+              <label>{t('detail.notes')}</label>
               <textarea
                 value={itineraryForm.notes}
                 onChange={(e) => setItineraryForm({ ...itineraryForm, notes: e.target.value })}
-                placeholder="Add any notes about this stop..."
+                placeholder={t('detail.notesPlaceholder')}
               />
             </div>
 
-            <button type="submit">{editingItemId ? 'Update' : 'Add'} Stop</button>
+            <button type="submit">{editingItemId ? t('detail.updateStop') : t('detail.addStopSubmit')}</button>
           </form>
         )}
 
         <div className="itinerary-list">
           {trip.itinerary.length === 0 ? (
-            <p className="empty">No stops yet. Add one to get started!</p>
+            <p className="empty">{t('detail.noStops')}</p>
           ) : (
             trip.itinerary.map((item) => {
               const editingUser = activeUsers.find((u) => u.editingItemId === item._id)
@@ -651,11 +657,11 @@ export default function TripDetail() {
                   <div className="item-content">
                     {editingUser && (
                       <div className="editing-note">
-                        ✏️ {editingUser.userEmail} is editing...
+                        {t('detail.isEditing', { name: editingUser.userEmail })}
                       </div>
                     )}
                     <h3>{item.stop}</h3>
-                  <p className="time">{new Date(item.time).toLocaleString()}</p>
+                  <p className="time">{new Date(item.time).toLocaleString(locale)}</p>
                   {item.transport && <p className="transport">{transportIcon(item.transport)} {item.transport}</p>}
                   {item.notes && <p className="notes">{item.notes}</p>}
                 </div>
@@ -681,12 +687,12 @@ export default function TripDetail() {
 
       <div className="qa-section">
         <div className="section-header">
-          <h2>Members</h2>
+          <h2>{t('detail.membersTitle')}</h2>
           <button
             className="add-button"
             onClick={() => setShowMembersTab(!showMembersTab)}
           >
-            {showMembersTab ? 'Hide' : '+ Invite'}
+            {showMembersTab ? t('detail.hide') : t('detail.invite')}
           </button>
         </div>
 
@@ -697,30 +703,30 @@ export default function TripDetail() {
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="Enter email address..."
+                placeholder={t('detail.emailPlaceholder')}
                 required
               />
               <button type="submit" disabled={inviting || !inviteEmail.trim()}>
-                {inviting ? '📧 Sending...' : '📧 Send Invite'}
+                {inviting ? t('detail.sending') : t('detail.sendInvite')}
               </button>
             </form>
 
             {inviteToken && (
               <div className="invite-box">
-                <strong>✓ Invitation Created!</strong>
-                <p>Share this link with the invited person:</p>
+                <strong>{t('detail.inviteCreated')}</strong>
+                <p>{t('detail.shareLink')}</p>
                 <div
                   className="invite-link"
                   onClick={() => {
                     navigator.clipboard.writeText(`${window.location.origin}/accept-invite/${inviteToken}`)
-                    alert('Link copied to clipboard!')
+                    alert(t('detail.linkCopied'))
                   }}
                 >
                   {`${window.location.origin}/accept-invite/${inviteToken}`}
                 </div>
-                <p className="small">(Click to copy link)</p>
+                <p className="small">{t('detail.clickToCopy')}</p>
                 <button className="btn-sm" onClick={() => setInviteToken(null)}>
-                  Done
+                  {t('common.done')}
                 </button>
               </div>
             )}
@@ -731,12 +737,12 @@ export default function TripDetail() {
           {trip.members.map((member) => (
             <div key={member.userId || member.email} className="comment-item">
               <div className="question">
-                <strong>{member.email || 'Unknown'}</strong>
+                <strong>{member.email || t('common.unknown')}</strong>
                 <span className="comment-meta">
-                  {member.role === 'organizer' ? '👑 Organizer' : 'Member'}
+                  {member.role === 'organizer' ? t('detail.organizer') : t('detail.member')}
                 </span>
                 <span className={`badge ${member.status === 'active' ? 'badge-success' : 'badge-muted'}`}>
-                  {member.status === 'pending' ? '⏳ Invited' : '✓ Active'}
+                  {member.status === 'pending' ? t('detail.invited') : t('detail.activeBadge')}
                 </span>
                 {member.role !== 'organizer' &&
                   trip.members.some(
@@ -747,7 +753,7 @@ export default function TripDetail() {
                       className="btn-danger btn-sm"
                       onClick={() => handleRemoveMember(member)}
                     >
-                      {member.status === 'pending' ? 'Cancel invite' : 'Remove'}
+                      {member.status === 'pending' ? t('detail.cancelInvite') : t('detail.remove')}
                     </button>
                   )}
               </div>
@@ -783,36 +789,36 @@ export default function TripDetail() {
 
       <div className="qa-section">
         <div className="section-header">
-          <h2>Questions & Answers</h2>
+          <h2>{t('detail.qaTitle')}</h2>
         </div>
 
         <form className="question-form" onSubmit={handleAskQuestion}>
           <textarea
             value={questionText}
             onChange={(e) => setQuestionText(e.target.value)}
-            placeholder="Ask a question about your trip or travel suggestions..."
+            placeholder={t('detail.askPlaceholder')}
             rows={3}
           />
           <button type="submit" disabled={askingQuestion || !questionText.trim()}>
-            {askingQuestion ? '🤔 Thinking...' : '💬 Ask AI'}
+            {askingQuestion ? t('detail.thinking') : t('detail.askAi')}
           </button>
         </form>
 
         <div className="comments-list">
           {comments.length === 0 ? (
-            <p className="empty">No questions yet. Ask something to get AI insights!</p>
+            <p className="empty">{t('detail.noQuestions')}</p>
           ) : (
             comments.map((comment) => (
               <div key={comment._id} className="comment-item">
                 <div className="question">
-                  <strong>Q: {comment.question}</strong>
+                  <strong>{t('detail.q')} {comment.question}</strong>
                 </div>
                 {comment.answer ? (
                   <div className="answer">
-                    <strong>A:</strong> {comment.answer}
+                    <strong>{t('detail.a')}</strong> {comment.answer}
                   </div>
                 ) : (
-                  <div className="answer loading">Generating answer...</div>
+                  <div className="answer loading">{t('detail.generatingAnswer')}</div>
                 )}
               </div>
             ))

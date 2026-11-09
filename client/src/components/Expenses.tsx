@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 import type { Socket } from 'socket.io-client'
 
 interface Expense {
@@ -34,10 +35,11 @@ interface Props {
   socket: Socket | null
 }
 
-const fmt = (cents: number, currency = 'EUR') =>
-  new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(cents / 100)
+const fmt = (cents: number, currency = 'EUR', locale?: string) =>
+  new Intl.NumberFormat(locale, { style: 'currency', currency }).format(cents / 100)
 
 export default function Expenses({ groupId, apiUrl, token, currentUid, members, socket }: Props) {
+  const { t, i18n } = useTranslation()
   const [data, setData] = useState<Summary>({ expenses: [], balances: {}, settlements: [] })
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
@@ -58,7 +60,7 @@ export default function Expenses({ groupId, apiUrl, token, currentUid, members, 
       setLoadFailed(false)
     } catch (err: any) {
       setLoadFailed(true)
-      setError(err.response?.data?.error || 'Failed to load expenses')
+      setError(err.response?.data?.error || t('expenses.loadFailed'))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [base, token])
@@ -84,7 +86,7 @@ export default function Expenses({ groupId, apiUrl, token, currentUid, members, 
       setDescription('')
       setAmount('')
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to add expense')
+      setError(err.response?.data?.error || t('expenses.addFailed'))
     }
   }
 
@@ -94,14 +96,14 @@ export default function Expenses({ groupId, apiUrl, token, currentUid, members, 
       const res = await axios.delete<Summary>(`${base}/${id}`, { headers })
       setData(res.data)
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to delete expense')
+      setError(err.response?.data?.error || t('expenses.deleteFailed'))
     }
   }
 
   return (
     <div className="qa-section">
       <div className="section-header">
-        <h2>Expenses</h2>
+        <h2>{t('expenses.title')}</h2>
       </div>
 
       {error && <p className="text-error">{error}</p>}
@@ -110,7 +112,7 @@ export default function Expenses({ groupId, apiUrl, token, currentUid, members, 
         <input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="What was it for? e.g. Dinner"
+          placeholder={t('expenses.descriptionPlaceholder')}
           maxLength={200}
         />
         <input
@@ -119,28 +121,28 @@ export default function Expenses({ groupId, apiUrl, token, currentUid, members, 
           step="0.01"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          placeholder="Amount"
+          placeholder={t('expenses.amount')}
         />
         <select value={paidBy} onChange={(e) => setPaidBy(e.target.value)}>
           {active.map((m) => (
             <option key={m.userId} value={m.userId}>
-              Paid by {m.email || m.userId}
+              {t('expenses.paidByOption', { name: m.email || m.userId })}
             </option>
           ))}
         </select>
         <button type="submit" disabled={!description.trim() || !(Number(amount) > 0)}>
-          💸 Add expense (split equally)
+          {t('expenses.add')}
         </button>
       </form>
 
       {data.settlements.length > 0 && (
         <div className="comment-item">
           <div className="question">
-            <strong>Settle up</strong>
+            <strong>{t('expenses.settleUp')}</strong>
           </div>
           {data.settlements.map((s, i) => (
             <div key={i}>
-              {nameOf(s.from)} → {nameOf(s.to)}: <strong>{fmt(s.amountCents, currency)}</strong>
+              {nameOf(s.from)} → {nameOf(s.to)}: <strong>{fmt(s.amountCents, currency, i18n.resolvedLanguage)}</strong>
             </div>
           ))}
         </div>
@@ -148,18 +150,18 @@ export default function Expenses({ groupId, apiUrl, token, currentUid, members, 
 
       <div className="comments-list">
         {data.expenses.length === 0 ? (
-          loadFailed ? null : <p className="empty">No expenses yet.</p>
+          loadFailed ? null : <p className="empty">{t('expenses.empty')}</p>
         ) : (
           data.expenses.map((exp) => (
             <div key={exp._id} className="comment-item">
               <div className="question">
-                <strong>{exp.description}</strong> — {fmt(exp.amountCents, exp.currency)}
+                <strong>{exp.description}</strong> — {fmt(exp.amountCents, exp.currency, i18n.resolvedLanguage)}
                 <span className="comment-meta">
-                  paid by {nameOf(exp.paidBy)}, split {exp.splitAmong.length} ways
+                  {t('expenses.paidBySplit', { name: nameOf(exp.paidBy), count: exp.splitAmong.length })}
                 </span>
                 {exp.createdBy === currentUid && (
                   <button type="button" className="btn-danger btn-sm" onClick={() => remove(exp._id)}>
-                    Delete
+                    {t('common.delete')}
                   </button>
                 )}
               </div>
