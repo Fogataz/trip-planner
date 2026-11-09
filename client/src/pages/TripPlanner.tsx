@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 import './TripPlanner.css'
 import '../components/TripCover.css'
 import { TripCoverData, coverBackground, coverImageSrc, defaultGradient } from '../covers'
@@ -17,6 +18,7 @@ interface Trip {
 }
 
 export default function TripPlanner() {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [trips, setTrips] = useState<Trip[]>([])
   const [loading, setLoading] = useState(true)
@@ -43,7 +45,7 @@ export default function TripPlanner() {
       })
       setTrips(response.data)
     } catch (err) {
-      setError('Failed to load trips')
+      setError(t('trips.loadFailed'))
       console.error(err)
     } finally {
       setLoading(false)
@@ -54,7 +56,7 @@ export default function TripPlanner() {
     e.preventDefault()
     const start = new Date(formData.startDate)
     if (!formData.startDate || isNaN(start.getTime())) {
-      setError('Please enter a valid start date')
+      setError(t('trips.invalidDate'))
       return
     }
     try {
@@ -74,7 +76,7 @@ export default function TripPlanner() {
       // Land on the new trip, where the cover affordance gets its one nudge
       navigate(`/trips/${response.data.groupId}`, { state: { justCreated: true } })
     } catch (err) {
-      setError('Failed to create trip')
+      setError(t('trips.createFailed'))
       console.error(err)
     }
   }
@@ -86,19 +88,19 @@ export default function TripPlanner() {
       })
       setTrips(trips.filter((t) => t.groupId !== groupId))
     } catch (err) {
-      setError('Failed to delete trip')
+      setError(t('trips.deleteFailed'))
       console.error(err)
     }
   }
 
-  if (loading) return <div className="loading">Loading trips...</div>
+  if (loading) return <div className="loading">{t('trips.loading')}</div>
 
   return (
     <div className="trip-planner">
       <div className="header">
-        <h2>Your Trips</h2>
+        <h2>{t('trips.title')}</h2>
         <button onClick={() => setFormOpen(!formOpen)}>
-          {formOpen ? 'Cancel' : '+ New Trip'}
+          {formOpen ? t('common.cancel') : t('trips.new')}
         </button>
       </div>
 
@@ -107,40 +109,40 @@ export default function TripPlanner() {
       {formOpen && (
         <form className="trip-form" onSubmit={handleCreateTrip}>
           <div className="form-group">
-            <label>Trip Name</label>
+            <label>{t('trips.name')}</label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Paris Weekend"
+              placeholder={t('trips.namePlaceholder')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label>Origin</label>
+            <label>{t('trips.origin')}</label>
             <input
               type="text"
               value={formData.origin}
               onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
-              placeholder="e.g., San Francisco, CA"
+              placeholder={t('trips.originPlaceholder')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label>Destination</label>
+            <label>{t('trips.destination')}</label>
             <input
               type="text"
               value={formData.destination}
               onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-              placeholder="e.g., Paris, France"
+              placeholder={t('trips.destinationPlaceholder')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label>Start Date</label>
+            <label>{t('trips.startDate')}</label>
             <input
               type="date"
               value={formData.startDate}
@@ -149,13 +151,13 @@ export default function TripPlanner() {
             />
           </div>
 
-          <button type="submit">Create Trip</button>
+          <button type="submit">{t('trips.create')}</button>
         </form>
       )}
 
       <div className="trips-list">
         {trips.length === 0 ? (
-          <p className="empty">No trips yet. Create one to get started!</p>
+          <p className="empty">{t('trips.empty')}</p>
         ) : (
           trips.map((trip) => (
             <div key={trip._id} className="trip-card">
@@ -181,15 +183,15 @@ export default function TripPlanner() {
               </div>
               <div className="trip-info" onClick={() => navigate(`/trips/${trip.groupId}`)}>
                 <h3>{trip.name}</h3>
-                <p>{trip.origin?.address || 'Unknown'} → {trip.destination?.address || 'Unknown'}</p>
-                <small>{new Date(trip.startDate).toLocaleDateString()}</small>
+                <p>{trip.origin?.address || t('common.unknown')} → {trip.destination?.address || t('common.unknown')}</p>
+                <small>{new Date(trip.startDate).toLocaleDateString(i18n.resolvedLanguage)}</small>
               </div>
               <div className="trip-actions">
-                <span className="members">{trip.members.length} members</span>
+                <span className="members">{t('trips.members', { count: trip.members.length })}</span>
                 <button
                   className="delete-btn"
                   onClick={() => {
-                    if (confirm('Delete this trip?')) {
+                    if (confirm(t('trips.confirmDelete'))) {
                       handleDeleteTrip(trip.groupId)
                     }
                   }}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 import type { Socket } from 'socket.io-client'
 
 interface PollOption {
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer, socket }: Props) {
+  const { t } = useTranslation()
   const [polls, setPolls] = useState<Poll[]>([])
   const [question, setQuestion] = useState('')
   const [options, setOptions] = useState(['', ''])
@@ -46,7 +48,7 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
       })
       .catch((err) => {
         setLoadFailed(true)
-        setError(err.response?.data?.error || 'Failed to load polls')
+        setError(err.response?.data?.error || t('polls.loadFailed'))
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId])
@@ -75,7 +77,7 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
     try {
       await fn()
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Something went wrong')
+      setError(err.response?.data?.error || t('common.somethingWrong'))
     }
   }
 
@@ -115,7 +117,7 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
   return (
     <div className="qa-section">
       <div className="section-header">
-        <h2>Polls</h2>
+        <h2>{t('polls.title')}</h2>
       </div>
 
       {error && <p className="text-error">{error}</p>}
@@ -124,7 +126,7 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
         <input
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Ask the group, e.g. Where should we eat on day 2?"
+          placeholder={t('polls.questionPlaceholder')}
           maxLength={300}
         />
         {options.map((opt, i) => (
@@ -132,14 +134,14 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
             key={i}
             value={opt}
             onChange={(e) => setOptions(options.map((o, j) => (j === i ? e.target.value : o)))}
-            placeholder={`Option ${i + 1}`}
+            placeholder={t('polls.option', { n: i + 1 })}
             maxLength={200}
           />
         ))}
         <div className="form-row">
           {options.length < 10 && (
             <button type="button" className="btn-secondary btn-sm" onClick={() => setOptions([...options, ''])}>
-              + Add option
+              {t('polls.addOption')}
             </button>
           )}
           <label>
@@ -148,20 +150,20 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
               checked={allowMultiple}
               onChange={(e) => setAllowMultiple(e.target.checked)}
             />{' '}
-            Allow multiple choices
+            {t('polls.allowMultiple')}
           </label>
         </div>
         <button
           type="submit"
           disabled={!question.trim() || options.filter((o) => o.trim()).length < 2}
         >
-          🗳️ Create poll
+          {t('polls.create')}
         </button>
       </form>
 
       <div className="comments-list">
         {polls.length === 0 ? (
-          loadFailed ? null : <p className="empty">No polls yet. Create one to let the group decide!</p>
+          loadFailed ? null : <p className="empty">{t('polls.empty')}</p>
         ) : (
           polls.map((poll) => {
             const total = poll.options.reduce((sum, o) => sum + o.votes.length, 0)
@@ -171,7 +173,7 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
                 <div className="question">
                   <strong>{poll.question}</strong>
                   {poll.status === 'closed' && (
-                    <span className="badge badge-muted">🔒 Closed</span>
+                    <span className="badge badge-muted">{t('polls.closed')}</span>
                   )}
                 </div>
                 {poll.options.map((opt) => {
@@ -195,11 +197,11 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
                   <div className="row-actions">
                     {poll.status === 'open' && (
                       <button type="button" className="btn-secondary btn-sm" onClick={() => close(poll)}>
-                        Close poll
+                        {t('polls.close')}
                       </button>
                     )}
                     <button type="button" className="btn-danger btn-sm" onClick={() => remove(poll)}>
-                      Delete
+                      {t('common.delete')}
                     </button>
                   </div>
                 )}

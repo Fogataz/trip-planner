@@ -7,6 +7,7 @@ const User = require('../models/User');
 const crypto = require('crypto');
 const { GALLERY, isGalleryKey, isCoverAssetId } = require('../config/coverGallery');
 const { generateTravelSuggestions } = require('../services/travelSuggestions');
+const { requestLanguage } = require('../services/language');
 const { generateItinerary } = require('../services/itineraryBuilder');
 const { logItineraryChange, logTripUpdate } = require('../services/activityLogger');
 const { notifyTrip } = require('../services/notifications');
@@ -52,7 +53,7 @@ router.post('/', async (req, res) => {
     });
 
     await trip.save();
-    ensureSuggestions(trip);
+    ensureSuggestions(trip, requestLanguage(req));
 
     res.status(201).json(trip);
   } catch (error) {
@@ -76,10 +77,16 @@ router.get('/', async (req, res) => {
 // Generate suggestions in the background once a destination exists; retry failures after a cooldown
 const generating = new Set();
 const RETRY_AFTER_MS = 30 * 1000;
+const LANGUAGE_REGEN_COOLDOWN_MS = 10 * 60 * 1000; // limits cost when members of one trip use different languages
 
-function ensureSuggestions(trip) {
+function ensureSuggestions(trip, language) {
   const existing = trip.travelSuggestions;
-  const hasResult = existing && !existing.error;
+  // Suggestions saved before language support were written in English
+  const languageMismatch =
+    existing?.raw_suggestions &&
+    (existing.language || 'en') !== language &&
+    Date.now() - new Date(existing.generatedAt || 0) > LANGUAGE_REGEN_COOLDOWN_MS;
+  const hasResult = existing && !existing.error && !languageMismatch;
   const recentlyFailed = existing?.error && Date.now() - new Date(existing.failedAt || 0) < RETRY_AFTER_MS;
   const id = String(trip._id);
 
@@ -88,7 +95,7 @@ function ensureSuggestions(trip) {
   generating.add(id);
   (async () => {
     try {
-      let suggestions = await generateTravelSuggestions(trip);
+      let suggestions = await generateTravelSuggestions(trip, language);
       if (suggestions.error) suggestions = { ...suggestions, failedAt: new Date() };
       await Trip.findByIdAndUpdate(trip._id, { travelSuggestions: suggestions });
     } catch (err) {
@@ -363,7 +370,7 @@ router.post('/:groupId/itinerary/generate', async (req, res) => {
       return res.status(400).json({ error: 'Trip needs a destination first' });
     }
 
-    const items = await generateItinerary(trip, req.body?.preferences);
+    const items = await generateItinerary(trip, req.body?.preferences, requestLanguage(req));
     if (items.length === 0) {
       return res.status(502).json({ error: 'AI did not return any stops. Please try again.' });
     }

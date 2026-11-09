@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import axios from 'axios'
+import { applyIpLanguage } from './i18n'
 import App from './App.tsx'
 import './index.css'
 
@@ -19,8 +20,12 @@ axios.interceptors.response.use(
   }
 )
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4001'
+
+applyIpLanguage(apiUrl).finally(() => {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  )
+})

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/useAuth'
 import './Auth.css'
 
 export default function Auth() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { login, signup, error } = useAuth()
   const [isSignup, setIsSignup] = useState(false)
@@ -17,7 +19,7 @@ export default function Auth() {
     let success = false
     if (isSignup) {
       if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match')
+        alert(t('auth.passwordsMismatch'))
         setLoading(false)
         return
       }
@@ -37,12 +39,12 @@ export default function Auth() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Trip Planner</h1>
-        <h2>{isSignup ? 'Sign Up' : 'Log In'}</h2>
+        <h1>{t('app.title')}</h1>
+        <h2>{isSignup ? t('auth.signUp') : t('auth.logIn')}</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Email</label>
+            <label>{t('auth.email')}</label>
             <input
               type="email"
               value={formData.email}
@@ -52,7 +54,7 @@ export default function Auth() {
           </div>
 
           <div className="form-group">
-            <label>Password</label>
+            <label>{t('auth.password')}</label>
             <input
               type="password"
               value={formData.password}
@@ -63,7 +65,7 @@ export default function Auth() {
 
           {isSignup && (
             <div className="form-group">
-              <label>Confirm Password</label>
+              <label>{t('auth.confirmPassword')}</label>
               <input
                 type="password"
                 value={formData.confirmPassword}
@@ -76,18 +78,18 @@ export default function Auth() {
           {error && <div className="error-message">{error}</div>}
 
           <button type="submit" disabled={loading}>
-            {loading ? 'Loading...' : isSignup ? 'Sign Up' : 'Log In'}
+            {loading ? t('common.loading') : isSignup ? t('auth.signUp') : t('auth.logIn')}
           </button>
         </form>
 
         <p className="toggle-auth">
-          {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
+          {isSignup ? t('auth.haveAccount') : t('auth.noAccount')}{' '}
           <button
             type="button"
             onClick={() => setIsSignup(!isSignup)}
             className="toggle-button"
           >
-            {isSignup ? 'Log In' : 'Sign Up'}
+            {isSignup ? t('auth.logIn') : t('auth.signUp')}
           </button>
         </p>
       </div>

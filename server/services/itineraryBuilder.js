@@ -3,7 +3,7 @@ const { locationContext, tripCalendar, CONCRETE_RULES } = require('./tripContext
 
 const MAX_ITEMS = 15;
 
-async function generateItinerary(trip, preferences) {
+async function generateItinerary(trip, preferences, language) {
   const start = new Date(trip.startDate);
   const end = trip.endDate ? new Date(trip.endDate) : null;
   const existing = (trip.itinerary || []).map((i) => i.stop).filter(Boolean);
@@ -26,7 +26,7 @@ Return ONLY a JSON object: {"items":[{"stop":string,"time":ISO 8601 datetime wit
 - "notes": one or two short sentences with opening hours, price, booking advice or what to order.
 Use at most ${MAX_ITEMS} items in chronological order, with realistic timings (meals at meal times, travel time between stops, no overpacked days).`;
 
-  const text = await generateText(prompt, { json: true });
+  const text = await generateText(prompt, { json: true, language });
   const parsed = JSON.parse(text);
   if (!Array.isArray(parsed.items)) throw new Error('AI returned an unexpected format');
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import i18n from '../i18n'
 
 interface User {
   uid: string
@@ -38,7 +39,7 @@ export function useAuth() {
     } catch (err) {
       const message = axios.isAxiosError(err)
         ? err.response?.data?.error || err.message
-        : 'Signup failed'
+        : i18n.t('auth.signupFailed')
       setError(message)
       return false
     }
@@ -60,7 +61,7 @@ export function useAuth() {
     } catch (err) {
       const message = axios.isAxiosError(err)
         ? err.response?.data?.error || err.message
-        : 'Login failed'
+        : i18n.t('auth.loginFailed')
       setError(message)
       return false
     }

@@ -25,6 +25,11 @@ const io = socketio(server, {
   },
 });
 
+if (process.env.TRUST_PROXY) {
+  // Needed behind a load balancer so req.ip is the real client IP
+  app.set('trust proxy', /^\d+$/.test(process.env.TRUST_PROXY) ? Number(process.env.TRUST_PROXY) : process.env.TRUST_PROXY);
+}
+
 app.use(cors());
 app.use(express.json());
 
@@ -57,6 +62,7 @@ pollsRouter.setIO(io);
 const expensesRouter = require('./routes/expenses');
 expensesRouter.setIO(io);
 
+app.use('/api/locale', require('./routes/locale'));
 app.use('/api/auth', require('./routes/auth'));
 // Cover images are fetched by <img>, which cannot send an auth header: the
 // unguessable GridFS id is the capability. See routes/covers.js.
