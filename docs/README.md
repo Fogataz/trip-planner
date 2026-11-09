@@ -83,7 +83,7 @@ Rules:
 3. **One working branch at a time for docs.** Docs changes go on a `docs/…` branch and are merged to `main` quickly. Don't edit the same doc on both computers before one side has pushed.
 4. **Product sessions don't run git.** Cowork edits files; Claude Code commits, pushes and opens the pull request. When a product session ends, it says which files changed so Claude Code can commit them.
 5. **Rules live in the repo.** [CLAUDE.md](../CLAUDE.md) and this file hold the working rules, so any account or tool picks them up. Each Claude Project's instructions should say "Follow `CLAUDE.md` and `docs/README.md`" rather than repeat them.
-6. **Shared tooling lives in the repo too.** Claude Code commands (such as `/feature`) go in `.claude/commands/`, so both computers have them. Secrets (`.env`) never go in git; copy them between computers by hand or through a password manager.
+6. **Shared tooling lives in the repo too.** Claude Code commands (such as `/feature`) go in `.claude/commands/`, so both computers have them. Claude Code reads `CLAUDE.md` and Codex reads `AGENTS.md`; `AGENTS.md` points to `CLAUDE.md` so there is one set of rules. Commands are Claude Code only, so the stages in this file stay the source of truth for every tool. Secrets (`.env`) never go in git; copy them between computers by hand or through a password manager.
 7. **Links, not copies.** Wireframes and other artifacts made in one account are private to it. Save the files (for example HTML in `wireframes/NNN-short-name/`) or a screenshot in the repo, and link them from the spec.
 
 ## How to update
