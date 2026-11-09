@@ -6,6 +6,8 @@ Current behavior: [features.md](../features.md) (nothing from this spec is built
 Planning list (why now, why later, risks and fallbacks per feature): [product/pilot-event-feature-list.md](../product/pilot-event-feature-list.md)
 
 > Benchmark (2026-11-09) → spec draft (2026-11-09) → lo-fi wireframes → build.
+> **Updated 2026-11-09 (evening).** The localization base shipped separately in [spec 003](003-localization.md) (PR #5). The localization parts of this spec (§5.5, F33–F37, §7.2, §12) now cover only what spec 003 did not. Open decisions in §9 are **not blockers**: each recommendation is the working default until the product owner overrides it (D27).
+>
 > This spec is a record of what was decided and why. It is not updated as the features change; see [features.md](../features.md) once they ship. Strategy context lives in the [product working doc](../product/working-doc.md) (decisions D2, D4, D17–D19).
 
 ## 1. The idea in one line
@@ -92,12 +94,16 @@ The draft keeps the source language. We do not translate content.
 
 ### 5.5 Language
 
-- The interface is available in **English, Spanish and Portuguese**.
-- Default: the person's saved choice, else the browser language, else English.
-- A language switcher sits in the account menu and on the join page.
-- Dates and times use the person's language and the **event's time zone**, labelled ("Madrid time").
+**Already built (spec 003):** the interface in English, Spanish (es-ES) and Portuguese (pt-BR); a language switcher in the header; language order saved choice → country from IP → browser → English; AI output follows the UI language through the `X-Language` header.
+
+**This spec adds:**
+
+- Every **new screen** in this spec ships with its strings in all three languages from the start.
+- The **join page** works logged out, in the visitor's detected language, with the switcher visible.
+- Dates and times show in the **event's time zone**, labelled ("Madrid time"), whatever the viewer's device zone.
+- The chosen language is **saved to the account**, so it follows the person to another device and lets the server send push in their language.
 - Push titles and bodies use the recipient's language. Content inside them (the announcement text) stays as written.
-- AI answers to questions use the asker's language. AI drafts keep the source language.
+- AI answers to questions use the asker's language (built). **AI agenda drafts keep the source language** (new: the import must override spec 003's "write in the UI language" instruction).
 
 ## 6. Lo-fi wireframe frames (proposed)
 
@@ -189,11 +195,11 @@ For the wireframe stage. Mobile first; desktop is the same layout, wider.
 
 | # | Requirement |
 |---|---|
-| F33 | Every interface string is available in English, Spanish (es-ES) and Portuguese (variant: open decision S5). |
-| F34 | Language is chosen as: saved user choice, else browser language, else English. The choice is saved to the account. |
-| F35 | Dates and times are formatted for the user's language and shown in the event's time zone, with the zone named. |
-| F36 | Push notifications and the sign-in email use the recipient's language. |
-| F37 | AI answers use the asker's language. AI drafts keep the source language. Content is never machine-translated in this version. |
+| F33 | Every new string in this spec is added to `en.json`, `es.json` and `pt.json` (spec 003 set up the files; Portuguese is pt-BR, S5). |
+| F34 | Language detection stays as in spec 003. In addition, a signed-in user's choice is saved to their account (`User.locale`) and applied on sign-in on any device. |
+| F35 | Dates and times are formatted for the user's language and shown in the event's time zone (`trip.timeZone`), with the zone named. |
+| F36 | Push notifications and the sign-in email use the recipient's saved language (closes spec 003's "push text is English" gap for the categories in this spec). |
+| F37 | AI answers use the asker's language (built in spec 003). AI agenda drafts keep the source language. Content is never machine-translated in this version. |
 
 ### 7.2 Technical
 
@@ -209,8 +215,8 @@ Proposed; engineering confirms or adjusts in the PR.
 - **Notifications:** `notifyTrip` takes a category and filters recipients by their `TripMember` settings. Push text is built per recipient language.
 - **iPhone push:** web push on iPhone needs the site added to the Home Screen. Add a web app manifest and icons so this is possible. Without it, announcements reach iPhone users only in-app.
 - **Analytics:** first-party store in MongoDB (open decision S3), written by the server for server-side actions and by a batched `POST /api/analytics/events` from the client. Pseudonymous id: HMAC of the uid with a server secret. Retention: open decision S4. CSV export for the product owner.
-- **Localization:** `react-i18next` with one JSON file per language (`en`, `es`, `pt`). Move all client strings into keys. A small server-side dictionary for push and email text. `Intl.DateTimeFormat` with the trip's `timeZone` for all dates. A check in CI or a script that fails on missing keys.
-- **AI language:** add "Answer in {language}" to the Q&A prompt; tell the import prompt to keep the source language.
+- **Localization (on top of spec 003):** `react-i18next` and the three locale files already exist (`client/src/i18n.ts`, `client/src/locales/`; 207 keys, none missing today). New screens add keys, never hardcoded strings. Add `User.locale`, set it from the switcher when signed in (for example `PATCH /api/users/me`) and apply it on sign-in. A small server-side dictionary for push text, chosen per recipient's `User.locale`. `Intl.DateTimeFormat` with the trip's `timeZone` for all dates. Add a script that fails when a key is missing in any locale (there is none yet).
+- **AI language:** Q&A already answers in the request language (`server/services/language.js`). The agenda import must **not** use that instruction, or it will translate the host's agenda: pass a "keep the source language" instruction instead.
 
 ### 7.3 Non-functional
 
@@ -274,13 +280,17 @@ Proposed; engineering confirms or adjusts in the PR.
 
 ## 9. Open decisions — need your call
 
+**Status 2026-11-09:** S1 to S8 each have a recommendation below, proposed as the working default. They are **pending the product owner's OK**. S5 is settled: pt-BR.
+
+None of these block the build. The recommendation is the working default until the product owner overrides it (D27).
+
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
 | S1 | What the join page shows before approval | Name, dates, host, cover / also agenda summary / nothing but a request button | **Name, dates, host, cover.** Enough to know what you are asking to join; nothing about other people. |
 | S2 | Agenda file types | Paste, `.md`, `.txt`, `.csv` / also `.docx` and `.pdf` | **Paste plus `.md`, `.txt`, `.csv` now.** Organizers can copy from Google Docs. Add `.docx` and `.pdf` once we see what organizers try to upload. |
 | S3 | Where analytics live | First-party in MongoDB / PostHog (EU cloud) | **First-party now.** No new vendor or data processor, no cookie banner question, and we control what is stored. Move to a product analytics tool when we need funnels across many events. |
 | S4 | Analytics retention | 90 days / 180 days / 12 months | **180 days.** Covers the pilot and Phase 1 comparisons. Pseudonymous, so the risk is low; shorter is easy later. |
-| S5 | Portuguese variant | Portugal (pt-PT) / Brazil (pt-BR) | **pt-PT now.** Our first markets are Spain and Portugal. Add pt-BR as a second file if Brazil becomes a target. |
+| S5 | Portuguese variant | Portugal (pt-PT) / Brazil (pt-BR) | **Shipped as pt-BR in spec 003.** Keep pt-BR for the pilot; switching is one file. Revisit if Portugal becomes a target market. |
 | S6 | Announcement reach on iPhone | Manifest and Add to Home Screen only / plus email for announcements | **Manifest and in-app only for the pilot.** Email needs a sending provider and templates in 3 languages. Measure announcement_opened by platform, then decide. |
 | S7 | Who can create an Organization | Anyone / invite only for now | **Anyone, but not promoted in the UI yet.** No billing exists, so there is nothing to protect. |
 | S8 | Can guests reply to announcements? | No / yes, as comments | **No.** One-way, like WhatsApp announcement groups. Questions go to the existing Q&A. |
@@ -321,7 +331,7 @@ Proposed pilot thresholds (working doc, section 5; D7 to confirm).
 ## 12. Next step
 
 1. **Owner review of this spec** and the open decisions in §9.
-2. **Lo-fi wireframes** for the 13 frames in §6.
+2. **Lo-fi wireframes** for the 13 frames in §6, saved in `wireframes/002-hosted-event-pilot/` so both computers can see them.
 3. **Build** (Thu 12 – Thu 19 Nov), in this order, with a cut-line check on Tue 17 Nov. Effort, risks and fallbacks per feature are in [the planning list](../product/pilot-event-feature-list.md).
 
 | Order | Part | Cut line |
@@ -329,17 +339,17 @@ Proposed pilot thresholds (working doc, section 5; D7 to confirm).
 | 1 | Organizations, trip roles, TripMember and migration | Must |
 | 2 | Google sign-in and `POST /api/auth/firebase` | Must |
 | 3 | Invite link, requests, approve and approve all | Must |
-| 4 | Localization framework, English and Spanish | Must |
+| 4 | Localization for this spec: new strings in en/es/pt, `trip.timeZone` and event-time display | Must |
 | 5 | Analytics events and CSV export | Must |
 | 6 | Agenda import as draft | Must |
 | 7 | Announcements, pin, unread | Must |
 | 8 | Notification categories | Should: fall back to one "mute this event" switch |
 | 9 | Email-link sign-in | Should: fall back to email and password |
-| 10 | Portuguese | Should: ship the file if translation is reviewed in time |
+| 10 | Language saved to the account, push text in the recipient's language, missing-key script, native review of es and pt | Should: fall back to English push and the device-only language choice |
 | 11 | Generate itinerary as draft, Q&A context fix, web app manifest | Should |
 
 4. **Dry run** on Fri 20 Nov with 3 to 5 people: a personal Google account, a work mailbox email link, an iPhone and an Android phone, and all three languages.
 
 ## 13. Build status
 
-Not started.
+Not started. The localization base was delivered separately by [spec 003](003-localization.md).

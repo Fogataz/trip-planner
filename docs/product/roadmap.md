@@ -18,7 +18,8 @@ The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:update
 
 ## Next priorities (proposal)
 
-1. **Expense settlement.** Show who owes whom so shared costs can be closed out. **TBD:** owner and target date.
+0. **Hosted event pilot** for the first pilot event on 24–25 Nov: Organizations and trip roles, Google and email-link sign-in, invite link with approval, AI agenda import as a draft, announcements and notification settings, analytics, and the pilot's localization on top of spec 003 (event time zone, language saved to the account, push in each person's language). See [spec 002](../specs/002-hosted-event-pilot.md) (draft) and the [planning list](pilot-event-feature-list.md). It also covers item 3 (notification triggers) and part of item 4 (activity logging).
+1. **Expense settlement.** **Looks built (checked 2026-11-09):** the API returns suggested settlements (`computeSettlements` in `server/routes/expenses.js`) and the client shows a "Settle up" list. Engineering to confirm and update [features.md](../features.md), which still lists add, list and delete only.
 2. **Transport updates (Phase 5).** Choose a provider, then design the alert flow. **TBD:** provider and budget.
 3. **Notification triggers.** Decide which events send push notifications (new poll, itinerary change, invitation). **TBD.**
 4. **Activity feed.** The server logs trip activity, but nothing in the client shows it and no endpoint reads it. Found while building trip covers (spec 001, O1). **TBD:** owner and target date.
@@ -26,9 +27,9 @@ The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:update
 
 ## Not planned yet
 
-- Booking inside the app
-- Payments between members
-- Native mobile apps
+- Payments between members and to hosts: back in scope since 2026-11-09, planned after the pilot (see the product working doc). No spec yet.
+- Booking inside the app: back in scope since 2026-11-09, but parked for now. No spec yet.
+- Native mobile apps. A web app manifest (spec 002) lets people add the web app to their home screen first.
 
 ## Changelog pointer
 

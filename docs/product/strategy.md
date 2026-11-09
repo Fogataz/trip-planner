@@ -1,6 +1,8 @@
 # Product Strategy
 
-> **Status: draft for review.** Sections marked **TBD** are open questions for the product owner.
+> **Status: draft for review.** Sections marked **TBD** are open questions for the product owner. They are not blockers (D27).
+>
+> This page holds the stable parts: vision, problem and principles. Current bets, audience hypotheses, revenue models and the next two weeks live in the [working doc](working-doc.md).
 
 ## Vision
 
@@ -20,7 +22,7 @@ Group trips break down in predictable ways:
 - **Trip organizer:** creates the trip, invites people, and keeps the plan moving.
 - **Trip member:** joins through an invitation, contributes ideas, votes and tracks their own expenses.
 
-**TBD:** primary segment (friends, families, work groups) and typical group size.
+**TBD:** primary segment and typical group size. Being tested: team offsites and company events first (the pilot event), with friends and family, retreat hosts and others as later candidates. See the [working doc](working-doc.md) and [brand foundations](../brand/brand-foundations.md), section 1.2. Hosted trips add a third role, the host or co-host (spec 002).
 
 ## Product principles
 
@@ -35,9 +37,9 @@ Group trips break down in predictable ways:
 |---|---|---|
 | Collaborative planning | Members build and edit the itinerary together | Itinerary, comments and presence are in place |
 | Group decisions | Members decide quickly and fairly | Polls are in place |
-| Shared money | Costs are visible and easy to settle | Expenses are in place. Settlement (who owes whom) is **TBD** |
+| Shared money | Costs are visible and easy to settle | Expenses and suggested settlements (who pays whom) are in place. Payments are not built yet |
 | Live coordination | Members see where others are during the trip | Opt-in live location is in place |
-| Smart suggestions | AI helps draft itineraries and travel ideas | AI itinerary and travel suggestions are in place |
+| Smart suggestions | AI helps draft itineraries and travel ideas | AI itinerary, Q&A and travel suggestions are in place, in the user's language. Itinerary generation still writes straight in; spec 002 makes it a draft |
 | Transport awareness | Members are alerted to delays and changes | **Not started.** See [roadmap.md](roadmap.md) |
 
 ## Success metrics
@@ -57,8 +59,6 @@ Group trips break down in predictable ways:
 
 ## Out of scope for now
 
-- Booking flights, hotels or transport inside the app
-- Payments between members
 - A native mobile app (the web client comes first)
 
-**TBD:** confirm this list.
+**Update 2026-11-09:** payments and booking are no longer out of scope. Current product thinking (revenue models, shared foundation, the eDreams gathering test) lives in [working-doc.md](working-doc.md), with background in [discovery-amf-pmf.md](discovery-amf-pmf.md) and [revenue-models-analysis.md](revenue-models-analysis.md).

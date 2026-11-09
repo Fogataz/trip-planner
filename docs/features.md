@@ -42,10 +42,12 @@ This page describes what the product does today, based on the code in `server/` 
 ## Expenses
 
 - Add, list and delete shared expenses per trip
+- **Settle up:** the expense list also returns each member's balance and suggested settlements (who pays whom) so the group can clear what it owes (`computeSettlements` in `server/routes/expenses.js`)
 
-## Comments
+## AI Q&A
 
-- Post and read comments on a trip
+- Members ask a question about the trip and the AI answers it. Questions and answers are listed for the trip (`server/routes/comments.js`)
+- Answers are written in the asker's language
 
 ## Live features
 
@@ -54,7 +56,7 @@ This page describes what the product does today, based on the code in `server/` 
 
 ## Languages
 
-- The app is available in English, Portuguese (pt-BR) and Spanish (es-ES). Details in [localization-spec.md](specs/003-localization.md)
+- The app is available in English, Portuguese (pt-BR) and Spanish (es-ES). Details in [spec 003](specs/003-localization.md)
 - Language precedence: the choice saved from the header dropdown, then the visitor's country from their IP (`GET /api/locale`, offline lookup), then the browser language, then English
 - The client sends its language in the `X-Language` header, and AI answers, itineraries and travel suggestions are written in it
 - Set `TRUST_PROXY` when running behind a proxy so IP detection sees the real client IP
