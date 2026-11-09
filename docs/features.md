@@ -1,6 +1,6 @@
 # Current Features
 
-This page describes what the product does today, based on the server code in `server/`. It is a reference for product and design discussions, not a specification.
+This page describes what the product does today, based on the code in `server/` and `client/`. It is the living reference: keep it true as the product changes. For why a feature was built the way it is, follow the link to its spec in [specs/](specs/).
 
 ## Accounts
 
@@ -13,6 +13,15 @@ This page describes what the product does today, based on the server code in `se
 - Create, list, view, update and delete trips
 - Each trip has a name, destination, origin, start and end dates, and accommodation
 - Only active members can view a trip, and only the organizer can change or delete it (see `server/routes/trips.js`)
+
+## Trip covers
+
+- Each trip can have a cover image: a banner at the top of the trip page and a thumbnail on the trip card
+- Pick from a built-in gallery of 9 covers, or upload your own image (resized in the browser to WebP, 2 MB limit)
+- Reposition the cover vertically, or remove it. A trip without a cover shows the default gradient
+- Cover changes sync live to everyone viewing the trip and are recorded in the activity log
+- Gallery entries live in `client/src/covers.ts` and `server/config/coverGallery.js`; endpoints in `server/routes/trips.js` and `server/routes/covers.js`
+- Spec and open items: [specs/001-trip-covers.md](specs/001-trip-covers.md)
 
 ## Members and invitations
 
@@ -50,5 +59,6 @@ This page describes what the product does today, based on the server code in `se
 ## Activity log
 
 - The server records trip activity through `server/services/activityLogger.js`
+- There is no activity feed in the client yet, and no endpoint reads the log
 
 **Note:** the README lists `websocket/` and `services/` as "coming later". Both exist now. Keep the README in sync when it changes.

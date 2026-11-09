@@ -1,7 +1,11 @@
-# Trip Covers — feature spec (for review)
+# Spec 001: Trip Covers
 
-> **Status: stage 3 of 3, build in progress.** Ideation (approved 2026-11-05) → lo-fi wireframe (signed off 2026-11-06) → build.
-> v1 is implemented on `feature/trip-covers`. The server side is verified against the acceptance criteria; the browser walkthrough is still open. See §11.
+Status: shipped
+Shipped: 2026-11-06 · PR: [#3](https://github.com/barry-dempsey/trip-planner/pull/3)
+Current behavior: [features.md → Trip covers](../features.md#trip-covers)
+
+> Ideation (approved 2026-11-05) → lo-fi wireframe (signed off 2026-11-06) → build (merged 2026-11-06).
+> This spec is a record of what was decided and why. It is not updated as the feature changes; see [features.md](../features.md) for how it works today. QA results and open items are in §11.
 
 ## 1. The idea in one line
 
@@ -188,7 +192,7 @@ Wide images crop differently on phone and desktop — the sample banner loses ha
 - **Frame 3, Generate tab:** **hidden until v2** rather than shown disabled with SOON.
 - **Gallery size:** ship **9 covers** (8 gradients + the pod-gathering artwork) instead of ~16. The *Pixel cities* and *Travel* groups wait for real artwork, not placeholders. Adding a cover is one entry in `client/src/covers.ts` and one in `server/config/coverGallery.js`.
 
-**Stage 3, build:** implemented. Status and open items in §11.
+**Stage 3, build:** implemented and merged in PR #3. Status and open items in §11.
 
 ## 11. Build status (2026-11-06)
 
