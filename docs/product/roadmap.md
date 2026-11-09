@@ -12,7 +12,7 @@
 | 4. Location tracking | Opt-in live location shared within a trip | **In place** (in-memory only) |
 | 5. Transport API integration | Live transport delays and updates | **Not started** |
 | 6. Notifications | Push notifications through Firebase Cloud Messaging | **Partly in place.** Token registration exists. Triggers **TBD** |
-| 7. Frontend and polish | Full web client and UX polish | **In progress** (React client exists). Trip covers shipped. EN/PT/ES localization in review ([spec](localization-spec.md)). Server errors and push text still English |
+| 7. Frontend and polish | Full web client and UX polish | **In progress** (React client exists). Trip covers shipped 2026-11-06 ([spec 001](../specs/001-trip-covers.md)). EN/PT/ES localization shipped ([spec 003](../specs/003-localization.md)). Server errors and push text still English |
 
 The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:updated`, `location:update`, `transport:update`) are partly implemented. `join-trip`, `leave-trip` and `location:update` exist. `trip:updated` and `transport:update` should be confirmed.
 
@@ -21,7 +21,8 @@ The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:update
 1. **Expense settlement.** Show who owes whom so shared costs can be closed out. **TBD:** owner and target date.
 2. **Transport updates (Phase 5).** Choose a provider, then design the alert flow. **TBD:** provider and budget.
 3. **Notification triggers.** Decide which events send push notifications (new poll, itinerary change, invitation). **TBD.**
-4. **Quality fixes.** Remove duplicate Mongoose index definitions and fix the Redis URL configuration.
+4. **Activity feed.** The server logs trip activity, but nothing in the client shows it and no endpoint reads it. Found while building trip covers (spec 001, O1). **TBD:** owner and target date.
+5. **Quality fixes.** Remove duplicate Mongoose index definitions and fix the Redis URL configuration.
 
 ## Not planned yet
 
@@ -31,4 +32,4 @@ The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:update
 
 ## Changelog pointer
 
-Shipped work is recorded in git history. Update this file in the same pull request as the feature when a phase changes status.
+Shipped work is recorded in git history and in the specs table in [docs/README.md](../README.md). Update this file in the same pull request as the feature when a phase changes status.

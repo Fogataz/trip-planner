@@ -1,6 +1,10 @@
-# Localization — feature spec
+# Spec 003: Localization
 
-> **Status: implemented, pending native-speaker review.** English, Portuguese (pt-BR) and Spanish (es-ES). Code review feedback applied on this PR.
+Status: shipped
+Shipped: 2026-11-09 · PR: [#5](https://github.com/barry-dempsey/trip-planner/pull/5)
+Current behavior: [features.md → Languages](../features.md#languages)
+
+> Native-speaker review of the translations is still pending. English, Portuguese (pt-BR) and Spanish (es-ES). Code review feedback applied on this PR.
 
 ## 1. Goal
 
