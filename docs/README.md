@@ -2,7 +2,7 @@
 
 This folder holds product documentation for the Trip Planner. Engineering setup lives in the root [README](../README.md).
 
-> **Status: draft.** The product documents are a first version for review. Items marked **TBD** need input from the product owner.
+> Items marked **TBD** need input from the product owner.
 
 ## Two kinds of document
 
