@@ -1,6 +1,6 @@
 # Early Testers and Design Partners
 
-> **Living register.** Started 2026-11-10. People from the product owner's network who can test a revenue model early. Update status here as conversations happen. This is the seed of the organisers circle (working doc §10, D16).
+> **Living register.** Started 2026-11-10. **Priority (D33):** T1–T3 are the lead segment (premium hosts). People from the product owner's network who can test a revenue model early. Update status here as conversations happen. This is the seed of the organisers circle (working doc §10, D16).
 >
 > **Privacy rule:** names, organisations and public links only. No phone numbers, emails or private notes in the repo. Keep contact details and conversation notes in your own CRM.
 
@@ -21,7 +21,8 @@
 |---|---|---|---|
 | 5 Costa Rica destination-wedding planners | Test the planner as payer (W2 in [destination-weddings.md](destination-weddings.md)) | Your Costa Rica network; planner directories | Phase 1 (Dec 2026 – Feb 2027) |
 | 5 couples who had or are planning a destination wedding | Test the trip-around-the-wedding gap | Friends of friends; T5 group | Phase 1 |
-| 3–5 offsite organisers outside the pilot | Test D willingness to pay (revenue analysis §9) | Intros from pilot attendees | Phase 1 |
+| 10 premium retreat, workshop or expedition hosts | The lead segment (D33): the Sheets + WhatsApp pain, and willingness to pay (epic-briefs §3) | Your network, intros from T1–T3, Instagram | By 5 Feb 2027 |
+| Offsite organisers (benchmark only) | Inbound only; offsites are a reference, not a target (D33) | Intros from pilot attendees, if they come | Any time |
 
 ## How we run a test
 

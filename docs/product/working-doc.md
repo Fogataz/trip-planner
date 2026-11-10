@@ -48,6 +48,8 @@ Each revenue model is a mix of these layers. The core comes first because every 
 | H | Client trip app for small tour operators and advisors | Operator, per seat or departure | Core, host, light branding |
 | I | Paid pass for celebration trips (weddings, stag and hen) | Organiser, per trip | Core, optional money |
 
+**Added 2026-11-10:** [venture-analysis.md](venture-analysis.md) sizes each segment bottom-up and scores it on two lenses. Owner-operator lens: **D leads** for the next 3–6 months. Venture lens: **premium hosts (C1/H operators and retreat hosts, with payments E)** lead. **Decided (D33): premium hosts lead**; offsites stay as a reference and benchmark. Build the host layer v1 now, payments for hosts after the February gate, and keep weddings and celebration trips to discovery. Epic briefs: [epic-briefs.md](epic-briefs.md).
+
 ## 4. Shared foundation: what to build
 
 Checked against the code on 2026-11-09. Two corrections to earlier notes:
@@ -231,7 +233,7 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 |---|---|---|
 | D1 | Confirm gathering date, size, organizers, and who invites | TBD |
 | D2 | Gathering scope (section 5) | **Decided 2026-11-09** |
-| D3 | Lead revenue model | TBD. Analysis recommends D. |
+| D3 | Lead revenue model | **Decided 2026-11-10 (D33):** premium hosts (C1/H, with E next). D stays as a reference and benchmark |
 | D4 | SSO provider | **Decided 2026-11-09:** Google and email magic link |
 | D5 | eDreams policy check (side project, testing, OTA overlap) | **Closed 2026-11-09** at project level by the product owner |
 | D6 | Adopt "benchmark and wireframe before spec" as a rule | **Decided 2026-11-09:** stages and approval gate in [docs/README.md](../README.md); `/feature` command in Claude Code |
@@ -240,7 +242,7 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 | D12 | Working name for the gathering | TBD, by 12 Nov. Options in brand foundations, B2 |
 | D13 | Buy 1–2 domains for strong candidates | TBD, only if cheap and free |
 | D14 | Brand architecture: umbrella brand plus product descriptors, or separate brands | **Decided 2026-11-09:** umbrella brand with plain descriptors |
-| D15 | Phase 1 go-to-market focus: offsite organisers in Barcelona and Madrid tech companies | Proposed, depends on D3 |
+| D15 | Phase 1 go-to-market focus: offsite organisers in Barcelona and Madrid tech companies | **Superseded by D33:** Phase 1 go-to-market is premium hosts (T1–T3, then retreat and workshop hosts) |
 | D16 | Start an organisers circle (design partners) after the gathering | Proposed |
 | D17 | Invite link policy | **Decided 2026-11-09:** link plus host approval |
 | D18 | Account model | **Decided 2026-11-09:** Organizations own hosted trips; one account per person, role per trip |
@@ -255,8 +257,14 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 | D28 | Portuguese variant | pt-BR shipped in spec 003. Confirm or switch to pt-PT later (one file). Not a blocker. |
 | D29 | Pricing rule: the organiser with the budget pays; guests never pay (premium-buyer lens P1) | Proposed |
 | D30 | Done-with-you tier as capped paid discovery (P2) | Proposed |
-| D31 | Phase 2 candidates: C1/H premium operators and destination-wedding planners, interviews first (P3, W-a, W-b) | Proposed |
+| D31 | Phase 2 candidates: C1/H premium operators and destination-wedding planners, interviews first (P3, W-a, W-b) | **Superseded by D33:** premium hosts lead now; planners stay in discovery (D36) |
 | D32 | Use the April 2027 bachelor trip in Costa Rica as a product test (W-c) | Proposed |
+| D33 | Lead segment ([venture-analysis.md](venture-analysis.md) §14) | **Decided 2026-11-10:** premium hosts (premium retreats, workshops, expeditions: C1/H, with E next). Offsites stay as a reference and benchmark; no Naboo-style pivot |
+| D34 | Board changes: Horizon field, milestones M0–M2, outcome-named initiatives 6–8, close initiative 5, epics from [epic-briefs.md](epic-briefs.md) (venture analysis §12) | Proposed |
+| D35 | Funding path: bootstrap to M2 (30 Jun 2027), decide at M3 (Apr 2028) | Proposed |
+| D36 | Weddings: discovery only until the M1 gate (26 Feb 2027) | Proposed |
+| D37 | Prices to test with the first hosts (per departure, monthly, done with you) | TBD |
+| D38 | Adopt the epic standard (outcome titles, hypothesis, measures, user stories) and an `/epic` command ([epic-briefs.md](epic-briefs.md) §1, §6) | Proposed |
 | D26 | Where shared docs live, with two Claude accounts on two computers | **Decided 2026-11-09:** every durable doc lives in the repo's `docs/` (product, brand, specs). Claude Projects keep pointers only. See "Working across accounts and computers" in [docs/README.md](../README.md). |
 | D29 | Trip phase precedence (spec 004 §18.3 D9) | **Decided 2026-11-10:** the calendar wins. Countdown, Live and Wrap follow the dates even for a solo or plan-less trip |
 | D30 | Trips without an end date (spec 004 §18.3 D10) | **Decided 2026-11-10:** offer an approximate length (e.g. 8–10 days); phases use the longer estimate |
@@ -272,6 +280,8 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 - Premium buyer lens (Hormozi): [premium-buyer-lens.md](premium-buyer-lens.md)
 - Destination weddings use case: [destination-weddings.md](destination-weddings.md)
 - Early testers register: [early-testers.md](early-testers.md)
+- Venture analysis (market size, unit economics, two lenses, horizon ranking, board plan): [venture-analysis.md](venture-analysis.md)
+- Epic briefs and how we write an epic: [epic-briefs.md](epic-briefs.md)
 - Feature workflow (benchmark → define → wireframes → spec → owner approval → build → docs): [docs/README.md](../README.md)
 
 ## 9. Brand
@@ -315,8 +325,8 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 | Phase | Community move | Size |
 |---|---|---|
 | **Phase 0 (gathering)** | The gathering organizers are the first design partners. Hold a 30-minute retro with them after the event. | 2–5 people |
-| **Phase 1 (Dec – Feb)** | **Organisers circle:** offsite and event organisers who try the product. A private group chat, a monthly 30-minute call, early access, and a direct line to you. Offer the first 5 design partners a free first event or a discount in exchange for feedback and a quote. | 10–30 people |
-| **Phase 1, in parallel** | Interviews with retreat hosts and operators (C1, H). Invite the good ones into the circle too. | 10 + 10 interviews |
+| **Phase 1 (Dec – Feb)** | **Hosts circle:** premium hosts (T1–T3 and new ones) who try the product. A private group chat, a monthly 30-minute call, early access, and a direct line to you. Offer the first 5 design partners a free first event or a discount in exchange for feedback and a quote. | 10–30 people |
+| **Phase 1, in parallel** | Interviews: 15 retreat, workshop and expedition hosts (C1, H) and 5 wedding planners (W). Invite the good ones into the circle. | 15 + 5 interviews |
 | **Phase 2 (Mar – Jun)** | Templates people share: offsite agendas, retreat schedules, packing lists. They import straight into the product through AI import. Showcase real events with permission. | Grows with users |
 | **Later** | A host community for retreats (C), if C wins. It becomes marketplace supply. | TBD |
 
@@ -332,22 +342,22 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 
 ## 11. Go-to-market
 
-Proposal, assuming D leads (D3). It changes if C1 or I leads instead.
+Updated 2026-11-10 for D33: premium hosts lead. The earlier offsite version is in git history; offsites are now inbound only and serve as a benchmark.
 
-**Ideal first customer:** a team lead, People or Ops person, or event lead at a 50–500 person tech company in Barcelona or Madrid. They run 1–4 offsites or gatherings a year and use WhatsApp plus a shared doc today.
+**Ideal first customer:** the founder of a small-group trip business (a retreat, a photography or creative workshop, an expedition) running several departures a year for about 8–15 travellers who each pay thousands. They use a sign-up form, a spreadsheet and WhatsApp today [early-testers T1–T3]. Spanish, Portuguese or English speaking.
 
-**Positioning draft:** for team leads planning an offsite, [Name] is the live group space where the agenda, votes, updates and logistics live, so attendees actually use it. It replaces a WhatsApp group plus a shared doc, and is lighter than a full event app. Our edge is the real-time group experience and AI agenda import, not the agenda itself.
+**Positioning draft:** for hosts of premium small-group trips, [Name] is the live space where each departure's schedule, traveller details, updates and (soon) payments live, so travellers feel looked after and the host stops running the trip from WhatsApp and a spreadsheet. Unlike booking marketplaces, it takes no commission on the host's sales.
 
 | Phase | Goal | Channels | Offer |
 |---|---|---|---|
-| **Phase 0 (now – 27 Nov)** | Proof that it works on a real event | The eDreams gathering | Free. Collect data, quotes and screenshots without personal data. |
-| **Phase 1 (Dec – Feb)** | 3–5 paid events from 3+ companies | Founder-led sales: your network, warm intros from gathering attendees, LinkedIn posts about building in public, offsite venues and planners as referral partners | Flat price per event (D8), with free concierge setup. Yearly plan for anyone who books twice. |
-| **Phase 2 (Mar – Jun)** | A second paying segment (C1 or H) and payments | Instagram and DMs to retreat hosts, retreat directories, teacher communities, operator communities on LinkedIn; venue partnerships | Per retreat or per seat; payment fees once E exists |
-| **Later** | Scale what worked | Templates and content for SEO, partner programmes, the attendee-to-organiser loop | TBD |
+| **Phase 0 (now – 27 Nov)** | Proof the host layer works on a real event; pilot metrics become the benchmark | The eDreams gathering | Free |
+| **Phase 1 (Dec – Feb)** | 15 host interviews; 2+ hosts pay for or commit a departure (M1) | Founder-led: T1–T3, intros from them, Instagram DMs to hosts, Costa Rica and Spain networks | Concierge setup of one departure for a flat fee (D37); free for the first design partners if needed |
+| **Phase 2 (Mar – Jun)** | 10+ paying hosts; first deposits collected in the app (M2) | Host referrals, "made with" footer on public departure pages, retreat-teacher and operator communities | Monthly plan plus a payment fee |
+| **Later** | Scale what worked | Templates, the traveller-to-organiser loop, partner programmes | TBD |
 
-**Funnel to track:** organisers contacted → demos → pilots started → events run → paid → repeat. For each event, also track attendees → organisers.
+**Funnel to track:** hosts contacted → interviews → concierge departures → paid → second departure without our help. For each departure, also track travellers → organisers.
 
-**Not now:** paid ads, an App Store launch, Product Hunt, broad social accounts, or a marketplace launch. They spend money or attention before product-market fit.
+**Not now:** paid ads, an App Store launch, Product Hunt, broad social accounts, a marketplace launch, or an outbound offsite sales push.
 
 ## Decision log
 
@@ -370,4 +380,5 @@ Proposal, assuming D leads (D3). It changes if C1 or I leads instead.
 | 2026-11-09 | Spec 003 shipped (PR #5): the interface in English, Spanish and Portuguese (pt-BR), language by saved choice, country from IP, then browser. AI output follows the UI language. |
 | 2026-11-09 | D27: open product and strategy questions are not blockers. Recommendations act as working defaults; the next two weeks focus on the spec 002 build. |
 | 2026-11-09 | D26: with two Claude accounts on two computers, every durable doc lives in the repo. The working doc, revenue analysis and brand foundations moved to `docs/`. Claude Projects keep pointers only. |
+| 2026-11-10 | D33 (also D3): premium hosts lead (premium retreats, workshops, expeditions; C1/H with payments E next). Offsites stay as a reference and benchmark; we won't become an offsite booking platform. D15 and D31 superseded. See [venture-analysis.md](venture-analysis.md). |
 | 2026-11-10 | Spec 004 (trip information architecture) built in three slices, in review as PRs #11–#14. D29: trip phases follow the calendar. D30: trips without an end date take an approximate length. D31: slices 2–3 built before the tree test. Follow-ups seeded as specs 005–008 and the [spec backlog](spec-backlog.md). |

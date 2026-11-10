@@ -29,6 +29,8 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | [product/premium-buyer-lens.md](product/premium-buyer-lens.md) | Analysis (2026-11-10): who should pay and at what price, using Alex Hormozi's market and pricing advice |
 | [product/destination-weddings.md](product/destination-weddings.md) | Analysis (2026-11-10): destination weddings as a niche, use cases, gaps, who pays, test plan |
 | [product/early-testers.md](product/early-testers.md) | Living register of early testers and design partners (no contact details) |
+| [product/venture-analysis.md](product/venture-analysis.md) | Analysis (2026-11-10): market size, unit economics and defensibility per segment; premium hosts lead (D33); epics to build next and the board change plan |
+| [product/epic-briefs.md](product/epic-briefs.md) | How we write an epic (outcome titles, hypothesis, stories) and briefs for the next epics until they are on GitHub |
 | [features.md](features.md) | What the product does today, based on the current code |
 | [specs/](specs/) | One spec per feature, numbered |
 
@@ -47,7 +49,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 
 ## How a feature goes from idea to shipped
 
-Adopted 2026-11-09. Any Claude account working in this repo follows the same stages. In Claude Code, run `/feature <name or spec number>`.
+Adopted 2026-11-09. Any Claude account working in this repo follows the same stages. In Claude Code, run `/feature <name or spec number>`. To create or check the GitHub epic for a feature, run `/epic <brief, spec or issue number>` (rules in [process/tracker.md](process/tracker.md), "Writing an epic").
 
 | Stage | What | Output |
 |---|---|---|

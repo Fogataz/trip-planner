@@ -22,7 +22,7 @@ Group trips break down in predictable ways:
 - **Trip organizer:** creates the trip, invites people, and keeps the plan moving.
 - **Trip member:** joins through an invitation, contributes ideas, votes and tracks their own expenses.
 
-**TBD:** primary segment and typical group size. Being tested: team offsites and company events first (the pilot event), with friends and family, retreat hosts and others as later candidates. See the [working doc](working-doc.md) and [brand foundations](../brand/brand-foundations.md), section 1.2. Hosted trips add a third role, the host or co-host (spec 002).
+**Primary segment (D33, 2026-11-10):** premium hosts: leaders of small-group retreats, workshops and expeditions, who pay us, and their travellers, who never do. Team offsites stay as a reference and benchmark (the pilot event). Friends and family use the app free. **TBD:** typical group size (working assumption: 8–15 travellers). See [venture-analysis.md](venture-analysis.md). See the [working doc](working-doc.md) and [brand foundations](../brand/brand-foundations.md), section 1.2. Hosted trips add a third role, the host or co-host (spec 002).
 
 ## Product principles
 
