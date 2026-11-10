@@ -1,6 +1,6 @@
 # Brand Foundations v0
 
-> **Status: Draft v0.** Written 2026-11-09; naming round 2 added the same day (section 3.7). Everything here is a hypothesis for the AMF/PMF phase. Items marked **TBD** are decisions for the product owner. Nothing here is a logo, a design system or a final name.
+> **Status: Draft v0.** Written 2026-11-09; naming round 2 added the same day (section 3.7); naming round 3 added 2026-11-10 (section 3.8). Everything here is a hypothesis for the AMF/PMF phase. Items marked **TBD** are decisions for the product owner. Nothing here is a logo, a design system or a final name.
 >
 > Moved into the repo on 2026-11-09 (D26). This is a living doc: edit it here as brand decisions are made.
 >
@@ -365,6 +365,60 @@ Domains are still an estimate, not checked.
 
 ---
 
+### 3.8 Round 3: the GitHub handle, and four more embers
+
+Added 2026-11-10. The product owner is happy to use **Fogata**, but the plain `fogata` handle is already taken on GitHub. This round checks what that actually means, and adds four more candidates in the same "fire the group gathers around" vein, in case Fogata does not clear.
+
+#### The GitHub handle is not a brand problem
+
+`fogata` is taken on GitHub by an old open-source group-chat clone, unrelated to us [52]. A few other round-2 names are taken too: `brasa` is a small programming-language project and a crypto-staking docs site [53]; `chispa` is widely used as a repo and package name [54].
+
+This is a code-hosting namespace collision, not a trademark or consumer brand conflict. Nobody outside engineering sees a GitHub org name, and it is cheap to route around:
+
+- Keep the brand name as-is in the product, marketing and app stores.
+- Use a suffixed handle for the GitHub org or repo when one is needed: for example `fogata-app`, `usefogata`, `fogatahq` or `get-fogata`. This is a one-line, reversible engineering choice, not a naming decision.
+- The repo already lives at `barry-dempsey/trip-planner` (CLAUDE.md). Nothing here needs to change before the gathering; it only matters if and when the team wants the org name to match the brand.
+
+This is engineering's call to make when it's actually needed (tracked as B7 in section 7), not a reason to drop a name candidate.
+
+#### Four more candidates, same principle as Fogata
+
+Fogata works by naming the object the group gathers around, not the trip. These follow the same move:
+
+| Name | Meaning | Notes |
+|---|---|---|
+| **Ascua** | ES/PT: a single glowing ember | The one piece of the fire that's left, kept warm. Shorter and rarer than Fogata; less obviously "fire" to someone who doesn't know the word. |
+| **Brasas** | ES/PT: live coals, embers (plural) | Reads as "the group" rather than one object — closer to Fogata's warmth, plural instead of singular. `brasa` (singular) is the one already in 3.7's screened list; `Brasas` is a different word, not just a respelling. |
+| **Brasero** | ES: a fire pit or brazier — the object Spanish terraces gather a group around for exactly this kind of evening | Most literal and most "us" of the four, but 3 syllables and harder for English speakers (bra-SEH-ro). Also the name of an old GNOME CD-burning app [55] — mild SEO clutter, not a brand conflict. |
+| **Rescoldo** | ES: the embers and warmth that remain after a fire has died down | Best match for "the bond outlasts the trip," but the hardest of the four to say in English and Portuguese. |
+
+**Screened out this round:**
+
+- **Candela** (flame, candle): a real, actively sold product — *Candela Obscura* is a trademarked tabletop role-playing game line from Darrington Press, Critical Role's publishing arm [56]. Also a generic word used by many unrelated engines and libraries. Drop it.
+- **Chispa** (spark): **Chispa is Match Group's dating app for Latino singles**, launched with Univision, with 6M+ downloads [54]. A direct, well-known commercial conflict — do not use.
+- **Tizón** (ember, firebrand): carries an unrelated slang meaning in some Spanish dialects that is best avoided regardless of naming fit.
+
+#### Scores (same scorecard as 3.4 and 3.7)
+
+| Name | Short | Say it | Non-literal | No overlap | Domains | TM risk | **Total** |
+|---|---|---|---|---|---|---|---|
+| *Fogata (reference)* | 2 | 2 | 3 | 3 | 2 | 3 | *15* |
+| **Ascua** | 3 | 2 | 3 | 3 | 2 | 3 | **16** |
+| **Brasas** | 2 | 2 | 3 | 3 | 2 | 3 | **15** |
+| **Brasero** | 1 | 1 | 3 | 2 | 2 | 3 | **12** |
+| **Rescoldo** | 1 | 1 | 3 | 3 | 2 | 3 | **13** |
+
+Domains and TM risk are still estimates from a web search only, not a legal check (see 3.5).
+
+#### Recommendation (round 3)
+
+- **If Fogata doesn't clear, try Ascua first.** Same shape and warmth, shortest of the four, no conflicts turned up in this search.
+- **Brasas is the next-best backup** — easy to say, reads as "the group around the fire" rather than one ember.
+- **Brasero and Rescoldo are reserves**, kept for their imagery but weaker on pronounceability in English and Portuguese.
+- **The GitHub handle itself changes nothing in section 3.6's finalists** (Lazo, Fogata, Corro). Route around it with a suffixed handle (above) rather than swapping the name.
+
+---
+
 ## 4. Visual direction (words only)
 
 **Where we are today** (`client/src/index.css`): a cool grey-blue background, indigo primary (`#5b5bd6`), an indigo-to-violet gradient, the system font stack, 16px radius, soft shadows, light and dark modes. It is clean but reads as generic SaaS. It says "tool", not "people together".
@@ -453,6 +507,7 @@ These guide the gathering build now and the design system later. Each has a test
 | B4 | Adopt voice rules (1.4) and UX principles (5) for the gathering spec | Adopt / edit / defer | Adopt as the default for spec 002 | Proposed |
 | B5 | PT-BR or PT-PT first | — | pt-BR shipped in spec 003 (2026-11-09); keep it for the pilot | Default: pt-BR (D28) |
 | B6 | Visual direction to mock up | A / B / C | After the retro, based on H1 vs H3 | Later |
+| B7 | GitHub org/repo handle if it needs to match the brand name | Suffix the handle (e.g. `fogata-app`) vs. wait | Suffix it, only when actually needed | Engineering (not blocking) |
 
 ---
 
@@ -514,3 +569,11 @@ Round 2 (3.7):
 49. Presentie events app: [Product Hunt](https://www.producthunt.com/products/presentie-together-for-experiences/makers)
 50. Presente.org: [presente.org](https://presente.org/?p=53), [Wikipedia](https://en.wikipedia.org/wiki/Presente.org)
 51. ¡LATINA, PRESENTE!, pending, classes 18/25/41: [trademarkregistration.app](https://trademarkregistration.app/Trademark/Details/98630122)
+
+Round 3 (3.8):
+
+52. Fogata GitHub repo, open-source group chat (Campfire clone), unrelated project: [github-redirect.dependabot.com](https://github-redirect.dependabot.com/patriciomacadden/fogata)
+53. Brasa as a GitHub handle: a small programming-language project (`brasa-lang`) and a liquid-staking docs site (`brasa-finance`): [github.com/brasa-lang](https://github.com/brasa-lang), [gh.r-mj.com/Firstset/brasa-docs](https://gh.r-mj.com/Firstset/brasa-docs)
+54. Chispa dating app for Latino singles, Match Group and Univision, 6M+ downloads: [hiplatina.com](https://hiplatina.com/chispa-dating-app/), [apptopia.com](https://apptopia.com/unified/app/8101711498/about)
+55. Brasero, GNOME CD/DVD-burning application (unrelated legacy software, not a brand conflict): [pkgs.alpinelinux.org](https://pkgs.alpinelinux.org/package/v3.22/community/x86_64/brasero)
+56. Candela Obscura, trademarked tabletop RPG by Darrington Press (Critical Role): [Wikipedia](https://en.wikipedia.org/wiki/Darrington_Press)
