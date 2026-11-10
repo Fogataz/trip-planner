@@ -11,19 +11,22 @@
 | 3. Real-time collaboration | Socket.io trip rooms, presence, membership checks, polls, comments | **Largely in place** |
 | 4. Location tracking | Opt-in live location shared within a trip | **In place** (in-memory only) |
 | 5. Transport API integration | Live transport delays and updates | **Not started** |
-| 6. Notifications | Push notifications through Firebase Cloud Messaging | **Partly in place.** Token registration exists. Triggers **TBD** |
-| 7. Frontend and polish | Full web client and UX polish | **In progress** (React client exists). Trip covers shipped 2026-11-06 ([spec 001](../specs/001-trip-covers.md)). EN/PT/ES localization shipped ([spec 003](../specs/003-localization.md)). Server errors and push text still English |
+| 6. Notifications | Push notifications through Firebase Cloud Messaging | **Partly in place.** Token registration and pushes for new expense, new poll, member joined, question asked and stop changes exist. Per-category preferences are in [spec 002](../specs/002-hosted-event-pilot.md) F27–F29 |
+| 7. Frontend and polish | Full web client and UX polish | **In progress** (React client exists). Trip covers shipped 2026-11-06 ([spec 001](../specs/001-trip-covers.md)). EN/PT/ES localization shipped ([spec 003](../specs/003-localization.md)). Trip information architecture ([spec 004](../specs/004-trip-ia-redesign.md)) built in three slices, in review as PRs #11–#14. Server errors and push text still English |
 
 The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:updated`, `location:update`, `transport:update`) are partly implemented. `join-trip`, `leave-trip` and `location:update` exist. `trip:updated` and `transport:update` should be confirmed.
 
 ## Next priorities (proposal)
 
 0. **Hosted event pilot** for the first pilot event on 24–25 Nov: Organizations and trip roles, Google and email-link sign-in, invite link with approval, AI agenda import as a draft, announcements and notification settings, analytics, and the pilot's localization on top of spec 003 (event time zone, language saved to the account, push in each person's language). See [spec 002](../specs/002-hosted-event-pilot.md) (draft) and the [planning list](pilot-event-feature-list.md). It also covers item 3 (notification triggers) and part of item 4 (activity logging).
-1. **Expense settlement.** **Looks built (checked 2026-11-09):** the API returns suggested settlements (`computeSettlements` in `server/routes/expenses.js`) and the client shows a "Settle up" list. Engineering to confirm and update [features.md](../features.md), which still lists add, list and delete only.
-2. **Transport updates (Phase 5).** Choose a provider, then design the alert flow. **TBD:** provider and budget.
-3. **Notification triggers.** Decide which events send push notifications (new poll, itinerary change, invitation). **TBD.**
-4. **Activity feed.** The server logs trip activity, but nothing in the client shows it and no endpoint reads it. Found while building trip covers (spec 001, O1). **TBD:** owner and target date.
-5. **Quality fixes.** Remove duplicate Mongoose index definitions and fix the Redis URL configuration.
+1. **Expense settlement.** Suggested settlements are built (`computeSettlements` in `server/routes/expenses.js`), and spec 004 made Money balance-first ("You owe Ana €42.00"). **Missing:** recording that a payment happened, so balances reach zero. Seed draft: [spec 005 Settle up](../specs/005-settle-up.md).
+2. **Transport updates (Phase 5).** The alert slots exist in the Countdown and Live Overview (spec 004). Seed draft: [spec 006](../specs/006-transport-updates.md), recommending manual status first, then one flight API. **TBD:** provider and budget.
+3. **Notification preferences.** Pushes already fire for the main events; what is missing is opting out per category. This is [spec 002](../specs/002-hosted-event-pilot.md) F27–F29, not a new spec.
+4. **Activity feed.** Built in spec 004 slice 2 (PR #13): a read endpoint, "since you were away" on Overview, and needs-me badges. **Missing:** polls and expenses are not logged, and read state is per device. Seed draft: [spec 008](../specs/008-activity-and-read-state.md).
+5. **Quality fixes.** Remove duplicate Mongoose index definitions and fix the Redis URL configuration. Add CI that runs the client's `tsc`, tests and build on every pull request.
+6. **Profiles and display names.** Replace email addresses with names and avatars. Seed draft: [spec 007](../specs/007-profiles-and-display-names.md); best shipped with spec 002's Google sign-in.
+
+Smaller candidates and reserved slots (chat, packing, bookings, photos, editing trip dates) are in the [spec backlog](spec-backlog.md).
 
 ## Not planned yet
 
