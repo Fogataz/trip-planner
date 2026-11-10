@@ -307,7 +307,8 @@
 /* ---------- Compact trip chrome ----------
    The chrome now persists across four destinations (F3), so it has to be short enough that each
    destination's content starts on the first screen (spec 004 section 14 guardrail). The wireframes
-   use a 110px cover on desktop and 86px on phones; the spec 001 banner was sized for the old single page. */
+   used a 110px cover on desktop and 86px on phones. That cropped the art to a thin strip, so spec 009
+   sets the banner by aspect ratio in TripCover.css (--cover-ratio, --cover-max, --cover-overlap). */
 .back-link {
   align-self: flex-start;
   background: none;
@@ -321,11 +322,6 @@
 .back-link:hover:not(:disabled) {
   background: none;
   color: var(--text);
-}
-
-.trip-detail .cover-band,
-.trip-detail .cover-band--empty {
-  height: 110px;
 }
 
 .trip-detail .trip-title-row {
@@ -365,15 +361,6 @@
 @media (max-width: 768px) {
   .trip-detail {
     gap: 12px;
-  }
-
-  .trip-detail .cover-band,
-  .trip-detail .cover-band--empty {
-    height: 86px;
-  }
-
-  .trip-cover-head.has-cover .trip-header {
-    margin-top: -16px;
   }
 
   .trip-detail .trip-header {
@@ -441,17 +428,13 @@
 }
 
 .skeleton-back { width: 120px; height: 24px; border-radius: 8px; }
-.skeleton-cover { height: 110px; }
+.skeleton-cover { aspect-ratio: var(--cover-ratio); max-height: var(--cover-max); }
 .skeleton-title { height: 76px; }
 .skeleton-tabs { height: 54px; }
 .skeleton-card { height: 220px; }
 
 @keyframes skeleton-pulse {
   50% { opacity: 0.55; }
-}
-
-@media (max-width: 768px) {
-  .skeleton-cover { height: 86px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

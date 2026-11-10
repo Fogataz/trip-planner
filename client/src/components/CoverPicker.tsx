@@ -29,6 +29,8 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
   const [progress, setProgress] = useState<number | null>(null)
   const [fileName, setFileName] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
+  // A chosen file waits here, previewed at the banner crop, until the user confirms it (spec 009 F5)
+  const [pending, setPending] = useState<{ file: File; url: string; tall: boolean } | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -42,6 +44,12 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
   onCloseRef.current = onClose
 
   const dialogRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    return () => {
+      if (pending) URL.revokeObjectURL(pending.url)
+    }
+  }, [pending])
 
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null
@@ -100,7 +108,8 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
     }
   }
 
-  const upload = async (file: File) => {
+  // Check the file, then show how it will crop. Nothing is uploaded until the user confirms.
+  const choose = async (file: File) => {
     setError(null)
 
     if (file.size > MAX_UPLOAD_BYTES) {
@@ -111,6 +120,20 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
       setError(t('cover.errors.notImage'))
       return
     }
+
+    const url = URL.createObjectURL(file)
+    const probe = new Image()
+    probe.onload = () => setPending({ file, url, tall: probe.naturalWidth / probe.naturalHeight < 2 })
+    probe.onerror = () => {
+      URL.revokeObjectURL(url)
+      setError(t('cover.errors.cannotOpen'))
+    }
+    probe.src = url
+  }
+
+  const upload = async (file: File) => {
+    setError(null)
+    setPending(null)
 
     setBusy(true)
     setFileName(file.name)
@@ -245,7 +268,29 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
 
           {tab === 'upload' && (
             <>
-              {progress === null ? (
+              {pending && progress === null ? (
+                <div>
+                  <p className="cover-hint" style={{ marginBottom: 8 }}>
+                    {t('cover.previewTitle')}
+                  </p>
+                  <div className="cover-preview">
+                    <img src={pending.url} alt="" />
+                  </div>
+                  {pending.tall && (
+                    <p className="cover-hint" style={{ marginTop: 8 }}>
+                      {t('cover.previewTall')}
+                    </p>
+                  )}
+                  <div className="cover-preview-actions">
+                    <button type="button" className="cover-tab" disabled={busy} onClick={() => upload(pending.file)}>
+                      {t('cover.usePicture')}
+                    </button>
+                    <button type="button" className="cover-tab" disabled={busy} onClick={() => setPending(null)}>
+                      {t('cover.chooseAnother')}
+                    </button>
+                  </div>
+                </div>
+              ) : progress === null ? (
                 <div
                   className={`cover-drop${dragOver ? ' is-over' : ''}`}
                   onDragOver={(e) => {
@@ -257,7 +302,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
                     e.preventDefault()
                     setDragOver(false)
                     const file = e.dataTransfer.files?.[0]
-                    if (file) upload(file)
+                    if (file) choose(file)
                   }}
                 >
                   <strong>{t('cover.drop')}</strong>
@@ -278,7 +323,7 @@ export default function CoverPicker({ apiUrl, token, groupId, cover, onApplied, 
                     onChange={(e) => {
                       const file = e.target.files?.[0]
                       e.target.value = ''
-                      if (file) upload(file)
+                      if (file) choose(file)
                     }}
                   />
                 </div>

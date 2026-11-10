@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import CoverPicker from './CoverPicker'
+import CoverSheet from './CoverSheet'
 import { TripCoverData, coverAlt, coverBackground, coverImageSrc, defaultGradient } from '../covers'
 import './TripCover.css'
 
@@ -29,6 +30,7 @@ export default function TripCover({
 }: Props) {
   const { t } = useTranslation()
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [repositioning, setRepositioning] = useState(false)
   const [focalY, setFocalY] = useState(cover?.focalY ?? 50)
   const [loaded, setLoaded] = useState(false)
@@ -38,6 +40,8 @@ export default function TripCover({
   const [broken, setBroken] = useState(false)
   const bandRef = useRef<HTMLDivElement>(null)
   const sliderRef = useRef<HTMLInputElement>(null)
+  const editBtnRef = useRef<HTMLButtonElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
   const dragRef = useRef<{ startY: number; startFocal: number } | null>(null)
 
   const imageSrc = broken ? null : coverImageSrc(apiUrl, cover)
@@ -47,7 +51,10 @@ export default function TripCover({
 
   useEffect(() => {
     setFocalY(cover?.focalY ?? 50)
-    setLoaded(false)
+    // A cached image can finish loading before this effect runs, and its load event is then
+    // already gone. Ask the element instead of assuming it is still loading.
+    const img = imgRef.current
+    setLoaded(Boolean(img && img.complete && img.naturalWidth > 0))
   }, [cover?.key, cover?.focalY])
 
   useEffect(() => {
@@ -123,7 +130,33 @@ export default function TripCover({
 
   const openPicker = () => {
     setNudged(false)
+    setSheetOpen(false)
     setPickerOpen(true)
+  }
+
+  // Escape, the backdrop or Close: hand focus back to Edit cover. Actions that move on do their own focus.
+  const closeSheet = () => {
+    setSheetOpen(false)
+    window.setTimeout(() => editBtnRef.current?.focus(), 0)
+  }
+
+  const startReposition = () => {
+    setSheetOpen(false)
+    setRepositioning(true)
+  }
+
+  // From the phone sheet. The picker has its own Remove button for the desktop path.
+  const removeCover = async () => {
+    setSheetOpen(false)
+    try {
+      await axios.delete(`${apiUrl}/api/trips/${groupId}/cover`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      onChange(null)
+      setError(null)
+    } catch {
+      setError(t('cover.errors.removeFailed'))
+    }
   }
 
   return (
@@ -141,6 +174,7 @@ export default function TripCover({
       >
         {imageSrc && (
           <img
+            ref={imgRef}
             className={`cover-band__img${loaded ? ' is-loaded' : ''}`}
             src={imageSrc}
             alt={coverAlt(cover, tripName, t)}
@@ -159,16 +193,28 @@ export default function TripCover({
             <button type="button" className="cover-btn" onClick={openPicker}>
               {t('cover.change')}
             </button>
-            <button type="button" className="cover-btn" onClick={() => setRepositioning(true)}>
+            <button type="button" className="cover-btn" onClick={startReposition}>
               {t('cover.reposition')}
             </button>
           </div>
         )}
 
+        {cover && !repositioning && (
+          <button
+            ref={editBtnRef}
+            type="button"
+            className="cover-btn cover-edit-btn"
+            aria-haspopup="dialog"
+            onClick={() => setSheetOpen(true)}
+          >
+            {t('cover.edit')}
+          </button>
+        )}
+
         {repositioning && (
           <div className="cover-reposition-bar">
             <label>
-              {t('cover.verticalPosition')}
+              <span className="cover-reposition-bar__label">{t('cover.verticalPosition')}</span>
               <input
                 ref={sliderRef}
                 type="range"
@@ -207,6 +253,15 @@ export default function TripCover({
         {children}
       </div>
 
+      {sheetOpen && (
+        <CoverSheet
+          onChange={openPicker}
+          onReposition={startReposition}
+          onRemove={removeCover}
+          onClose={closeSheet}
+        />
+      )}
+
       {pickerOpen && (
         <CoverPicker
           apiUrl={apiUrl}
@@ -214,7 +269,13 @@ export default function TripCover({
           groupId={groupId}
           cover={cover}
           onApplied={onChange}
-          onClose={() => setPickerOpen(false)}
+          onClose={() => {
+            setPickerOpen(false)
+            // On phones the picker was opened from the sheet, so hand focus back to Edit cover
+            window.setTimeout(() => {
+              if (!document.querySelector('[role="dialog"]')) editBtnRef.current?.focus()
+            }, 0)
+          }}
         />
       )}
     </div>

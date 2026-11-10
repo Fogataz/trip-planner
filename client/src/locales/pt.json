@@ -248,7 +248,13 @@
       "removeFailed": "Não foi possível remover a capa. Tente novamente.",
       "cannotOpen": "Não foi possível abrir essa imagem.",
       "cannotProcess": "Não foi possível processar essa imagem neste navegador."
-    }
+    },
+    "edit": "Editar capa",
+    "sheetTitle": "Capa",
+    "previewTitle": "Como vai ficar na página da viagem",
+    "previewTall": "Esta imagem é alta, então só uma faixa vai aparecer. Você escolhe a faixa depois de salvar.",
+    "usePicture": "Usar esta imagem",
+    "chooseAnother": "Escolher outra"
   },
   "trip": {
     "tabs": {

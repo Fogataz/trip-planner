@@ -1,10 +1,10 @@
 # Spec 009: Trip cover layout
 
-Status: draft
+Status: building
 Owner: Alberto (product)   Shipped: —   PR: —
 Comes from: [spec 001](001-trip-covers.md) (covers) and [spec 004](004-trip-ia-redesign.md) §18 (the compact header, which shrank the cover).
 
-> Stage 1 of 3 (analysis and proposal, 2026-11-10). Wireframes are in [wireframes/009-trip-cover-layout](../../wireframes/009-trip-cover-layout/index.html). **Not signed off. Do not build yet.** Items waiting on the product owner are marked **TBD**.
+> Stage 3 of 3, build in progress (2026-11-10). Wireframes in [wireframes/009-trip-cover-layout](../../wireframes/009-trip-cover-layout/index.html). Option A approved by the product owner on 2026-11-10; see §13 for build status. Items waiting on the product owner are marked **TBD**.
 
 ## 1. The problem in one line
 
@@ -84,7 +84,7 @@ All three keep the four destinations and the persistent header from spec 004 (F3
 | Art | Gallery artwork is made at 2000 × 500 (4 : 1) with the title and date inside the middle 60%. The pod-gathering art needs a new crop (closes O5) |
 | Upload | The picker shows a live preview at the banner ratio and says "Wide pictures work best". A tall picture still works, and the reposition step lets the user choose the slice (addresses Q6) |
 | Trip list thumbnail | Unchanged: 96 px strip |
-| No cover | Unchanged: the *Add cover* row above the title. The empty state does not reserve banner space |
+| No cover | Unchanged: the plain gradient strip (110 px desktop, 86 px phone) and the *Add cover* row above the title |
 | Layout shift | Height is known from the ratio before the image loads, so no shift (N2 from spec 001 still holds) |
 
 Open question on phones: with the sheet pattern, spec 001 O2 (action sheet instead of buttons on mobile) is closed by this spec. **TBD** whether to ship it in the same PR or after.
@@ -143,3 +143,30 @@ The product owner wants organisers to be able to rename a trip, probably from th
 ## 12. Next step
 
 Sign-off on the wireframes and D1–D5. Then a PR that touches `TripCover.css`, `trip/trip.css` and `TripCover.tsx`, plus the picker preview. When it ships, update this spec, `features.md`, `roadmap.md` and the specs table in the same PR. Spec 001 stays as it is.
+
+## 13. Build status (2026-11-10)
+
+**Built.** Banner sized by aspect ratio from one set of variables in `client/src/components/TripCover.css` (`--cover-ratio`, `--cover-max`, `--cover-overlap`); the old overrides in `trip/trip.css` are gone, and the loading skeleton uses the same variables. New `CoverSheet.tsx` and an *Edit cover* button for phones and touch screens. The upload tab previews the banner crop before anything is sent. New strings in EN, PT and ES.
+
+**Verified in the running app** (local build, pod-gathering cover, dark theme):
+
+| Check | Result |
+|---|---|
+| Desktop, 1060 px content | Banner 260 px, visible 244 px, 4.34 : 1, 55% of the art. Controls and reposition bar clear of the header card. Reposition has 181 px of travel |
+| Tablet, 768 px | Banner 251 px, visible 235 px, 3.2 : 1. Hover controls. No horizontal scroll |
+| Phone, 375 px | Banner 140 px, visible 128 px, 2.93 : 1, 82% of the art. *Edit cover* is 8.4% of the visible banner. No horizontal scroll |
+| N2, phone first content | 58 px lower than before (limit 60), from the 70 px to 128 px visible strip |
+| Sheet | Opens, focus moves in, Tab wraps, Escape and backdrop close it, focus returns to *Edit cover* (also after the picker closes). Reposition and Remove work from it. After Remove the page matches the no-cover state |
+| Reposition on phone | One row, 56 px high, so most of the banner stays draggable |
+| Upload preview | A 4 : 3 PNG previews at 5 : 2 on a phone, shows the tall note, and nothing uploads until *Use this picture*. Uploading then applies the cover |
+| Client checks | `tsc` clean, 102 Vitest tests pass, production build succeeds |
+
+**A bug found and fixed on the way.** A cached cover image could finish loading before the effect that resets `loaded` ran, and the banner stayed invisible (opacity 0). The effect now asks the image element (`complete`, `naturalWidth`) instead of assuming it is still loading.
+
+**Not done, and why.**
+
+| # | Item | Why |
+|---|---|---|
+| F6 | Re-crop of the pod-gathering art to 4 : 1 | D4: needs the product owner. The art is unchanged. At 4.3 : 1 its title shows on phones and is clipped on desktop |
+| — | Real phone and touch device, reduced motion, light theme, Safari and Firefox | Not exercised. Checked only in the in-app browser with emulated sizes |
+| — | A live check of the trips list thumbnail | The list code did not change |
