@@ -45,6 +45,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 007 | [Profiles and display names](specs/007-profiles-and-display-names.md) | draft | — | — |
 | 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
 
+| 009 | [Trip cover layout](specs/009-trip-cover-layout.md) | draft | — | — |
 ## How a feature goes from idea to shipped
 
 Adopted 2026-11-09. Any Claude account working in this repo follows the same stages. In Claude Code, run `/feature <name or spec number>`.
