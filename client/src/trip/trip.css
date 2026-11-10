@@ -732,6 +732,7 @@ a.overview-card:hover {
   background: var(--primary);
   color: var(--on-primary);
   font-weight: 600;
+  text-align: center;
   text-decoration: none;
 }
 

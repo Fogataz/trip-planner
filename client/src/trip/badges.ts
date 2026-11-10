@@ -36,7 +36,9 @@ export function computeBadges(input: BadgeInput): Badges {
   const unvoted = polls.filter(
     (p) => p.status === 'open' && !p.options.some((o) => !!currentUid && o.votes.includes(currentUid))
   ).length
-  const planChanges = byOthers.filter((a) => a.targetType === 'itinerary' && newerThan(a, seen.plan)).length
+  // Never opened Plan here but has opened the trip: count from that last visit instead
+  const planSeen = seen.plan ?? seen.overview
+  const planChanges = byOthers.filter((a) => a.targetType === 'itinerary' && newerThan(a, planSeen)).length
 
   const myBalance = currentUid ? expenses.balances[currentUid] ?? 0 : 0
 

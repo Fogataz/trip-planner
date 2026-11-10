@@ -56,6 +56,11 @@ describe('computeBadges', () => {
     expect(computeBadges(input({ activity, seen: { plan: '2026-11-10T09:00:00Z' } })).plan).toBe(1)
   })
 
+  it('counts Plan changes since the last trip visit when Plan was never opened', () => {
+    const activity = [entry(ANA, '2026-11-10T10:00:00Z')]
+    expect(computeBadges(input({ activity, seen: { overview: '2026-11-10T09:00:00Z' } })).plan).toBe(1)
+  })
+
   it('counts nothing for a first visit (no stored timestamp)', () => {
     const activity = [entry(ANA, '2026-11-10T10:00:00Z')]
     expect(computeBadges(input({ activity })).plan).toBe(0)
