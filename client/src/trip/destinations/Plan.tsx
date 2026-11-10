@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import Polls from '../../components/Polls'
 import DestinationHeading from '../DestinationHeading'
-import Ideas from '../Ideas'
+import { chunkIdeas } from '../ideas'
 import { ItineraryItem, useTrip } from '../TripContext'
 import { useOneShotIntent } from '../useOneShotIntent'
+import { groupByDay, nowAndNext } from '../itineraryDays'
 
 function transportIcon(transport: string): string {
   const t = transport.toLowerCase()
@@ -24,8 +25,25 @@ function transportIcon(transport: string): string {
 export default function Plan() {
   const { t, i18n } = useTranslation()
   const locale = i18n.resolvedLanguage || 'en'
-  const { trip, refetch, socket, activeUsers, apiUrl, token, currentUid, isOrganizer, setMapOpen } = useTrip()
+  const { trip, refetch, socket, activeUsers, apiUrl, token, currentUid, isOrganizer, setMapOpen, setAssistantOpen, phase, seen, activity } =
+    useTrip()
   const groupId = trip.groupId
+  const live = phase === 'live'
+  const ideaCount = chunkIdeas(trip.travelSuggestions?.raw_suggestions).length
+  const [now] = useState(() => new Date())
+  const current = nowAndNext(trip.itinerary, now)
+
+  // Opening Plan clears its "itinerary changed" badge
+  // While it is open, new activity counts as seen, so the tab you are looking at never badges itself
+  useEffect(() => {
+    seen.mark('plan')
+  }, [seen, activity.data])
+
+  // During the trip, Plan opens on today's stops (AC12)
+  useEffect(() => {
+    if (live) document.getElementById('plan-today')?.scrollIntoView({ block: 'start' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const intent = useOneShotIntent()
   const [showItineraryForm, setShowItineraryForm] = useState(intent === 'addStop')
@@ -33,34 +51,6 @@ export default function Plan() {
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
   const [conflictError, setConflictError] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
-  const [generatingItinerary, setGeneratingItinerary] = useState(false)
-
-  const handleGenerateItinerary = async () => {
-    const preferences = window.prompt(t('detail.aiPreferencesPrompt'), '')
-    if (preferences === null) return
-    setGeneratingItinerary(true)
-    try {
-      await axios.post(
-        `${apiUrl}/api/trips/${groupId}/itinerary/generate`,
-        { preferences },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      refetch()
-    } catch (err: any) {
-      alert(t('common.errorPrefix', { message: err.response?.data?.error || t('detail.generateFailed') }))
-    } finally {
-      setGeneratingItinerary(false)
-    }
-  }
-
-  // "Draft a plan with AI" from Overview lands here and starts the same flow as the Generate button
-  const generateIntentHandled = useRef(false)
-  useEffect(() => {
-    if (intent !== 'generate' || generateIntentHandled.current) return
-    generateIntentHandled.current = true
-    handleGenerateItinerary()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const handleAddItinerary = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -166,13 +156,8 @@ export default function Plan() {
             <button type="button" onClick={() => setShowItineraryForm(true)}>
               {t('trip.setup.planAction')}
             </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={handleGenerateItinerary}
-              disabled={generatingItinerary}
-            >
-              {generatingItinerary ? t('detail.generating') : t('trip.setup.draftPlan')}
+            <button type="button" className="btn-secondary" onClick={() => setAssistantOpen('draft')}>
+              {t('trip.setup.draftPlan')}
             </button>
           </div>
         </section>
@@ -185,13 +170,9 @@ export default function Plan() {
             <button type="button" className="btn-secondary" onClick={() => setMapOpen(true)}>
               {t('trip.map.short')}
             </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={handleGenerateItinerary}
-              disabled={generatingItinerary}
-            >
-              {generatingItinerary ? t('detail.generating') : t('detail.generate')}
+            {/* AI drafting lives in the Trip assistant: it proposes, the group decides (section 7.5) */}
+            <button type="button" className="btn-secondary" onClick={() => setAssistantOpen('draft')}>
+              {t('trip.assistant.draftShort')}
             </button>
             <button
               type="button"
@@ -202,8 +183,6 @@ export default function Plan() {
             </button>
           </div>
         </div>
-
-        <p className="hint">{t('detail.itineraryDisclaimer')}</p>
 
         {showItineraryForm && (
           <form className="itinerary-form" onSubmit={handleAddItinerary}>
@@ -251,36 +230,69 @@ export default function Plan() {
           </form>
         )}
 
-        <div className="itinerary-list">
-          {trip.itinerary.map((item) => {
-              const editingUser = activeUsers.find((u) => u.editingItemId === item._id)
-              return (
-                <div key={item._id} className={`itinerary-item${editingUser ? ' editing' : ''}`}>
-                  <div className="item-content">
-                    {editingUser && (
-                      <div className="editing-note">{t('detail.isEditing', { name: editingUser.userEmail })}</div>
-                    )}
-                    <h3>{item.stop}</h3>
-                    <p className="time">{new Date(item.time).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' })}</p>
-                    {item.transport && (
-                      <p className="transport">
-                        {transportIcon(item.transport)} {item.transport}
-                      </p>
-                    )}
-                    {item.notes && <p className="notes">{item.notes}</p>}
-                  </div>
-                  <div className="item-actions">
-                    <button className="edit-button" onClick={() => handleEditItinerary(item)}>
-                      ✏️
-                    </button>
-                    <button className="delete-button" onClick={() => handleDeleteItinerary(item._id)}>
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
-        </div>
+        {groupByDay(trip.itinerary, trip.startDate, now).map((group) => {
+          const heading = new Date(`${group.day}T12:00:00`).toLocaleDateString(locale, {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+          })
+          return (
+            <section
+              key={group.day}
+              id={group.isToday ? 'plan-today' : undefined}
+              className={`itinerary-day${group.isToday && live ? ' is-today' : ''}`}
+              aria-labelledby={`day-${group.day}`}
+            >
+              <h3 id={`day-${group.day}`} className="day-heading">
+                {group.dayNumber ? t('trip.plan.dayHeading', { n: group.dayNumber, date: heading }) : heading}
+                {group.isToday && live && <span className="day-today">{t('trip.plan.today')}</span>}
+              </h3>
+              <div className="itinerary-list">
+                {group.items.map((item) => {
+                  const editingUser = activeUsers.find((u) => u.editingItemId === item._id)
+                  const marker = live && current.now?._id === item._id ? 'now' : live && current.next?._id === item._id ? 'next' : null
+                  return (
+                    <div
+                      key={item._id}
+                      className={`itinerary-item${editingUser ? ' editing' : ''}${marker ? ` is-${marker}` : ''}`}
+                    >
+                      <div className="item-content">
+                        {editingUser && (
+                          <div className="editing-note">{t('detail.isEditing', { name: editingUser.userEmail })}</div>
+                        )}
+                        {marker && <span className="stop-marker">{t(`trip.plan.${marker}`)}</span>}
+                        <h3>{item.stop}</h3>
+                        <p className="time">{new Date(item.time).toLocaleTimeString(locale, { timeStyle: 'short' })}</p>
+                        {item.transport && (
+                          <p className="transport">
+                            {transportIcon(item.transport)} {item.transport}
+                          </p>
+                        )}
+                        {item.notes && <p className="notes">{item.notes}</p>}
+                      </div>
+                      <div className="item-actions">
+                        <button
+                          className="edit-button"
+                          aria-label={t('trip.plan.editStop', { stop: item.stop })}
+                          onClick={() => handleEditItinerary(item)}
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          className="delete-button"
+                          aria-label={t('trip.plan.deleteStop', { stop: item.stop })}
+                          onClick={() => handleDeleteItinerary(item._id)}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </section>
+          )
+        })}
       </div>
       )}
 
@@ -290,10 +302,14 @@ export default function Plan() {
         token={token}
         currentUid={currentUid}
         isOrganizer={isOrganizer}
-        socket={socket}
       />
 
-      <Ideas />
+      {ideaCount > 0 && (
+        <button type="button" className="overview-card summary-card ideas-link" onClick={() => setAssistantOpen('ideas')}>
+          <strong>{t('trip.assistant.ideasCount', { count: ideaCount })}</strong>
+          <span className="muted">{t('trip.assistant.ideasHint')}</span>
+        </button>
+      )}
     </>
   )
 }

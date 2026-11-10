@@ -1,24 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
-import type { Socket } from 'socket.io-client'
-
-interface Expense {
-  _id: string
-  description: string
-  amountCents: number
-  currency: string
-  paidBy: string
-  splitAmong: string[]
-  createdBy: string
-}
-
-interface Summary {
-  expenses: Expense[]
-  /** Per member, in cents: positive means the group owes them, negative means they owe */
-  balances: Record<string, number>
-  settlements: Array<{ from: string; to: string; amountCents: number }>
-}
+import { useTrip } from '../trip/TripContext'
+import type { ExpenseSummary as Summary } from '../trip/tripData'
 
 interface Member {
   userId?: string
@@ -33,7 +17,6 @@ interface Props {
   token: string | null
   currentUid?: string
   members: Member[]
-  socket: Socket | null
   /** During the trip, fast capture is the job: the add form stays open at the top (spec 004 F6, AC17) */
   liveNow?: boolean
 }
@@ -45,16 +28,19 @@ const fmt = (cents: number, currency = 'EUR', locale?: string) =>
  * Money, balance-first (spec 004 F12): your own position, then who pays whom, the trip total,
  * everyone's balance, and finally the ledger. Marking a payment as settled is R2 and not built yet.
  */
-export default function Expenses({ groupId, apiUrl, token, currentUid, members, socket, liveNow = false }: Props) {
+export default function Expenses({ groupId, apiUrl, token, currentUid, members, liveNow = false }: Props) {
   const { t, i18n } = useTranslation()
   const locale = i18n.resolvedLanguage
-  const [data, setData] = useState<Summary>({ expenses: [], balances: {}, settlements: [] })
-  const [loaded, setLoaded] = useState(false)
+  // The summary lives in TripContext so the Money badge and Overview see the same numbers
+  const { expenses: remote } = useTrip()
+  const data: Summary = remote.data
+  const setData = remote.set
+  const loaded = remote.loaded
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
   const [paidBy, setPaidBy] = useState(currentUid || '')
   const [error, setError] = useState<string | null>(null)
-  const [loadFailed, setLoadFailed] = useState(false)
+  const loadFailed = !!remote.error
   const [showForm, setShowForm] = useState(liveNow)
 
   const base = `${apiUrl}/api/expenses/trip/${groupId}`
@@ -65,32 +51,10 @@ export default function Expenses({ groupId, apiUrl, token, currentUid, members, 
   const currency = data.expenses[0]?.currency || 'EUR'
   const money = (cents: number) => fmt(cents, currency, locale)
 
-  const load = useCallback(async () => {
-    try {
-      const res = await axios.get<Summary>(base, { headers })
-      setData(res.data)
-      setLoadFailed(false)
-      setError(null)
-    } catch (err: any) {
-      setLoadFailed(true)
-      setError(err.response?.data?.error || t('expenses.loadFailed'))
-    } finally {
-      setLoaded(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [base, token])
-
-  useEffect(() => {
-    load()
-  }, [load])
-
-  useEffect(() => {
-    if (!socket) return
-    socket.on('expenses:changed', load)
-    return () => {
-      socket.off('expenses:changed', load)
-    }
-  }, [socket, load])
+  const load = () => {
+    setError(null)
+    remote.reload()
+  }
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -154,9 +118,9 @@ export default function Expenses({ groupId, apiUrl, token, currentUid, members, 
     </form>
   )
 
-  const errorLine = error && (
+  const errorLine = (error || loadFailed) && (
     <p className="text-error" role="alert">
-      {error}{' '}
+      {error || t('expenses.loadFailed')}{' '}
       {loadFailed && (
         <button type="button" className="btn-link" onClick={load}>
           {t('trip.retry')}

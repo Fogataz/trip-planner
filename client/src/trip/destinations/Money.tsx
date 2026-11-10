@@ -1,10 +1,9 @@
 import Expenses from '../../components/Expenses'
 import DestinationHeading from '../DestinationHeading'
-import { isTripLive } from '../phase'
 import { useTrip } from '../TripContext'
 
 export default function Money() {
-  const { trip, apiUrl, token, currentUid, socket } = useTrip()
+  const { trip, apiUrl, token, currentUid, phase } = useTrip()
   return (
     <>
       <DestinationHeading name="money" />
@@ -14,8 +13,7 @@ export default function Money() {
         token={token}
         currentUid={currentUid}
         members={trip.members}
-        socket={socket}
-        liveNow={isTripLive(trip.startDate, trip.endDate)}
+        liveNow={phase === 'live'}
       />
     </>
   )

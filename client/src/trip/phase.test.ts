@@ -75,6 +75,20 @@ describe.each(zones)('tripPhase boundaries in %s', (tz) => {
     expect(tripPhase(t, at(2026, 6, 11, 0, 0))).toBe('wrap')
   })
 
+  it('uses the longer approximate length when there is no end date (8 to 10 days)', () => {
+    const t = trip({ endDate: undefined, durationDays: { min: 8, max: 10 } })
+    expect(tripPhase(t, at(2026, 6, 10, 0, 0))).toBe('live')
+    // Day 10 is 19 June: still Live until 23:59
+    expect(tripPhase(t, at(2026, 6, 19, 23, 59))).toBe('live')
+    expect(tripPhase(t, at(2026, 6, 20, 0, 0))).toBe('wrap')
+    expect(isTripLive(START, undefined, at(2026, 6, 19, 12, 0), { min: 8, max: 10 })).toBe(true)
+  })
+
+  it('prefers a real end date over an approximate length', () => {
+    const t = trip({ durationDays: { min: 8, max: 10 } })
+    expect(tripPhase(t, at(2026, 6, 13, 0, 0))).toBe('wrap')
+  })
+
   it('keeps isTripLive in step with tripPhase', () => {
     for (const now of [at(2026, 6, 9, 23, 59), at(2026, 6, 10, 0, 0), at(2026, 6, 12, 23, 59), at(2026, 6, 13, 0, 0)]) {
       expect(isTripLive(START, END, now)).toBe(tripPhase(trip(), now) === 'live')

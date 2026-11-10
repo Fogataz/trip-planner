@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import TripCover from '../components/TripCover'
 import { TripProvider, useTrip } from './TripContext'
 import Assistant from './Assistant'
-import { formatDateRange } from './format'
+import { formatTripDates } from './format'
 import '../pages/TripDetail.css'
 import './trip.css'
 
@@ -27,7 +27,7 @@ function TripChrome() {
   const navigate = useNavigate()
   const location = useLocation()
   const navigationType = useNavigationType()
-  const { trip, setTrip, apiUrl, token, activeUsers, mapOpen, assistantOpen, setAssistantOpen } = useTrip()
+  const { trip, setTrip, apiUrl, token, activeUsers, mapOpen, assistantOpen, setAssistantOpen, badges } = useTrip()
   const tabsRef = useRef<HTMLElement>(null)
 
   // Set when we arrive straight from creating the trip, to nudge the cover once.
@@ -83,7 +83,7 @@ function TripChrome() {
     }
   }, [location.pathname, navigationType])
 
-  const dateRange = formatDateRange(trip.startDate, trip.endDate, locale, t('detail.tbd'))
+  const dateRange = formatTripDates(trip, locale, t)
   const route = [trip.origin?.address, trip.destination?.address].filter(Boolean).join(' → ')
 
   return (
@@ -121,7 +121,7 @@ function TripChrome() {
                 ))}
               </ul>
             )}
-            <button type="button" className="btn-secondary assistant-open" onClick={() => setAssistantOpen(true)}>
+            <button type="button" className="btn-secondary assistant-open" onClick={() => setAssistantOpen('ask')}>
               {t('trip.assistant.open')}
             </button>
           </div>
@@ -132,6 +132,15 @@ function TripChrome() {
         {TABS.map((tab) => (
           <NavLink key={tab.key} to={tab.to} end={tab.end} className="trip-tab">
             {t(`trip.tabs.${tab.key}`)}
+            {/* Needs-me badge (spec 004 section 7.6): zero renders nothing, never a grey 0 */}
+            {badges[tab.key] > 0 && (
+              <>
+                <span className="tab-badge" aria-hidden="true">
+                  {badges[tab.key] > 9 ? '9+' : badges[tab.key]}
+                </span>
+                <span className="sr-only">{t('trip.badge', { count: badges[tab.key] })}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
@@ -144,7 +153,7 @@ function TripChrome() {
       <button
         type="button"
         className="assistant-fab"
-        onClick={() => setAssistantOpen(true)}
+        onClick={() => setAssistantOpen('ask')}
         aria-label={t('trip.assistant.open')}
       >
         <span aria-hidden="true">✦</span>

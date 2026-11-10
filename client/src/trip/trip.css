@@ -623,3 +623,381 @@
     font-size: 24px;
   }
 }
+
+/* ---------- Needs-me badges (spec 004 section 7.6) ---------- */
+.trip-tab {
+  position: relative;
+}
+
+.tab-badge {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Absolutely placed in both layouts so a badge appearing never moves the label (N4) */
+@media (min-width: 769px) {
+  .tab-badge {
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+  }
+}
+
+/* ---------- Plan: itinerary by day (F11, AC11, AC12) ---------- */
+.itinerary-day + .itinerary-day {
+  margin-top: 18px;
+}
+
+.day-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 10px;
+  scroll-margin-top: calc(var(--app-header-height, 65px) + 72px);
+}
+
+.itinerary-day.is-today .day-heading {
+  color: var(--primary);
+}
+
+.day-today,
+.stop-marker {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stop-marker {
+  margin-bottom: 6px;
+}
+
+.itinerary-item.is-next .stop-marker {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+#plan-today {
+  scroll-margin-top: calc(var(--app-header-height, 65px) + 72px);
+}
+
+/* ---------- Overview: phase blocks (section 7.4) ---------- */
+a.overview-card,
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+a.overview-card:hover {
+  border-color: var(--primary);
+}
+
+.overview-card h2 + p,
+.overview-card .eyebrow + h2 {
+  margin-top: 2px;
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: var(--tap);
+  padding: 0 18px;
+  margin-top: 10px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.button-link:hover {
+  background: var(--primary-hover);
+}
+
+.vote-preview {
+  list-style: none;
+  margin: 10px 0 6px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vote-preview li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(to right, var(--primary-soft) var(--pct, 0%), transparent var(--pct, 0%));
+}
+
+.small {
+  font-size: 13px;
+}
+
+.countdown-ribbon h2 {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.mini-stops {
+  list-style: none;
+  margin: 6px 0 4px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mini-stops li {
+  display: flex;
+  gap: 12px;
+}
+
+.mini-stops time {
+  min-width: 52px;
+  color: var(--primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.now-card {
+  border-color: var(--primary);
+}
+
+.now-card h2 {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.next-line {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.live-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.live-actions .button-link {
+  margin-top: 0;
+  align-self: stretch;
+}
+
+.trip-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin: 8px 0 0;
+}
+
+.trip-summary div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.trip-summary dd {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.trip-summary dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.fact-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- Since you were away (F16, AC22) ---------- */
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-list li:last-child {
+  border-bottom: 0;
+}
+
+.activity-avatar {
+  flex: 0 0 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.activity-text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.activity-text a {
+  color: var(--text);
+}
+
+.activity-list time {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.balance-card .button-link {
+  margin-top: 6px;
+}
+
+/* ---------- Trip assistant (spec 004 section 7.5) ---------- */
+.assistant-disclaimer {
+  margin: -6px 0 0;
+}
+
+.assistant-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.assistant-tab {
+  flex: 1;
+  min-height: 40px;
+  padding: 0 8px;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.assistant-tab:hover:not(:disabled) {
+  background: var(--primary-soft);
+}
+
+.assistant-tab.is-active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.draft-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 10px;
+}
+
+.draft-bar .row-actions {
+  margin-top: 0;
+}
+
+.draft-list,
+.idea-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.draft-item,
+.idea-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--surface-2);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+}
+
+/* A draft is not part of the plan yet: dashed, until someone adds it */
+.draft-item {
+  border-color: var(--primary);
+}
+
+.draft-item .muted {
+  font-size: 13px;
+}
+
+.idea-card {
+  border-style: solid;
+}
+
+.idea-card h3 {
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.idea-card p {
+  font-size: 14px;
+}
+
+button.overview-card {
+  width: 100%;
+  text-align: left;
+  align-items: flex-start;
+  font-weight: 400;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+button.overview-card:hover:not(:disabled) {
+  background: var(--surface);
+  border-color: var(--primary);
+}
