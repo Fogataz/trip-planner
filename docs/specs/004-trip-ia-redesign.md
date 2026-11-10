@@ -1,7 +1,7 @@
 # Spec 004: Trip Information Architecture
 
-Status: approved
-Owner: Alberto Calvo · Approved: 2026-11-10 · Shipped: — · PR: —
+Status: building
+Owner: Alberto Calvo · Approved: 2026-11-10 · Shipped: — · PR: — (slice 1 on branch `feature/trip-ia-slice-1`)
 Wireframes: [`wireframes/004-trip-ia-redesign/index.html`](../../wireframes/004-trip-ia-redesign/index.html)
 
 > Benchmark (§6) → define (§7) → wireframes (§15) → spec → gate → **build (§13)**.

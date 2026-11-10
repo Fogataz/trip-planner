@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { useSocket } from './hooks/useSocket'
 import { useAuth } from './hooks/useAuth'
 import Auth from './pages/Auth'
 import TripPlanner from './pages/TripPlanner'
-import TripDetail from './pages/TripDetail'
+import TripLayout from './trip/TripLayout'
+import Overview from './trip/destinations/Overview'
+import Plan from './trip/destinations/Plan'
+import Money from './trip/destinations/Money'
+import Group from './trip/destinations/Group'
 import AcceptInvite from './pages/AcceptInvite'
 import LanguageSwitcher from './components/LanguageSwitcher'
 import './App.css'
@@ -13,6 +17,12 @@ import './App.css'
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('authToken')
   return token ? <>{children}</> : <Navigate to="/" />
+}
+
+// Unknown trip sub-paths fall back to Overview
+function ToOverview() {
+  const { groupId } = useParams()
+  return <Navigate to={`/trips/${groupId}`} replace />
 }
 
 function AppHeader() {
@@ -92,10 +102,16 @@ export default function App() {
               path="/trips/:groupId"
               element={
                 <ProtectedRoute>
-                  <TripDetail />
+                  <TripLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<Overview />} />
+              <Route path="plan" element={<Plan />} />
+              <Route path="money" element={<Money />} />
+              <Route path="group" element={<Group />} />
+              <Route path="*" element={<ToOverview />} />
+            </Route>
           </Routes>
         </main>
       </div>

@@ -11,6 +11,14 @@ This page describes what the product does today, based on the code in `server/` 
 ## Trips
 
 - Create, list, view, update and delete trips
+- **Trip page structure (spec 004, slice 1):** a trip opens on one of four destinations, each its own URL under `/trips/:groupId`: Overview (`/`), Plan (`/plan`), Money (`/money`) and Group (`/group`). The cover, title, route, dates and presence stay on screen across all four. The tabs are a bottom bar on phones (up to 768px) and a segmented bar above that. See [spec 004](specs/004-trip-ia-redesign.md)
+  - **Overview:** key facts and the Stay (accommodation) card, plus links to the other destinations and the live map
+  - **Plan:** itinerary (add, edit, delete, generate with AI), polls, and the AI travel suggestions as a collapsed "Trip ideas" card
+  - **Money:** expenses and settle up
+  - **Group:** members, invite by email and link, and push notifications for this device
+  - **Map:** live location opens as a full-screen mode from Overview or Plan, and closes with Esc. Closing it stops sharing
+  - **Assistant:** the "Ask the assistant" button opens the Q&A from any destination
+  - The trip is fetched once and shared by all four destinations, which stay current through the trip's socket. AI travel suggestions arrive by the `trip:suggestionsUpdated` socket event, with a short backed-off re-fetch as a fallback
 - Each trip has a name, destination, origin, start and end dates, and accommodation
 - Only active members can view a trip, and only the organizer can change or delete it (see `server/routes/trips.js`)
 
@@ -46,6 +54,7 @@ This page describes what the product does today, based on the code in `server/` 
 
 ## AI Q&A
 
+- Opened from the "Ask the assistant" button, available on every destination of a trip
 - Members ask a question about the trip and the AI answers it. Questions and answers are listed for the trip (`server/routes/comments.js`)
 - Answers are written in the asker's language
 

@@ -231,5 +231,41 @@
       "cannotOpen": "Não foi possível abrir essa imagem.",
       "cannotProcess": "Não foi possível processar essa imagem neste navegador."
     }
+  },
+  "trip": {
+    "tabs": {
+      "overview": "Resumo",
+      "plan": "Plano",
+      "money": "Dinheiro",
+      "group": "Grupo"
+    },
+    "navLabel": "Secções da viagem",
+    "retry": "Tentar novamente",
+    "overview": {
+      "factsTitle": "Os dados",
+      "summaryTitle": "Nesta viagem",
+      "planSummary_one": "{{count}} paragem planeada",
+      "planSummary_other": "{{count}} paragens planeadas",
+      "moneySummary": "Despesas e quem deve a quem",
+      "groupSummary_one": "{{count}} membro",
+      "groupSummary_other": "{{count}} membros",
+      "stayTitle": "Onde vão ficar"
+    },
+    "map": {
+      "open": "Onde está cada um",
+      "close": "Fechar mapa"
+    },
+    "assistant": {
+      "open": "Perguntar ao assistente",
+      "title": "Assistente da viagem",
+      "close": "Fechar assistente"
+    },
+    "ideas": {
+      "summary": "Ideias de viagem do assistente"
+    },
+    "group": {
+      "notificationsTitle": "Notificações",
+      "notificationsHint": "Notificações push neste dispositivo"
+    }
   }
 }

@@ -18,6 +18,8 @@ interface Props {
   socket: Socket | null
   currentUid?: string
   destination?: { lat?: number; lng?: number; address?: string }
+  /** Who is sharing right now, so the map can open after the join snapshot was received */
+  initialLocations?: Record<string, SharedLocation>
 }
 
 const STALE_AFTER_MS = 2 * 60 * 1000
@@ -35,9 +37,9 @@ function FitBounds({ points }: { points: Array<[number, number]> }) {
   return null
 }
 
-export default function LiveLocationMap({ groupId, socket, currentUid, destination }: Props) {
+export default function LiveLocationMap({ groupId, socket, currentUid, destination, initialLocations }: Props) {
   const { t } = useTranslation()
-  const [locations, setLocations] = useState<Record<string, SharedLocation>>({})
+  const [locations, setLocations] = useState<Record<string, SharedLocation>>(initialLocations ?? {})
   const [sharing, setSharing] = useState(false)
   const [geoError, setGeoError] = useState<string | null>(null)
   const [now, setNow] = useState(Date.now())

@@ -231,5 +231,41 @@
       "cannotOpen": "That image could not be opened.",
       "cannotProcess": "That image could not be processed in this browser."
     }
+  },
+  "trip": {
+    "tabs": {
+      "overview": "Overview",
+      "plan": "Plan",
+      "money": "Money",
+      "group": "Group"
+    },
+    "navLabel": "Trip sections",
+    "retry": "Try again",
+    "overview": {
+      "factsTitle": "The facts",
+      "summaryTitle": "In this trip",
+      "planSummary_one": "{{count}} stop planned",
+      "planSummary_other": "{{count}} stops planned",
+      "moneySummary": "Expenses and who owes whom",
+      "groupSummary_one": "{{count}} member",
+      "groupSummary_other": "{{count}} members",
+      "stayTitle": "Where you're staying"
+    },
+    "map": {
+      "open": "Where everyone is",
+      "close": "Close map"
+    },
+    "assistant": {
+      "open": "Ask the assistant",
+      "title": "Trip assistant",
+      "close": "Close assistant"
+    },
+    "ideas": {
+      "summary": "Trip ideas from the assistant"
+    },
+    "group": {
+      "notificationsTitle": "Notifications",
+      "notificationsHint": "Push notifications on this device"
+    }
   }
 }
