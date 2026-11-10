@@ -1,0 +1,183 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-10T00:00:00Z" },
+  "title": "Trip IA — lo-fi wireframes",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "designSystems": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "Trips list" },
+    "Overview-Setup.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "Overview · Setup" },
+    "Overview-Planning.dc.html": { "x": 0, "y": 1600, "w": 390, "h": 844, "title": "Overview · Planning" },
+    "Overview-Countdown.dc.html": { "x": 470, "y": 1600, "w": 390, "h": 844, "title": "Overview · Countdown" },
+    "Overview-Live.dc.html": { "x": 940, "y": 1600, "w": 390, "h": 844, "title": "Overview · Live" },
+    "Overview-Wrap.dc.html": { "x": 1410, "y": 1600, "w": 390, "h": 844, "title": "Overview · Wrap" },
+    "Plan.dc.html": { "x": 0, "y": 3200, "w": 390, "h": 844, "title": "Plan" },
+    "Plan-Empty.dc.html": { "x": 470, "y": 3200, "w": 390, "h": 844, "title": "Plan · empty" },
+    "Money.dc.html": { "x": 940, "y": 3200, "w": 390, "h": 844, "title": "Money" },
+    "Money-Settled.dc.html": { "x": 1410, "y": 3200, "w": 390, "h": 844, "title": "Money · settled" },
+    "Group.dc.html": { "x": 1880, "y": 3200, "w": 390, "h": 844, "title": "Group" },
+    "Map-Mode.dc.html": { "x": 0, "y": 4800, "w": 390, "h": 844, "title": "Map mode" },
+    "Assistant.dc.html": { "x": 470, "y": 4800, "w": 390, "h": 844, "title": "Assistant" },
+    "Desktop-Overview.dc.html": { "x": 0, "y": 6400, "w": 1280, "h": 900, "title": "Desktop · Overview" },
+    "Desktop-Plan.dc.html": { "x": 1360, "y": 6400, "w": 1280, "h": 900, "title": "Desktop · Plan + map" }
+  },
+  "order": [
+    "Main.dc.html",
+    "Overview-Setup.dc.html",
+    "Overview-Planning.dc.html",
+    "Overview-Countdown.dc.html",
+    "Overview-Live.dc.html",
+    "Overview-Wrap.dc.html",
+    "Plan.dc.html",
+    "Plan-Empty.dc.html",
+    "Money.dc.html",
+    "Money-Settled.dc.html",
+    "Group.dc.html",
+    "Map-Mode.dc.html",
+    "Assistant.dc.html",
+    "Desktop-Overview.dc.html",
+    "Desktop-Plan.dc.html"
+  ],
+  "notes": {
+    "t-rowA": {
+      "x": 0,
+      "y": -240,
+      "kind": "title1",
+      "maxW": 860,
+      "text": "1 · Arriving — the collection, and a brand-new trip"
+    },
+    "legend": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "fill": "blue",
+      "text": "HOW TO READ THESE\n\nLo-fi on purpose: greyscale, no brand colour, no type decisions. Judge structure only — what sits where, and what is loudest.\n\nSolid box = ships in this redesign.\nDashed box = reserved slot, renders nothing until that feature lands (R2 settlement, R3 transport, R4 notifications, chat).\nGrey block = cover image.\n\nF/AC numbers refer to docs/specs/004-trip-ia-redesign.md."
+    },
+    "decisions": {
+      "x": 940,
+      "y": 470,
+      "w": 390,
+      "fill": "green",
+      "text": "SETTLED 2026-11-10\n\nD1 Four destinations: Overview · Plan · Money · Group\nD2 Map is a mode, not a tab\nD3 One assistant, not three AI surfaces\nD4 Countdown starts at T-7\nD5 Chat reserved, not in v1\nD6 Desktop = segmented tabs\nD7 Three build slices\nD8 Covers land first"
+    },
+    "n-trips": {
+      "x": 0,
+      "y": 892,
+      "w": 390,
+      "text": "TRIPS LIST (F15, AC—)\n\nGrouped Live now / Upcoming / Past, nearest first. No tab bar here: tabs belong to a trip, not to the collection.\n\nThe past card carries 'You owe €42 · Settle up'. That pill is the only reason anyone opens this app after a trip ends."
+    },
+    "n-setup": {
+      "x": 470,
+      "y": 892,
+      "w": 390,
+      "text": "OVERVIEW · SETUP (F4, AC6, AC25)\n\nFixes A5: today a new trip shows five empty sections at once. Here it shows ONE job — invite the group — and three quiet secondary actions.\n\nThe four tabs are already present and carry no badges. Nav never changes shape, even when the trip is empty."
+    },
+    "t-rowB": {
+      "x": 0,
+      "y": 1360,
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "2 · Overview adapts to the phase — the four tabs never move"
+    },
+    "n-planning": {
+      "x": 0,
+      "y": 2492,
+      "w": 390,
+      "text": "PLANNING (AC20, AC22)\n\nTop block is the open poll waiting on YOUR vote — the needs-me layer that fixes A7.\n\n'Since you were away' is the activity log we already write server-side and have never shown (A10).\n\nPlan tab carries badge 1."
+    },
+    "n-countdown": {
+      "x": 470,
+      "y": 2492,
+      "w": 390,
+      "text": "COUNTDOWN · T-7 (AC7, F18)\n\nThe job changes from deciding to being certain. Day-1 logistics go above the fold.\n\nTwo dashed slots: transport status (R3) and packing. They are drawn now so shipping R3 is 'fill the slot', not 'find somewhere to put it'."
+    },
+    "n-live": {
+      "x": 940,
+      "y": 2492,
+      "w": 390,
+      "text": "LIVE (AC8, AC17, D2)\n\nA now screen, not a summary. Now/Next first, then where everyone is.\n\nAdd expense is one tap from the top — the only place F6 allows an open composer, because fast capture is the whole job here.\n\nMap opens as a mode."
+    },
+    "n-wrap": {
+      "x": 1410,
+      "y": 2492,
+      "w": 390,
+      "text": "WRAP (AC9, R2)\n\nAfter the trip exactly one thing matters. Balance and Settle up are the first block — this is the home for the settlement work in the roadmap.\n\nEverything else on this screen is memory, not task."
+    },
+    "t-rowC": {
+      "x": 0,
+      "y": 2960,
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "3 · The three fixed destinations"
+    },
+    "n-plan": {
+      "x": 0,
+      "y": 4092,
+      "w": 390,
+      "text": "PLAN (F11, AC11-14)\n\nDay-grouped itinerary — today's group is marked during Live.\n\nDecisions (polls) live here: a poll is nearly always a question about the plan.\n\nIdeas is the old AI essay, collapsed. It no longer sits in the header pushing the itinerary below the fold (A3).\n\nEvery create form is behind a button (F6)."
+    },
+    "n-planempty": {
+      "x": 470,
+      "y": 4092,
+      "w": 390,
+      "text": "PLAN · EMPTY (F14, AC25)\n\nThe pattern every destination uses: one line saying what this is for, then the primary action, then the assistant as the low-effort path.\n\nFour destinations on a young product feel empty without this. The empty states are not polish — they are what makes the structure survive."
+    },
+    "n-money": {
+      "x": 940,
+      "y": 4092,
+      "w": 390,
+      "text": "MONEY (F12, AC15)\n\nSplitwise-shaped: your own position first, settle up as the primary action, then the trip total, then the ledger.\n\nToday this information is at the bottom of a 10-section scroll, under a form. The server already computes settlements."
+    },
+    "n-moneysettled": {
+      "x": 1410,
+      "y": 4092,
+      "w": 390,
+      "text": "MONEY · SETTLED (AC16)\n\nWhen nothing is owed the screen says so plainly, with no red and no zero badge.\n\nA debt UI that shouts when there is no debt trains people to ignore it."
+    },
+    "n-group": {
+      "x": 1880,
+      "y": 4092,
+      "w": 390,
+      "text": "GROUP (F13, AC18-19, R4, D5)\n\nAvatars and names replace the raw email addresses currently shown in presence, members, polls and expenses (A9).\n\nNotification preferences land here (R4). Chat is a dashed slot — we cannot out-chat WhatsApp; our advantage is state, not stream."
+    },
+    "t-rowD": {
+      "x": 0,
+      "y": 4560,
+      "kind": "title1",
+      "maxW": 860,
+      "text": "4 · Modes, not tabs"
+    },
+    "n-map": {
+      "x": 0,
+      "y": 5692,
+      "w": 390,
+      "text": "MAP MODE (F9, D2)\n\nFull screen, entered and dismissed, Esc closes it. Not a fifth tab: live location is useful for ~2 days of a 60-day object.\n\nThe sharing state and its countdown are visible while the map is open, never buried in a settings screen."
+    },
+    "n-assistant": {
+      "x": 470,
+      "y": 5692,
+      "w": 390,
+      "text": "ASSISTANT (F10, D3)\n\nReplaces three disconnected AI surfaces: auto travel suggestions, 'Generate with AI', and Ask AI (A8).\n\nOne contract: it drafts, the group decides. Every answer arrives as proposals with Add to plan / Dismiss.\n\nThe accuracy disclaimer appears once, here, instead of beside every list."
+    },
+    "t-rowE": {
+      "x": 0,
+      "y": 6160,
+      "kind": "title1",
+      "maxW": 2640,
+      "text": "5 · Desktop — same routes, different chrome"
+    },
+    "n-desktop-o": {
+      "x": 0,
+      "y": 7348,
+      "w": 600,
+      "text": "DESKTOP · OVERVIEW (D6, N1)\n\nThe bottom tab bar becomes segmented tabs under the trip header, inside the existing 1100px container. Same four routes, same order, same badges.\n\nA left rail only earns its place beyond five destinations, and we have capped it at four."
+    },
+    "n-desktop-p": {
+      "x": 1360,
+      "y": 7348,
+      "w": 600,
+      "text": "DESKTOP · PLAN + MAP (D2, F9)\n\nOn a wide screen the map becomes a companion panel beside the itinerary rather than a full-screen takeover — the Wanderlog pattern. Same mode, more room.\n\nIt is still not a tab."
+    }
+  }
+}

@@ -1,0 +1,1668 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trip IA redesign — lo-fi wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ink:#15181d; --ink-2:#5b6472; --ink-3:#8b94a3;
+    --line:#c9ced8; --line-soft:#e3e7ee; --page:#fbfcfe; --card:#fff;
+    --note:#b4530a; --note-bg:#fdf3e7; --note-line:#e8b482;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--page); color:var(--ink);
+    font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+  h1{font-size:26px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);margin:0 0 4px;font-size:14px}
+  .sub a{color:#1d4ed8}
+  .cards{display:flex;flex-wrap:wrap;gap:16px;margin:28px 0 44px}
+  .card{flex:1 1 320px;border:1px solid var(--line-soft);background:var(--card);border-radius:10px;padding:16px 18px}
+  .card h3{margin:0 0 8px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+  .card p{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+  .card p:last-child{margin-bottom:0}
+
+  .row{margin:0 0 56px}
+  .row h2{font-size:17px;margin:0 0 20px;padding-bottom:10px;border-bottom:1px solid var(--line-soft);letter-spacing:-.01em}
+  .strip{display:flex;flex-wrap:wrap;gap:34px 28px;align-items:flex-start}
+
+  .board{margin:0;width:390px}
+  .label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 8px}
+  .label .name{font-size:13px;font-weight:600}
+  .label .dims{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .stage{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .frame{position:absolute;top:0;left:0;transform-origin:top left;color:#1a1a1a}
+  .frame button{font:inherit;cursor:default}
+  .frame a{color:#1d4ed8}
+
+  .note{margin-top:12px;border-left:3px solid var(--note-line);background:var(--note-bg);border-radius:0 8px 8px 0;padding:11px 13px}
+  .note h3{margin:0 0 6px;font-size:10.5px;letter-spacing:.07em;color:var(--note);font-weight:700}
+  .note p{margin:0 0 7px;font-size:12.5px;line-height:1.5;color:#5a4330}
+  .note p:last-child{margin-bottom:0}
+
+  /* desktop boards are scaled down, so they get a wider column */
+  #desktop-overview,#desktop-plan{width:717px}
+  @media (max-width:820px){
+    #desktop-overview,#desktop-plan{width:100%}
+    .board{width:100%}
+    .stage{max-width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Trip IA redesign — lo-fi wireframes</h1>
+  <p class="sub">Spec 004: <a href="../../docs/specs/004-trip-ia-redesign.md">docs/specs/004-trip-ia-redesign.md</a>. The handoff and the build prompt are §16 of that spec.</p>
+  <p class="sub">15 artboards. Everything on this page is static markup — nothing here is interactive, and none of it is production code.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>HOW TO READ THESE</h3>
+      <p>Lo-fi on purpose: greyscale, no brand colour, no type decisions. Judge structure only — what sits where, and what is loudest.</p>
+          <p>Solid box = ships in this redesign.<br>Dashed box = reserved slot, renders nothing until that feature lands (R2 settlement, R3 transport, R4 notifications, chat).<br>Grey block = cover image.</p>
+          <p>F/AC numbers refer to docs/specs/004-trip-ia-redesign.md.</p>
+    </div>
+    <div class="card">
+      <h3>SETTLED 2026-11-10</h3>
+      <p>D1 Four destinations: Overview · Plan · Money · Group<br>D2 Map is a mode, not a tab<br>D3 One assistant, not three AI surfaces<br>D4 Countdown starts at T-7<br>D5 Chat reserved, not in v1<br>D6 Desktop = segmented tabs<br>D7 Three build slices<br>D8 Covers land first</p>
+    </div>
+  </div>
+
+  <section class="row">
+    <h2>1 · Arriving — the collection, and a brand-new trip</h2>
+    <div class="strip">
+      <figure class="board" id="main">
+        <figcaption class="label"><span class="name">Trips list</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <!-- app header -->
+  <div style="height: 56px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 16px">
+    <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px">Trip Planner</span>
+    <div style="display: flex; align-items: center; gap: 12px">
+      <button type="button" aria-label="Activity, 2 new" style="position: relative; background: none; border: none; padding: 0; color: #1a1a1a; display: flex">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+        <span style="position: absolute; top: -3px; right: -4px; min-width: 14px; height: 14px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">2</span>
+      </button>
+      <span style="width: 26px; height: 26px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #6b6b6b">A</span>
+    </div>
+  </div>
+
+  <!-- body -->
+  <div style="flex: 1; overflow: hidden; padding: 16px">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.4px">Your trips</h1>
+      <button type="button" style="background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        New trip
+      </button>
+    </div>
+
+    <!-- LIVE NOW -->
+    <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.9px; color: #6b6b6b; margin-bottom: 8px">LIVE NOW</div>
+    <div style="border: 1px solid #1a1a1a; border-radius: 10px; overflow: hidden; margin-bottom: 20px">
+      <div style="height: 64px; background: #ececec; display: flex; align-items: flex-end; padding: 8px 10px">
+        <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+      </div>
+      <div style="padding: 10px 12px 12px">
+        <div style="font-size: 15px; font-weight: 600">Madrid Gathering</div>
+        <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Barcelona → Madrid · 4 going</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px">
+          <span style="font-size: 10px; font-weight: 600; background: #1a1a1a; color: #fff; border-radius: 99px; padding: 3px 7px">DAY 2 OF 2</span>
+          <span style="font-size: 11px; color: #1a1a1a">Next: Mercado de San Miguel · 13:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPCOMING -->
+    <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.9px; color: #6b6b6b; margin-bottom: 8px">UPCOMING</div>
+    <div style="border: 1px solid #cfcfcf; border-radius: 10px; overflow: hidden; margin-bottom: 20px">
+      <div style="height: 64px; background: #f1f1f1; display: flex; align-items: flex-end; padding: 8px 10px">
+        <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+      </div>
+      <div style="padding: 10px 12px 12px">
+        <div style="font-size: 15px; font-weight: 600">Lisbon in March</div>
+        <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Barcelona → Lisbon · 6 going</div>
+        <div style="font-size: 11px; color: #6b6b6b; margin-top: 8px">In 112 days · 8 stops planned</div>
+      </div>
+    </div>
+
+    <!-- PAST -->
+    <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.9px; color: #6b6b6b; margin-bottom: 8px">PAST</div>
+    <div style="border: 1px solid #cfcfcf; border-radius: 10px; overflow: hidden; background: #fafafa">
+      <div style="padding: 10px 12px 12px">
+        <div style="font-size: 15px; font-weight: 600; color: #6b6b6b">Porto weekend</div>
+        <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px">12–14 Sep · 5 going</div>
+        <button type="button" style="margin-top: 9px; width: 100%; background: #fff; border: 1px solid #1a1a1a; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px">
+          You owe €42 · Settle up
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>TRIPS LIST (F15, AC—)</h3>
+          <p>Grouped Live now / Upcoming / Past, nearest first. No tab bar here: tabs belong to a trip, not to the collection.</p>
+          <p>The past card carries 'You owe €42 · Settle up'. That pill is the only reason anyone opens this app after a trip ends.</p>
+        </div>
+      </figure>
+      <figure class="board" id="overview-setup">
+        <figcaption class="label"><span class="name">Overview · Setup</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <!-- cover: none yet -->
+  <div style="height: 110px; flex: none; background: #f4f4f4; border-bottom: 1px solid #e4e4e4; display: flex; align-items: center; justify-content: center">
+    <button type="button" style="background: #fff; border: 1px solid #cfcfcf; border-radius: 8px; padding: 7px 12px; font-size: 11px; font-weight: 600; color: #6b6b6b">Add cover</button>
+  </div>
+
+  <div style="flex: none; padding: 10px 16px 12px; border-bottom: 1px solid #cfcfcf">
+    <h1 style="margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+    <div style="font-size: 12px; color: #6b6b6b; margin-top: 3px">Barcelona → Madrid · 24–25 Nov · 1 going</div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 14px 16px">
+
+    <div style="border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 14px">
+      <div style="font-size: 15px; font-weight: 700">Invite the group</div>
+      <div style="font-size: 12px; color: #6b6b6b; margin-top: 4px; line-height: 1.45">A trip is better with people. Send the link, then start deciding together.</div>
+      <button type="button" style="margin-top: 11px; width: 100%; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: 600">Copy invite link</button>
+      <button type="button" style="margin-top: 7px; width: 100%; background: #fff; color: #1a1a1a; border: 1px solid #cfcfcf; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: 600">Invite by email</button>
+    </div>
+
+    <div style="margin-top: 16px; border: 1px solid #cfcfcf; border-radius: 10px; overflow: hidden">
+      <button type="button" style="width: 100%; background: #fff; border: none; border-bottom: 1px solid #e4e4e4; padding: 13px 12px; display: flex; align-items: center; justify-content: space-between; text-align: left">
+        <span style="font-size: 13px; font-weight: 500">Add a cover</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <button type="button" style="width: 100%; background: #fff; border: none; border-bottom: 1px solid #e4e4e4; padding: 13px 12px; display: flex; align-items: center; justify-content: space-between; text-align: left">
+        <span style="font-size: 13px; font-weight: 500">Add where you're staying</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <button type="button" style="width: 100%; background: #fff; border: none; padding: 13px 12px; display: flex; align-items: center; justify-content: space-between; text-align: left">
+        <span style="font-size: 13px; font-weight: 500">Draft a plan with the assistant</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <div style="margin-top: 16px; font-size: 11px; color: #6b6b6b; line-height: 1.5">
+      One job on screen, not five empty sections.
+    </div>
+
+  </div>
+
+  <!-- tab bar -->
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 600">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>OVERVIEW · SETUP (F4, AC6, AC25)</h3>
+          <p>Fixes A5: today a new trip shows five empty sections at once. Here it shows ONE job — invite the group — and three quiet secondary actions.</p>
+          <p>The four tabs are already present and carry no badges. Nav never changes shape, even when the trip is empty.</p>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="row">
+    <h2>2 · Overview adapts to the phase — the four tabs never move</h2>
+    <div class="strip">
+      <figure class="board" id="overview-planning">
+        <figcaption class="label"><span class="name">Overview · Planning</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 110px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 10px 16px 11px; border-bottom: 1px solid #cfcfcf; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+    <div>
+      <h1 style="margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+      <div style="font-size: 12px; color: #6b6b6b; margin-top: 3px">Barcelona → Madrid · 24–25 Nov</div>
+    </div>
+    <div style="display: flex; flex: none; margin-top: 4px">
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #ececec; border: 1.5px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">A</span>
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #e0e0e0; border: 1.5px solid #fff; margin-left: -7px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">L</span>
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #d4d4d4; border: 1.5px solid #fff; margin-left: -7px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">M</span>
+    </div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 14px 16px">
+
+    <!-- needs your vote -->
+    <div style="border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 13px">
+      <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #1a1a1a">NEEDS YOUR VOTE</div>
+      <div style="font-size: 14px; font-weight: 600; margin-top: 6px">Where do we eat on day 2?</div>
+      <div style="margin-top: 9px; display: flex; flex-direction: column; gap: 5px">
+        <div style="height: 26px; border: 1px solid #cfcfcf; border-radius: 6px; position: relative; overflow: hidden">
+          <div style="position: absolute; inset: 0 55% 0 0; background: #ececec"></div>
+          <div style="position: relative; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 11px"><span>Casa Botín</span><span style="color: #6b6b6b">45%</span></div>
+        </div>
+        <div style="height: 26px; border: 1px solid #cfcfcf; border-radius: 6px; position: relative; overflow: hidden">
+          <div style="position: absolute; inset: 0 70% 0 0; background: #ececec"></div>
+          <div style="position: relative; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 11px"><span>Mercado de San Miguel</span><span style="color: #6b6b6b">30%</span></div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px">
+        <span style="font-size: 11px; color: #6b6b6b">2 of 4 voted · closes in 2 days</span>
+        <button type="button" style="background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 7px 14px; font-size: 12px; font-weight: 600">Vote</button>
+      </div>
+    </div>
+
+    <!-- plan progress -->
+    <button type="button" style="margin-top: 12px; width: 100%; text-align: left; background: #fff; border: 1px solid #cfcfcf; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between">
+      <span>
+        <span style="display: block; font-size: 13px; font-weight: 600">Your plan</span>
+        <span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 2px">4 stops · day 2 has nothing yet</span>
+      </span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <!-- activity -->
+    <div style="margin-top: 12px; border: 1px solid #cfcfcf; border-radius: 10px; padding: 12px">
+      <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">SINCE YOU WERE AWAY</div>
+      <div style="margin-top: 9px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px">
+          <span style="width: 20px; height: 20px; flex: none; border-radius: 99px; background: #ececec; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">A</span>
+          <span>Ana added <strong style="font-weight: 600">Prado Museum</strong></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px">
+          <span style="width: 20px; height: 20px; flex: none; border-radius: 99px; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">L</span>
+          <span>Luis set the stay to <strong style="font-weight: 600">Hotel Riu Plaza</strong></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px">
+          <span style="width: 20px; height: 20px; flex: none; border-radius: 99px; background: #d4d4d4; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">M</span>
+          <span>Marta joined the trip</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ideas -->
+    <button type="button" style="margin-top: 12px; width: 100%; text-align: left; background: #fff; border: 1px solid #cfcfcf; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 13px; font-weight: 500">12 ideas from the assistant</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 600">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <span style="position: relative; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; min-width: 15px; height: 15px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">1</span>
+      </span>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>PLANNING (AC20, AC22)</h3>
+          <p>Top block is the open poll waiting on YOUR vote — the needs-me layer that fixes A7.</p>
+          <p>'Since you were away' is the activity log we already write server-side and have never shown (A10).</p>
+          <p>Plan tab carries badge 1.</p>
+        </div>
+      </figure>
+      <figure class="board" id="overview-countdown">
+        <figcaption class="label"><span class="name">Overview · Countdown</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 110px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 10px 16px 11px; border-bottom: 1px solid #cfcfcf; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+    <div>
+      <h1 style="margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+      <div style="font-size: 12px; color: #6b6b6b; margin-top: 3px">Barcelona → Madrid · 24–25 Nov</div>
+    </div>
+    <div style="display: flex; flex: none; margin-top: 4px">
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #ececec; border: 1.5px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">A</span>
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #e0e0e0; border: 1.5px solid #fff; margin-left: -7px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">L</span>
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #d4d4d4; border: 1.5px solid #fff; margin-left: -7px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">M</span>
+    </div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 14px 16px">
+
+    <!-- countdown ribbon -->
+    <div style="background: #1a1a1a; color: #fff; border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 17px; font-weight: 700; letter-spacing: -0.3px">3 days to go</span>
+      <span style="font-size: 11px; color: #d4d4d4">Leaves Mon 09:40</span>
+    </div>
+
+    <!-- day 1 logistics -->
+    <div style="margin-top: 12px; border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 13px">
+      <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #1a1a1a">DAY 1 STARTS</div>
+      <div style="margin-top: 9px; display: flex; gap: 10px; align-items: flex-start">
+        <span style="font-size: 13px; font-weight: 700; flex: none; width: 42px">09:40</span>
+        <span>
+          <span style="display: block; font-size: 13px; font-weight: 600">Train to Madrid</span>
+          <span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 2px">Barcelona Sants → Madrid Atocha</span>
+        </span>
+      </div>
+      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e4e4e4; display: flex; gap: 10px; align-items: flex-start">
+        <span style="font-size: 13px; font-weight: 700; flex: none; width: 42px">15:00</span>
+        <span>
+          <span style="display: block; font-size: 13px; font-weight: 600">Check in · Hotel Riu Plaza</span>
+          <span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 2px">Gran Vía 84</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- reserved: transport -->
+    <div style="margin-top: 12px; border: 1.5px dashed #b0b0b0; border-radius: 10px; padding: 12px">
+      <div style="font-size: 12px; font-weight: 600; color: #6b6b6b">Transport status</div>
+      <div style="font-size: 11px; color: #6b6b6b; margin-top: 3px">Reserved slot — fills when R3 ships</div>
+    </div>
+
+    <!-- confirmations -->
+    <div style="margin-top: 12px; border: 1px solid #cfcfcf; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px">
+      <span>
+        <span style="display: block; font-size: 13px; font-weight: 600">2 of 4 haven't confirmed</span>
+        <span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 2px">Marta and Luis</span>
+      </span>
+      <button type="button" style="flex: none; background: #fff; border: 1px solid #1a1a1a; border-radius: 7px; padding: 7px 12px; font-size: 12px; font-weight: 600">Nudge</button>
+    </div>
+
+    <!-- reserved: packing -->
+    <div style="margin-top: 12px; border: 1.5px dashed #b0b0b0; border-radius: 10px; padding: 12px">
+      <div style="font-size: 12px; font-weight: 600; color: #6b6b6b">Packing checklist</div>
+      <div style="font-size: 11px; color: #6b6b6b; margin-top: 3px">Reserved slot — not in v1</div>
+    </div>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 600">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <span style="position: relative; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; min-width: 15px; height: 15px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">1</span>
+      </span>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>COUNTDOWN · T-7 (AC7, F18)</h3>
+          <p>The job changes from deciding to being certain. Day-1 logistics go above the fold.</p>
+          <p>Two dashed slots: transport status (R3) and packing. They are drawn now so shipping R3 is 'fill the slot', not 'find somewhere to put it'.</p>
+        </div>
+      </figure>
+      <figure class="board" id="overview-live">
+        <figcaption class="label"><span class="name">Overview · Live</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 86px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 9px 16px 10px; border-bottom: 1px solid #cfcfcf; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+    <div>
+      <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+      <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Day 2 of 2 · Madrid</div>
+    </div>
+    <div style="display: flex; flex: none; margin-top: 3px">
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #ececec; border: 1.5px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">A</span>
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #e0e0e0; border: 1.5px solid #fff; margin-left: -7px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">L</span>
+      <span style="width: 22px; height: 22px; border-radius: 99px; background: #d4d4d4; border: 1.5px solid #fff; margin-left: -7px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">M</span>
+    </div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 12px 16px">
+
+    <!-- NOW -->
+    <div style="border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 12px 13px">
+      <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px">NOW</div>
+      <div style="font-size: 16px; font-weight: 700; margin-top: 5px; letter-spacing: -0.2px">Mercado de San Miguel</div>
+      <div style="font-size: 11px; color: #6b6b6b; margin-top: 3px">Until 14:30 · Plaza de San Miguel</div>
+    </div>
+
+    <!-- NEXT -->
+    <div style="margin-top: 10px; border: 1px solid #cfcfcf; border-radius: 10px; padding: 11px 13px; display: flex; align-items: center; gap: 10px">
+      <span style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; flex: none">NEXT</span>
+      <span style="font-size: 12px"><strong style="font-weight: 600">15:30 Palacio Real</strong> · 12 min walk</span>
+    </div>
+
+    <!-- where everyone is -->
+    <div style="margin-top: 10px; border: 1px solid #cfcfcf; border-radius: 10px; overflow: hidden">
+      <div style="height: 70px; background: #ececec; position: relative">
+        <span style="position: absolute; left: 70px; top: 26px; width: 11px; height: 11px; border-radius: 99px; background: #1a1a1a; border: 2px solid #fff"></span>
+        <span style="position: absolute; left: 160px; top: 40px; width: 11px; height: 11px; border-radius: 99px; background: #6b6b6b; border: 2px solid #fff"></span>
+        <span style="position: absolute; left: 250px; top: 20px; width: 11px; height: 11px; border-radius: 99px; background: #6b6b6b; border: 2px solid #fff"></span>
+      </div>
+      <button type="button" style="width: 100%; background: #fff; border: none; border-top: 1px solid #e4e4e4; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; text-align: left">
+        <span style="font-size: 12px; font-weight: 600">Where everyone is</span>
+        <span style="font-size: 11px; color: #6b6b6b">Open map</span>
+      </button>
+    </div>
+
+    <!-- fast capture -->
+    <button type="button" style="margin-top: 10px; width: 100%; background: #1a1a1a; color: #fff; border: none; border-radius: 9px; padding: 11px; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      Add an expense
+    </button>
+
+    <!-- rest of today -->
+    <div style="margin-top: 12px">
+      <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin-bottom: 7px">REST OF TODAY</div>
+      <div style="display: flex; gap: 10px; font-size: 12px; padding: 5px 0"><span style="font-weight: 700; width: 42px; flex: none">17:00</span><span>Retiro Park</span></div>
+      <div style="display: flex; gap: 10px; font-size: 12px; padding: 5px 0"><span style="font-weight: 700; width: 42px; flex: none">20:30</span><span>Dinner · Casa Botín</span></div>
+    </div>
+
+    <!-- reserved: alerts -->
+    <div style="margin-top: 8px; border: 1.5px dashed #b0b0b0; border-radius: 10px; padding: 9px 12px">
+      <span style="font-size: 11px; color: #6b6b6b"><strong style="font-weight: 600">Transport alerts</strong> — reserved slot, fills with R3</span>
+    </div>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 600">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <span style="position: relative; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; min-width: 15px; height: 15px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">1</span>
+      </span>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>LIVE (AC8, AC17, D2)</h3>
+          <p>A now screen, not a summary. Now/Next first, then where everyone is.</p>
+          <p>Add expense is one tap from the top — the only place F6 allows an open composer, because fast capture is the whole job here.</p>
+          <p>Map opens as a mode.</p>
+        </div>
+      </figure>
+      <figure class="board" id="overview-wrap">
+        <figcaption class="label"><span class="name">Overview · Wrap</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 110px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 10px 16px 11px; border-bottom: 1px solid #cfcfcf">
+    <h1 style="margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+    <div style="font-size: 12px; color: #6b6b6b; margin-top: 3px">24–25 Nov · Ended 2 days ago</div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 14px 16px">
+
+    <!-- balance -->
+    <div style="border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 14px">
+      <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">YOUR BALANCE</div>
+      <div style="font-size: 30px; font-weight: 700; letter-spacing: -1px; margin-top: 5px">You owe €42.00</div>
+      <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">to Ana · one payment clears it</div>
+      <button type="button" style="margin-top: 12px; width: 100%; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 13px; font-weight: 600">Settle up</button>
+    </div>
+
+    <!-- summary -->
+    <div style="margin-top: 14px">
+      <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin-bottom: 8px">TRIP SUMMARY</div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <div style="border: 1px solid #cfcfcf; border-radius: 9px; padding: 10px">
+          <div style="font-size: 19px; font-weight: 700; letter-spacing: -0.4px">2 days</div>
+          <div style="font-size: 11px; color: #6b6b6b; margin-top: 1px">in Madrid</div>
+        </div>
+        <div style="border: 1px solid #cfcfcf; border-radius: 9px; padding: 10px">
+          <div style="font-size: 19px; font-weight: 700; letter-spacing: -0.4px">11 stops</div>
+          <div style="font-size: 11px; color: #6b6b6b; margin-top: 1px">9 of them visited</div>
+        </div>
+        <div style="border: 1px solid #cfcfcf; border-radius: 9px; padding: 10px">
+          <div style="font-size: 19px; font-weight: 700; letter-spacing: -0.4px">€312</div>
+          <div style="font-size: 11px; color: #6b6b6b; margin-top: 1px">€78 each</div>
+        </div>
+        <div style="border: 1px solid #cfcfcf; border-radius: 9px; padding: 10px">
+          <div style="font-size: 19px; font-weight: 700; letter-spacing: -0.4px">4 people</div>
+          <div style="font-size: 11px; color: #6b6b6b; margin-top: 1px">all settled but you</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- recap slot -->
+    <div style="margin-top: 14px; border: 1.5px dashed #b0b0b0; border-radius: 10px; padding: 12px">
+      <div style="font-size: 12px; font-weight: 600; color: #6b6b6b">Photos and recap</div>
+      <div style="font-size: 11px; color: #6b6b6b; margin-top: 3px">Reserved slot — not in v1</div>
+    </div>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 600">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <span style="position: relative; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; min-width: 15px; height: 15px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">1</span>
+      </span>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>WRAP (AC9, R2)</h3>
+          <p>After the trip exactly one thing matters. Balance and Settle up are the first block — this is the home for the settlement work in the roadmap.</p>
+          <p>Everything else on this screen is memory, not task.</p>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="row">
+    <h2>3 · The three fixed destinations</h2>
+    <div class="strip">
+      <figure class="board" id="plan">
+        <figcaption class="label"><span class="name">Plan</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 86px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 9px 16px 10px; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; gap: 10px">
+    <div>
+      <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+      <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Barcelona → Madrid · 24–25 Nov</div>
+    </div>
+    <button type="button" style="flex: none; background: #fff; border: 1px solid #cfcfcf; border-radius: 8px; padding: 7px 10px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 5px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="2.6"/></svg>
+      Map
+    </button>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 13px 16px 0">
+
+    <!-- decisions -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px">
+      <span style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">DECISIONS</span>
+      <button type="button" style="background: none; border: none; padding: 0; font-size: 11px; font-weight: 600; color: #1a1a1a">+ New poll</button>
+    </div>
+    <div style="border: 1px solid #1a1a1a; border-radius: 9px; padding: 11px; display: flex; align-items: center; justify-content: space-between; gap: 10px">
+      <span>
+        <span style="display: block; font-size: 13px; font-weight: 600">Where do we eat on day 2?</span>
+        <span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 2px">2 of 4 voted · you haven't</span>
+      </span>
+      <button type="button" style="flex: none; background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 6px 12px; font-size: 12px; font-weight: 600">Vote</button>
+    </div>
+
+    <!-- day 1 -->
+    <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin: 18px 0 4px">DAY 1 · MON 24 NOV</div>
+    <div style="border-top: 1px solid #e4e4e4">
+      <div style="display: flex; gap: 11px; padding: 10px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="font-size: 12px; font-weight: 700; width: 40px; flex: none">09:40</span>
+        <span><span style="display: block; font-size: 13px; font-weight: 500">Train to Madrid</span><span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 1px">Sants → Atocha</span></span>
+      </div>
+      <div style="display: flex; gap: 11px; padding: 10px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="font-size: 12px; font-weight: 700; width: 40px; flex: none">15:00</span>
+        <span><span style="display: block; font-size: 13px; font-weight: 500">Check in · Hotel Riu Plaza</span></span>
+      </div>
+      <div style="display: flex; gap: 11px; padding: 10px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="font-size: 12px; font-weight: 700; width: 40px; flex: none">19:30</span>
+        <span><span style="display: block; font-size: 13px; font-weight: 500">Prado Museum</span><span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 1px">Added by Ana</span></span>
+      </div>
+    </div>
+
+    <!-- day 2 -->
+    <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin: 16px 0 4px">DAY 2 · TUE 25 NOV</div>
+    <div style="border-top: 1px solid #e4e4e4">
+      <div style="display: flex; gap: 11px; padding: 10px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="font-size: 12px; font-weight: 700; width: 40px; flex: none">13:00</span>
+        <span><span style="display: block; font-size: 13px; font-weight: 500">Mercado de San Miguel</span></span>
+      </div>
+      <div style="padding: 11px 0; font-size: 11px; color: #6b6b6b">Nothing else planned yet</div>
+    </div>
+
+    <!-- ideas -->
+    <button type="button" style="margin-top: 6px; width: 100%; text-align: left; background: #fafafa; border: 1px solid #cfcfcf; border-radius: 9px; padding: 11px; display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 12px; font-weight: 500; color: #1a1a1a">12 ideas from the assistant</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+
+  </div>
+
+  <!-- primary action -->
+  <button type="button" style="position: absolute; right: 16px; bottom: 82px; background: #1a1a1a; color: #fff; border: none; border-radius: 99px; padding: 12px 18px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.22)">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Add stop
+  </button>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #fff">
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <span style="position: relative; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; min-width: 15px; height: 15px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">1</span>
+      </span>
+      <span style="font-size: 10px; font-weight: 600">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>PLAN (F11, AC11-14)</h3>
+          <p>Day-grouped itinerary — today's group is marked during Live.</p>
+          <p>Decisions (polls) live here: a poll is nearly always a question about the plan.</p>
+          <p>Ideas is the old AI essay, collapsed. It no longer sits in the header pushing the itinerary below the fold (A3).</p>
+          <p>Every create form is behind a button (F6).</p>
+        </div>
+      </figure>
+      <figure class="board" id="plan-empty">
+        <figcaption class="label"><span class="name">Plan · empty</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 86px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 9px 16px 10px; border-bottom: 1px solid #cfcfcf">
+    <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+    <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Barcelona → Madrid · 24–25 Nov</div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center">
+
+    <div style="width: 54px; height: 54px; border: 1.5px solid #cfcfcf; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #8a8a8a">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+    </div>
+
+    <div style="font-size: 17px; font-weight: 700; margin-top: 14px; letter-spacing: -0.2px">No plan yet</div>
+    <div style="font-size: 12px; color: #6b6b6b; margin-top: 5px; line-height: 1.5; max-width: 250px">Add stops as the group decides them, or let the assistant draft a first day you can edit.</div>
+
+    <button type="button" style="margin-top: 18px; width: 220px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 13px; font-weight: 600">Add the first stop</button>
+    <button type="button" style="margin-top: 8px; width: 220px; background: #fff; color: #1a1a1a; border: 1px solid #cfcfcf; border-radius: 8px; padding: 11px; font-size: 13px; font-weight: 600">Draft a day with the assistant</button>
+
+    <div style="margin-top: 20px; font-size: 11px; color: #6b6b6b; max-width: 260px; line-height: 1.5">Every destination uses this shape: one line of purpose, the primary action, then the low-effort path.</div>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span style="font-size: 10px; font-weight: 600">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>PLAN · EMPTY (F14, AC25)</h3>
+          <p>The pattern every destination uses: one line saying what this is for, then the primary action, then the assistant as the low-effort path.</p>
+          <p>Four destinations on a young product feel empty without this. The empty states are not polish — they are what makes the structure survive.</p>
+        </div>
+      </figure>
+      <figure class="board" id="money">
+        <figcaption class="label"><span class="name">Money</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 86px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 9px 16px 10px; border-bottom: 1px solid #cfcfcf">
+    <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+    <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Barcelona → Madrid · 24–25 Nov</div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 13px 16px 0">
+
+    <!-- balance first -->
+    <div style="border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 13px">
+      <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">YOUR BALANCE</div>
+      <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.9px; margin-top: 4px">You owe €42.00</div>
+      <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">to Ana</div>
+      <button type="button" style="margin-top: 11px; width: 100%; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 13px; font-weight: 600">Settle up</button>
+    </div>
+
+    <!-- trip total -->
+    <div style="margin-top: 11px; border: 1px solid #cfcfcf; border-radius: 10px; padding: 11px 13px; display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 12px; color: #6b6b6b">Trip total</span>
+      <span style="font-size: 13px; font-weight: 600">€312.00 · €78.00 each</span>
+    </div>
+
+    <!-- everyone -->
+    <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin: 16px 0 4px">EVERYONE</div>
+    <div style="border-top: 1px solid #e4e4e4">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 22px; height: 22px; border-radius: 99px; background: #ececec; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">A</span>Ana</span>
+        <span style="font-size: 12px; font-weight: 600">is owed €84.00</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600"><span style="width: 22px; height: 22px; border-radius: 99px; background: #1a1a1a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600">Y</span>You</span>
+        <span style="font-size: 12px; font-weight: 600">owe €42.00</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 22px; height: 22px; border-radius: 99px; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">L</span>Luis</span>
+        <span style="font-size: 12px; color: #6b6b6b">owes €18.00</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 22px; height: 22px; border-radius: 99px; background: #d4d4d4; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">M</span>Marta</span>
+        <span style="font-size: 12px; color: #6b6b6b">owes €24.00</span>
+      </div>
+    </div>
+
+    <!-- ledger -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin: 16px 0 4px">
+      <span style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">ALL EXPENSES</span>
+      <button type="button" style="background: none; border: none; padding: 0; font-size: 11px; font-weight: 600; color: #1a1a1a">+ Add expense</button>
+    </div>
+    <div style="border-top: 1px solid #e4e4e4">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span><span style="display: block; font-size: 13px; font-weight: 500">Dinner · Casa Botín</span><span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 1px">Ana paid · split 4 ways</span></span>
+        <span style="font-size: 13px; font-weight: 600">€168.00</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span><span style="display: block; font-size: 13px; font-weight: 500">Train tickets</span><span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 1px">Luis paid · split 4 ways</span></span>
+        <span style="font-size: 13px; font-weight: 600">€96.00</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <span style="position: relative; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; min-width: 15px; height: 15px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">1</span>
+      </span>
+      <span style="font-size: 10px; font-weight: 600">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>MONEY (F12, AC15)</h3>
+          <p>Splitwise-shaped: your own position first, settle up as the primary action, then the trip total, then the ledger.</p>
+          <p>Today this information is at the bottom of a 10-section scroll, under a form. The server already computes settlements.</p>
+        </div>
+      </figure>
+      <figure class="board" id="money-settled">
+        <figcaption class="label"><span class="name">Money · settled</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 86px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 9px 16px 10px; border-bottom: 1px solid #cfcfcf">
+    <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+    <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Barcelona → Madrid · 24–25 Nov</div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 13px 16px 0">
+
+    <!-- settled: quiet, no red, no zero badge -->
+    <div style="border: 1px solid #cfcfcf; border-radius: 10px; padding: 15px 13px; display: flex; align-items: center; gap: 12px">
+      <span style="width: 38px; height: 38px; flex: none; border-radius: 99px; border: 1.5px solid #1a1a1a; display: flex; align-items: center; justify-content: center">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2.4" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>
+      </span>
+      <span>
+        <span style="display: block; font-size: 16px; font-weight: 700; letter-spacing: -0.2px">You're all settled up</span>
+        <span style="display: block; font-size: 12px; color: #6b6b6b; margin-top: 2px">Nothing to pay, nothing to chase.</span>
+      </span>
+    </div>
+
+    <!-- trip total -->
+    <div style="margin-top: 11px; border: 1px solid #cfcfcf; border-radius: 10px; padding: 11px 13px; display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 12px; color: #6b6b6b">Trip total</span>
+      <span style="font-size: 13px; font-weight: 600">€312.00 · €78.00 each</span>
+    </div>
+
+    <!-- everyone -->
+    <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin: 16px 0 4px">EVERYONE</div>
+    <div style="border-top: 1px solid #e4e4e4">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 22px; height: 22px; border-radius: 99px; background: #ececec; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">A</span>Ana</span>
+        <span style="font-size: 12px; color: #6b6b6b">settled</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600"><span style="width: 22px; height: 22px; border-radius: 99px; background: #1a1a1a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600">Y</span>You</span>
+        <span style="font-size: 12px; color: #6b6b6b">settled</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 22px; height: 22px; border-radius: 99px; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">L</span>Luis</span>
+        <span style="font-size: 12px; color: #6b6b6b">settled</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 22px; height: 22px; border-radius: 99px; background: #d4d4d4; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">M</span>Marta</span>
+        <span style="font-size: 12px; color: #6b6b6b">settled</span>
+      </div>
+    </div>
+
+    <!-- ledger -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin: 16px 0 4px">
+      <span style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">ALL EXPENSES</span>
+      <button type="button" style="background: none; border: none; padding: 0; font-size: 11px; font-weight: 600; color: #1a1a1a">+ Add expense</button>
+    </div>
+    <div style="border-top: 1px solid #e4e4e4">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span><span style="display: block; font-size: 13px; font-weight: 500">Dinner · Casa Botín</span><span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 1px">Ana paid · split 4 ways</span></span>
+        <span style="font-size: 13px; font-weight: 600">€168.00</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span><span style="display: block; font-size: 13px; font-weight: 500">Train tickets</span><span style="display: block; font-size: 11px; color: #6b6b6b; margin-top: 1px">Luis paid · split 4 ways</span></span>
+        <span style="font-size: 13px; font-weight: 600">€96.00</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+      <span style="font-size: 10px; font-weight: 600">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>MONEY · SETTLED (AC16)</h3>
+          <p>When nothing is owed the screen says so plainly, with no red and no zero badge.</p>
+          <p>A debt UI that shouts when there is no debt trains people to ignore it.</p>
+        </div>
+      </figure>
+      <figure class="board" id="group">
+        <figcaption class="label"><span class="name">Group</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 86px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 9px 16px 10px; border-bottom: 1px solid #cfcfcf">
+    <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+    <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Barcelona → Madrid · 24–25 Nov</div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 13px 16px 0">
+
+    <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin-bottom: 4px">4 GOING</div>
+    <div style="border-top: 1px solid #e4e4e4">
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: #1a1a1a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600">Y</span>
+        <span style="flex: 1"><span style="display: block; font-size: 13px; font-weight: 600">You</span><span style="display: block; font-size: 11px; color: #6b6b6b">alberto</span></span>
+        <span style="font-size: 10px; font-weight: 600; border: 1px solid #1a1a1a; border-radius: 99px; padding: 2px 7px">ORGANIZER</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: #ececec; color: #6b6b6b; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600">A</span>
+        <span style="flex: 1"><span style="display: block; font-size: 13px; font-weight: 600">Ana López</span><span style="display: block; font-size: 11px; color: #6b6b6b">Viewing now</span></span>
+        <span style="width: 8px; height: 8px; border-radius: 99px; background: #1a1a1a"></span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: #e0e0e0; color: #6b6b6b; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600">L</span>
+        <span style="flex: 1"><span style="display: block; font-size: 13px; font-weight: 600">Luis Martín</span><span style="display: block; font-size: 11px; color: #6b6b6b">Last seen 2h ago</span></span>
+        <button type="button" style="background: none; border: 1px solid #cfcfcf; border-radius: 6px; padding: 4px 9px; font-size: 11px; color: #6b6b6b">Remove</button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: #fff; border: 1.5px dashed #b0b0b0; color: #8a8a8a; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600">M</span>
+        <span style="flex: 1"><span style="display: block; font-size: 13px; font-weight: 600; color: #6b6b6b">marta@example.com</span><span style="display: block; font-size: 11px; color: #6b6b6b">Invited 3 days ago</span></span>
+        <button type="button" style="background: none; border: 1px solid #cfcfcf; border-radius: 6px; padding: 4px 9px; font-size: 11px; color: #6b6b6b">Resend</button>
+      </div>
+
+    </div>
+
+    <div style="display: flex; gap: 8px; margin-top: 12px">
+      <button type="button" style="flex: 1; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 600">Invite by email</button>
+      <button type="button" style="flex: 1; background: #fff; color: #1a1a1a; border: 1px solid #cfcfcf; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 600">Copy invite link</button>
+    </div>
+
+    <!-- notifications -->
+    <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin: 16px 0 6px">NOTIFICATIONS</div>
+    <div style="border: 1px solid #cfcfcf; border-radius: 9px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 12px">Push on this device</span>
+      <button type="button" aria-pressed="true" aria-label="Push on this device" style="width: 38px; height: 22px; border-radius: 99px; background: #1a1a1a; border: none; padding: 0; display: flex; align-items: center; justify-content: flex-end">
+        <span style="width: 17px; height: 17px; border-radius: 99px; background: #fff; margin-right: 2px"></span>
+      </button>
+    </div>
+    <div style="margin-top: 8px; border: 1.5px dashed #b0b0b0; border-radius: 9px; padding: 10px 12px">
+      <span style="font-size: 11px; color: #6b6b6b">Per-event preferences — reserved slot, fills with R4</span>
+    </div>
+
+    <!-- chat -->
+    <div style="margin-top: 12px; border: 1.5px dashed #b0b0b0; border-radius: 9px; padding: 10px 12px">
+      <span style="font-size: 11px; color: #6b6b6b"><strong style="font-weight: 600">Group chat</strong> — reserved slot, not in v1</span>
+    </div>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <span style="position: relative; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; min-width: 15px; height: 15px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">1</span>
+      </span>
+      <span style="font-size: 10px; font-weight: 600">Group</span>
+    </button>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>GROUP (F13, AC18-19, R4, D5)</h3>
+          <p>Avatars and names replace the raw email addresses currently shown in presence, members, polls and expenses (A9).</p>
+          <p>Notification preferences land here (R4). Chat is a dashed slot — we cannot out-chat WhatsApp; our advantage is state, not stream.</p>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="row">
+    <h2>4 · Modes, not tabs</h2>
+    <div class="strip">
+      <figure class="board" id="map-mode">
+        <figcaption class="label"><span class="name">Map mode</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <!-- mode bar: a mode is closed, not navigated away from -->
+  <div style="height: 56px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; gap: 12px; padding: 0 14px; background: #fff; position: relative; z-index: 2">
+    <button type="button" aria-label="Close map" style="background: none; border: none; padding: 0; color: #1a1a1a; display: flex">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span style="flex: 1">
+      <span style="display: block; font-size: 14px; font-weight: 600">Where everyone is</span>
+      <span style="display: block; font-size: 11px; color: #6b6b6b">Updated 30 seconds ago</span>
+    </span>
+    <span style="font-size: 10px; font-weight: 600; color: #6b6b6b; border: 1px solid #cfcfcf; border-radius: 99px; padding: 3px 8px">ESC</span>
+  </div>
+
+  <!-- map -->
+  <div style="flex: 1; background: #ececec; position: relative; overflow: hidden">
+
+    <div style="position: absolute; left: 0; right: 0; top: 120px; height: 10px; background: #e0e0e0"></div>
+    <div style="position: absolute; left: 0; right: 0; top: 330px; height: 14px; background: #e0e0e0"></div>
+    <div style="position: absolute; top: 0; bottom: 0; left: 96px; width: 10px; background: #e0e0e0"></div>
+    <div style="position: absolute; top: 0; bottom: 0; left: 268px; width: 12px; background: #e0e0e0"></div>
+    <div style="position: absolute; left: 130px; top: 160px; width: 110px; height: 130px; background: #e4e4e4; border-radius: 4px"></div>
+
+    <!-- destination -->
+    <div style="position: absolute; left: 236px; top: 274px; display: flex; flex-direction: column; align-items: center">
+      <span style="font-size: 10px; font-weight: 600; background: #fff; border: 1px solid #cfcfcf; border-radius: 6px; padding: 2px 6px; white-space: nowrap">Palacio Real</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" stroke="#1a1a1a" stroke-width="1.8" aria-hidden="true" style="margin-top: 2px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="2.6"/></svg>
+    </div>
+
+    <!-- people -->
+    <div style="position: absolute; left: 70px; top: 196px; display: flex; flex-direction: column; align-items: center">
+      <span style="width: 32px; height: 32px; border-radius: 99px; background: #1a1a1a; color: #fff; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">Y</span>
+    </div>
+    <div style="position: absolute; left: 190px; top: 150px; display: flex; flex-direction: column; align-items: center">
+      <span style="width: 32px; height: 32px; border-radius: 99px; background: #fff; color: #1a1a1a; border: 3px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">A</span>
+    </div>
+    <div style="position: absolute; left: 288px; top: 226px; display: flex; flex-direction: column; align-items: center">
+      <span style="width: 32px; height: 32px; border-radius: 99px; background: #fff; color: #1a1a1a; border: 3px solid #6b6b6b; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">L</span>
+    </div>
+  </div>
+
+  <!-- bottom sheet -->
+  <div style="flex: none; border-top: 1px solid #cfcfcf; background: #fff; padding: 12px 16px 16px">
+    <div style="width: 36px; height: 4px; border-radius: 99px; background: #cfcfcf; margin: 0 auto 12px"></div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 0">
+      <span style="display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600"><span style="width: 24px; height: 24px; border-radius: 99px; background: #1a1a1a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600">Y</span>You</span>
+      <span style="font-size: 12px; color: #6b6b6b">Gran Vía</span>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 0">
+      <span style="display: flex; align-items: center; gap: 9px; font-size: 13px"><span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; color: #6b6b6b; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600">A</span>Ana López</span>
+      <span style="font-size: 12px; color: #6b6b6b">400 m away</span>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 0">
+      <span style="display: flex; align-items: center; gap: 9px; font-size: 13px"><span style="width: 24px; height: 24px; border-radius: 99px; background: #e0e0e0; color: #6b6b6b; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600">L</span>Luis Martín</span>
+      <span style="font-size: 12px; color: #6b6b6b">At Palacio Real</span>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 0; opacity: 0.65">
+      <span style="display: flex; align-items: center; gap: 9px; font-size: 13px"><span style="width: 24px; height: 24px; border-radius: 99px; background: #fff; border: 1.5px dashed #b0b0b0; color: #8a8a8a; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600">M</span>Marta Ruiz</span>
+      <span style="font-size: 12px; color: #6b6b6b">Not sharing</span>
+    </div>
+
+    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e4e4e4; display: flex; align-items: center; justify-content: space-between; gap: 10px">
+      <span style="font-size: 11px; color: #6b6b6b">You're sharing · stops in 4 min</span>
+      <button type="button" style="flex: none; background: #fff; border: 1px solid #1a1a1a; border-radius: 7px; padding: 7px 12px; font-size: 12px; font-weight: 600">Stop sharing</button>
+    </div>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>MAP MODE (F9, D2)</h3>
+          <p>Full screen, entered and dismissed, Esc closes it. Not a fifth tab: live location is useful for ~2 days of a 60-day object.</p>
+          <p>The sharing state and its countdown are visible while the map is open, never buried in a settings screen.</p>
+        </div>
+      </figure>
+      <figure class="board" id="assistant">
+        <figcaption class="label"><span class="name">Assistant</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="frame" style="width:390px;height:844px;transform:scale(1)">
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <!-- the destination behind, dimmed: the assistant is a layer, not a place -->
+  <div style="height: 150px; flex: none; background: #ececec; position: relative; overflow: hidden">
+    <div style="padding: 14px 16px">
+      <div style="font-size: 16px; font-weight: 700; color: #8a8a8a">Madrid Gathering</div>
+      <div style="font-size: 11px; color: #a0a0a0; margin-top: 3px">Plan · day 1</div>
+      <div style="margin-top: 14px; height: 10px; width: 60%; background: #e0e0e0; border-radius: 99px"></div>
+      <div style="margin-top: 9px; height: 10px; width: 78%; background: #e0e0e0; border-radius: 99px"></div>
+      <div style="margin-top: 9px; height: 10px; width: 44%; background: #e0e0e0; border-radius: 99px"></div>
+    </div>
+    <div style="position: absolute; inset: 0; background: rgba(26,26,26,0.35)"></div>
+  </div>
+
+  <!-- sheet -->
+  <div style="flex: 1; background: #fff; border-top-left-radius: 16px; border-top-right-radius: 16px; margin-top: -14px; position: relative; display: flex; flex-direction: column; border: 1px solid #cfcfcf; border-bottom: none; overflow: hidden">
+
+    <div style="flex: none; padding: 10px 16px 0">
+      <div style="width: 36px; height: 4px; border-radius: 99px; background: #cfcfcf; margin: 0 auto"></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px">
+        <span style="font-size: 15px; font-weight: 700">Trip assistant</span>
+        <button type="button" aria-label="Close assistant" style="background: none; border: none; padding: 0; color: #6b6b6b; display: flex">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div style="font-size: 11px; color: #6b6b6b; margin-top: 7px; line-height: 1.45; border-bottom: 1px solid #e4e4e4; padding-bottom: 11px">
+        Everything here is a draft. Check opening hours and prices before you rely on them.
+      </div>
+    </div>
+
+    <div style="flex: 1; overflow: hidden; padding: 12px 16px">
+
+      <div style="display: flex; justify-content: flex-end">
+        <span style="max-width: 78%; background: #1a1a1a; color: #fff; border-radius: 12px; padding: 9px 12px; font-size: 12px; line-height: 1.45">What's good near the hotel for dinner?</span>
+      </div>
+
+      <div style="font-size: 12px; color: #1a1a1a; margin-top: 14px; line-height: 1.5">Three near Gran Vía, all under a 15-minute walk from Hotel Riu Plaza:</div>
+
+      <div style="margin-top: 10px; border: 1px solid #cfcfcf; border-radius: 10px; padding: 11px">
+        <div style="font-size: 13px; font-weight: 600">Casa Botín</div>
+        <div style="font-size: 11px; color: #6b6b6b; margin-top: 2px; line-height: 1.45">Roast lamb, book ahead · 12 min walk</div>
+        <div style="display: flex; gap: 7px; margin-top: 9px">
+          <button type="button" style="background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 6px 11px; font-size: 11px; font-weight: 600">Add to plan</button>
+          <button type="button" style="background: #fff; color: #6b6b6b; border: 1px solid #cfcfcf; border-radius: 7px; padding: 6px 11px; font-size: 11px; font-weight: 600">Dismiss</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 8px; border: 1px solid #cfcfcf; border-radius: 10px; padding: 11px">
+        <div style="font-size: 13px; font-weight: 600">Mercado de San Miguel</div>
+        <div style="font-size: 11px; color: #6b6b6b; margin-top: 2px; line-height: 1.45">Small plates, no booking · 9 min walk</div>
+        <div style="display: flex; gap: 7px; margin-top: 9px">
+          <button type="button" style="background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 6px 11px; font-size: 11px; font-weight: 600">Add to plan</button>
+          <button type="button" style="background: #fff; color: #6b6b6b; border: 1px solid #cfcfcf; border-radius: 7px; padding: 6px 11px; font-size: 11px; font-weight: 600">Dismiss</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 8px; border: 1px solid #cfcfcf; border-radius: 10px; padding: 11px">
+        <div style="font-size: 13px; font-weight: 600">Taberna La Bola</div>
+        <div style="font-size: 11px; color: #6b6b6b; margin-top: 2px; line-height: 1.45">Cocido madrileño, cash only · 14 min walk</div>
+        <div style="display: flex; gap: 7px; margin-top: 9px">
+          <button type="button" style="background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 6px 11px; font-size: 11px; font-weight: 600">Add to plan</button>
+          <button type="button" style="background: #fff; color: #6b6b6b; border: 1px solid #cfcfcf; border-radius: 7px; padding: 6px 11px; font-size: 11px; font-weight: 600">Dismiss</button>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 7px; margin-top: 14px; flex-wrap: wrap">
+        <button type="button" style="background: #fff; border: 1px solid #cfcfcf; border-radius: 99px; padding: 6px 11px; font-size: 11px; color: #1a1a1a">Draft day 2</button>
+        <button type="button" style="background: #fff; border: 1px solid #cfcfcf; border-radius: 99px; padding: 6px 11px; font-size: 11px; color: #1a1a1a">Getting around Madrid</button>
+      </div>
+
+    </div>
+
+    <div style="flex: none; border-top: 1px solid #e4e4e4; padding: 11px 16px 16px; display: flex; gap: 8px">
+      <label for="assistant-input" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Ask the trip assistant</label>
+      <input id="assistant-input" type="text" placeholder="Ask about this trip" style="flex: 1; min-width: 0; border: 1px solid #cfcfcf; border-radius: 8px; padding: 10px 11px; font: inherit; font-size: 12px; color: #1a1a1a">
+      <button type="button" aria-label="Send" style="flex: none; width: 40px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+      </button>
+    </div>
+
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>ASSISTANT (F10, D3)</h3>
+          <p>Replaces three disconnected AI surfaces: auto travel suggestions, 'Generate with AI', and Ask AI (A8).</p>
+          <p>One contract: it drafts, the group decides. Every answer arrives as proposals with Add to plan / Dismiss.</p>
+          <p>The accuracy disclaimer appears once, here, instead of beside every list.</p>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="row">
+    <h2>5 · Desktop — same routes, different chrome</h2>
+    <div class="strip">
+      <figure class="board" id="desktop-overview">
+        <figcaption class="label"><span class="name">Desktop · Overview</span><span class="dims">1280×900</span></figcaption>
+        <div class="stage" style="width:717px;height:504px">
+          <div class="frame" style="width:1280px;height:900px;transform:scale(0.56)">
+<div style="width: 1280px; height: 900px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <!-- app bar -->
+  <div style="height: 56px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 90px">
+    <div style="display: flex; align-items: center; gap: 16px">
+      <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px">Trip Planner</span>
+      <span style="font-size: 12px; color: #6b6b6b">Trips / Madrid Gathering</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px">
+      <button type="button" style="background: #fff; border: 1px solid #cfcfcf; border-radius: 7px; padding: 6px 11px; font-size: 11px; font-weight: 600; color: #1a1a1a">Ask the assistant · ⌘K</button>
+      <button type="button" aria-label="Activity, 2 new" style="position: relative; background: none; border: none; padding: 0; color: #1a1a1a; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+        <span style="position: absolute; top: -4px; right: -5px; min-width: 14px; height: 14px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">2</span>
+      </button>
+      <span style="width: 26px; height: 26px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #6b6b6b">A</span>
+    </div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 22px 90px 0">
+
+    <!-- cover -->
+    <div style="height: 168px; background: #ececec; border-radius: 12px; display: flex; align-items: flex-end; padding: 10px 14px">
+      <span style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+    </div>
+
+    <!-- title + presence -->
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-top: 14px">
+      <div>
+        <h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.6px">Madrid Gathering</h1>
+        <div style="font-size: 13px; color: #6b6b6b; margin-top: 4px">Barcelona → Madrid · 24–25 Nov · 4 going</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 9px">
+        <span style="font-size: 11px; color: #6b6b6b">Ana is viewing</span>
+        <span style="display: flex">
+          <span style="width: 26px; height: 26px; border-radius: 99px; background: #ececec; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+          <span style="width: 26px; height: 26px; border-radius: 99px; background: #e0e0e0; border: 2px solid #fff; margin-left: -8px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">L</span>
+          <span style="width: 26px; height: 26px; border-radius: 99px; background: #d4d4d4; border: 2px solid #fff; margin-left: -8px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">M</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- segmented tabs: same four routes as the phone tab bar -->
+    <div style="display: flex; gap: 4px; margin-top: 16px; border-bottom: 1px solid #cfcfcf; padding-bottom: 0">
+      <button type="button" style="background: none; border: none; border-bottom: 2px solid #1a1a1a; padding: 9px 14px 10px; font-size: 13px; font-weight: 600; color: #1a1a1a">Overview</button>
+      <button type="button" style="background: none; border: none; border-bottom: 2px solid transparent; padding: 9px 14px 10px; font-size: 13px; font-weight: 500; color: #6b6b6b; display: flex; align-items: center; gap: 7px">
+        Plan
+        <span style="min-width: 16px; height: 16px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 4px">1</span>
+      </button>
+      <button type="button" style="background: none; border: none; border-bottom: 2px solid transparent; padding: 9px 14px 10px; font-size: 13px; font-weight: 500; color: #6b6b6b">Money</button>
+      <button type="button" style="background: none; border: none; border-bottom: 2px solid transparent; padding: 9px 14px 10px; font-size: 13px; font-weight: 500; color: #6b6b6b">Group</button>
+    </div>
+
+    <!-- two columns -->
+    <div style="display: grid; grid-template-columns: 660px 400px; gap: 40px; margin-top: 22px">
+
+      <div>
+        <div style="border: 1.5px solid #1a1a1a; border-radius: 11px; padding: 16px">
+          <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px">NEEDS YOUR VOTE</div>
+          <div style="font-size: 16px; font-weight: 600; margin-top: 7px">Where do we eat on day 2?</div>
+          <div style="margin-top: 11px; display: flex; flex-direction: column; gap: 6px">
+            <div style="height: 30px; border: 1px solid #cfcfcf; border-radius: 7px; position: relative; overflow: hidden">
+              <div style="position: absolute; inset: 0 55% 0 0; background: #ececec"></div>
+              <div style="position: relative; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; font-size: 12px"><span>Casa Botín</span><span style="color: #6b6b6b">45%</span></div>
+            </div>
+            <div style="height: 30px; border: 1px solid #cfcfcf; border-radius: 7px; position: relative; overflow: hidden">
+              <div style="position: absolute; inset: 0 70% 0 0; background: #ececec"></div>
+              <div style="position: relative; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; font-size: 12px"><span>Mercado de San Miguel</span><span style="color: #6b6b6b">30%</span></div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px">
+            <span style="font-size: 12px; color: #6b6b6b">2 of 4 voted · closes in 2 days</span>
+            <button type="button" style="background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 8px 18px; font-size: 13px; font-weight: 600">Vote</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; border: 1px solid #cfcfcf; border-radius: 11px; padding: 16px">
+          <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">SINCE YOU WERE AWAY</div>
+          <div style="margin-top: 11px; display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+              <span style="width: 22px; height: 22px; flex: none; border-radius: 99px; background: #ececec; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">A</span>
+              <span>Ana added <strong style="font-weight: 600">Prado Museum</strong> to day 1</span>
+              <span style="margin-left: auto; font-size: 11px; color: #6b6b6b">2h ago</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+              <span style="width: 22px; height: 22px; flex: none; border-radius: 99px; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">L</span>
+              <span>Luis set the stay to <strong style="font-weight: 600">Hotel Riu Plaza</strong></span>
+              <span style="margin-left: auto; font-size: 11px; color: #6b6b6b">Yesterday</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+              <span style="width: 22px; height: 22px; flex: none; border-radius: 99px; background: #d4d4d4; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; color: #6b6b6b">M</span>
+              <span>Marta joined the trip</span>
+              <span style="margin-left: auto; font-size: 11px; color: #6b6b6b">Yesterday</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="border: 1px solid #cfcfcf; border-radius: 11px; padding: 16px">
+          <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">THE FACTS</div>
+          <div style="margin-top: 11px; display: flex; flex-direction: column; gap: 9px; font-size: 13px">
+            <div style="display: flex; justify-content: space-between"><span style="color: #6b6b6b">From</span><span style="font-weight: 500">Barcelona</span></div>
+            <div style="display: flex; justify-content: space-between"><span style="color: #6b6b6b">To</span><span style="font-weight: 500">Madrid</span></div>
+            <div style="display: flex; justify-content: space-between"><span style="color: #6b6b6b">Dates</span><span style="font-weight: 500">24–25 Nov</span></div>
+            <div style="display: flex; justify-content: space-between; gap: 12px"><span style="color: #6b6b6b; flex: none">Stay</span><span style="font-weight: 500; text-align: right">Hotel Riu Plaza</span></div>
+          </div>
+        </div>
+
+        <button type="button" style="margin-top: 16px; width: 100%; text-align: left; background: #fff; border: 1px solid #cfcfcf; border-radius: 11px; padding: 15px 16px; display: flex; align-items: center; justify-content: space-between">
+          <span>
+            <span style="display: block; font-size: 14px; font-weight: 600">Your plan</span>
+            <span style="display: block; font-size: 12px; color: #6b6b6b; margin-top: 2px">4 stops · day 2 has nothing yet</span>
+          </span>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <div style="margin-top: 16px; border: 1.5px dashed #b0b0b0; border-radius: 11px; padding: 15px 16px">
+          <div style="font-size: 13px; font-weight: 600; color: #6b6b6b">Transport status</div>
+          <div style="font-size: 12px; color: #6b6b6b; margin-top: 3px">Reserved slot — fills when R3 ships</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>DESKTOP · OVERVIEW (D6, N1)</h3>
+          <p>The bottom tab bar becomes segmented tabs under the trip header, inside the existing 1100px container. Same four routes, same order, same badges.</p>
+          <p>A left rail only earns its place beyond five destinations, and we have capped it at four.</p>
+        </div>
+      </figure>
+      <figure class="board" id="desktop-plan">
+        <figcaption class="label"><span class="name">Desktop · Plan + map</span><span class="dims">1280×900</span></figcaption>
+        <div class="stage" style="width:717px;height:504px">
+          <div class="frame" style="width:1280px;height:900px;transform:scale(0.56)">
+<div style="width: 1280px; height: 900px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 56px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 90px">
+    <div style="display: flex; align-items: center; gap: 16px">
+      <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px">Trip Planner</span>
+      <span style="font-size: 12px; color: #6b6b6b">Trips / Madrid Gathering</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px">
+      <button type="button" style="background: #fff; border: 1px solid #cfcfcf; border-radius: 7px; padding: 6px 11px; font-size: 11px; font-weight: 600; color: #1a1a1a">Ask the assistant · ⌘K</button>
+      <span style="width: 26px; height: 26px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #6b6b6b">A</span>
+    </div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 20px 90px 0">
+
+    <div style="height: 110px; background: #ececec; border-radius: 12px; display: flex; align-items: flex-end; padding: 10px 14px">
+      <span style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+    </div>
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-top: 12px">
+      <div>
+        <h1 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px">Madrid Gathering</h1>
+        <div style="font-size: 13px; color: #6b6b6b; margin-top: 3px">Barcelona → Madrid · 24–25 Nov · 4 going</div>
+      </div>
+      <div style="display: flex">
+        <span style="width: 26px; height: 26px; border-radius: 99px; background: #ececec; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+        <span style="width: 26px; height: 26px; border-radius: 99px; background: #e0e0e0; border: 2px solid #fff; margin-left: -8px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">L</span>
+        <span style="width: 26px; height: 26px; border-radius: 99px; background: #d4d4d4; border: 2px solid #fff; margin-left: -8px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">M</span>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 4px; margin-top: 14px; border-bottom: 1px solid #cfcfcf">
+      <button type="button" style="background: none; border: none; border-bottom: 2px solid transparent; padding: 9px 14px 10px; font-size: 13px; font-weight: 500; color: #6b6b6b">Overview</button>
+      <button type="button" style="background: none; border: none; border-bottom: 2px solid #1a1a1a; padding: 9px 14px 10px; font-size: 13px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; gap: 7px">
+        Plan
+        <span style="min-width: 16px; height: 16px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 4px">1</span>
+      </button>
+      <button type="button" style="background: none; border: none; border-bottom: 2px solid transparent; padding: 9px 14px 10px; font-size: 13px; font-weight: 500; color: #6b6b6b">Money</button>
+      <button type="button" style="background: none; border: none; border-bottom: 2px solid transparent; padding: 9px 14px 10px; font-size: 13px; font-weight: 500; color: #6b6b6b">Group</button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 640px 420px; gap: 40px; margin-top: 20px">
+
+      <!-- itinerary -->
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px">
+          <span style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">DECISIONS</span>
+          <button type="button" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: 600; color: #1a1a1a">+ New poll</button>
+        </div>
+        <div style="border: 1px solid #1a1a1a; border-radius: 10px; padding: 13px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+          <span>
+            <span style="display: block; font-size: 14px; font-weight: 600">Where do we eat on day 2?</span>
+            <span style="display: block; font-size: 12px; color: #6b6b6b; margin-top: 2px">2 of 4 voted · you haven't</span>
+          </span>
+          <button type="button" style="flex: none; background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 7px 16px; font-size: 12px; font-weight: 600">Vote</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin: 20px 0 5px">
+          <span style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b">DAY 1 · MON 24 NOV</span>
+          <button type="button" style="background: #1a1a1a; color: #fff; border: none; border-radius: 7px; padding: 6px 12px; font-size: 12px; font-weight: 600">+ Add stop</button>
+        </div>
+        <div style="border-top: 1px solid #e4e4e4">
+          <div style="display: flex; gap: 14px; align-items: center; padding: 11px 0; border-bottom: 1px solid #e4e4e4">
+            <span style="width: 22px; height: 22px; flex: none; border-radius: 99px; border: 1.5px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700">1</span>
+            <span style="font-size: 13px; font-weight: 700; width: 46px; flex: none">09:40</span>
+            <span style="flex: 1"><span style="display: block; font-size: 14px; font-weight: 500">Train to Madrid</span><span style="display: block; font-size: 12px; color: #6b6b6b; margin-top: 1px">Sants → Atocha</span></span>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: center; padding: 11px 0; border-bottom: 1px solid #e4e4e4">
+            <span style="width: 22px; height: 22px; flex: none; border-radius: 99px; border: 1.5px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700">2</span>
+            <span style="font-size: 13px; font-weight: 700; width: 46px; flex: none">15:00</span>
+            <span style="flex: 1"><span style="display: block; font-size: 14px; font-weight: 500">Check in · Hotel Riu Plaza</span><span style="display: block; font-size: 12px; color: #6b6b6b; margin-top: 1px">Gran Vía 84</span></span>
+          </div>
+          <div style="display: flex; gap: 14px; align-items: center; padding: 11px 0; border-bottom: 1px solid #e4e4e4">
+            <span style="width: 22px; height: 22px; flex: none; border-radius: 99px; border: 1.5px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700">3</span>
+            <span style="font-size: 13px; font-weight: 700; width: 46px; flex: none">19:30</span>
+            <span style="flex: 1"><span style="display: block; font-size: 14px; font-weight: 500">Prado Museum</span><span style="display: block; font-size: 12px; color: #6b6b6b; margin-top: 1px">Added by Ana</span></span>
+          </div>
+        </div>
+
+        <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin: 18px 0 5px">DAY 2 · TUE 25 NOV</div>
+        <div style="border-top: 1px solid #e4e4e4">
+          <div style="display: flex; gap: 14px; align-items: center; padding: 11px 0; border-bottom: 1px solid #e4e4e4">
+            <span style="width: 22px; height: 22px; flex: none; border-radius: 99px; border: 1.5px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700">4</span>
+            <span style="font-size: 13px; font-weight: 700; width: 46px; flex: none">13:00</span>
+            <span style="flex: 1"><span style="display: block; font-size: 14px; font-weight: 500">Mercado de San Miguel</span></span>
+          </div>
+          <div style="padding: 12px 0; font-size: 12px; color: #6b6b6b">Nothing else planned yet</div>
+        </div>
+      </div>
+
+      <!-- map companion -->
+      <div>
+        <div style="border: 1px solid #cfcfcf; border-radius: 11px; overflow: hidden">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 13px; border-bottom: 1px solid #e4e4e4">
+            <span style="font-size: 12px; font-weight: 600">Day 1 on the map</span>
+            <button type="button" style="background: none; border: none; padding: 0; font-size: 11px; font-weight: 600; color: #1a1a1a">Full screen</button>
+          </div>
+          <div style="height: 430px; background: #ececec; position: relative">
+            <div style="position: absolute; left: 0; right: 0; top: 130px; height: 11px; background: #e0e0e0"></div>
+            <div style="position: absolute; left: 0; right: 0; top: 300px; height: 14px; background: #e0e0e0"></div>
+            <div style="position: absolute; top: 0; bottom: 0; left: 110px; width: 11px; background: #e0e0e0"></div>
+            <div style="position: absolute; top: 0; bottom: 0; left: 290px; width: 13px; background: #e0e0e0"></div>
+            <div style="position: absolute; left: 150px; top: 165px; width: 120px; height: 110px; background: #e4e4e4; border-radius: 4px"></div>
+
+            <span style="position: absolute; left: 76px; top: 96px; width: 26px; height: 26px; border-radius: 99px; background: #1a1a1a; color: #fff; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">1</span>
+            <span style="position: absolute; left: 196px; top: 206px; width: 26px; height: 26px; border-radius: 99px; background: #1a1a1a; color: #fff; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">2</span>
+            <span style="position: absolute; left: 300px; top: 330px; width: 26px; height: 26px; border-radius: 99px; background: #1a1a1a; color: #fff; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700">3</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; border: 1px solid #cfcfcf; border-radius: 11px; padding: 13px; display: flex; align-items: center; justify-content: space-between">
+          <span style="font-size: 13px; font-weight: 500">12 ideas from the assistant</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>DESKTOP · PLAN + MAP (D2, F9)</h3>
+          <p>On a wide screen the map becomes a companion panel beside the itinerary rather than a full-screen takeover — the Wanderlog pattern. Same mode, more room.</p>
+          <p>It is still not a tab.</p>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
