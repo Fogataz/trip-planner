@@ -356,13 +356,44 @@ Nothing is removed in this change. Every element of today's page has a destinati
 
 ## 10. Validate the structure before we build it
 
-Two days, because an IA mistake found at wireframe stage is cheap and at build stage is not:
+An IA mistake found on paper is cheap; the same mistake found after the routes, the three languages and the shared links exist is not. So the four names get tested before anyone builds them.
 
-- **Tree test** of the four destinations with 5–8 people who have taken a group trip. Six findability tasks: *settle up after the trip · change the hotel · vote on dinner · invite your brother · see where Ana is right now · check what changed since yesterday.*
-- **Pass bar:** ≥80% first-choice success. Any task below that means the label or the grouping is wrong, and we fix it on paper.
-- **First-click test** on a static Overview in each of the five phases: does the first click match the phase's intended primary action?
+### 10.1 The tree test
 
-**Not yet run.** The wireframes in §15 are testable as they stand.
+**The instrument:** <https://claude.ai/artifact/KUoaJHuF5sdsyY8SHp4EUU>
+
+Labels only — no screens, no wireframes, no working app. That is the point: it tests whether the words carry, independently of how good the design is. Participants drill down through the menu to where they *would* expect each thing to live, and confirm. Six tasks, randomised per participant, about four minutes.
+
+| | |
+|---|---|
+| **Participants** | 5–8 people who have taken a group trip. Five is enough to expose a broken label; past eight you are buying precision you will not use |
+| **Tasks** | settle up after the trip · change the hotel · vote on dinner · invite your brother · see where Ana is right now · check what changed since yesterday |
+| **Measured** | first click, final answer, whether they backtracked, "I'm not sure" |
+| **Pass bar** | **≥80% first-choice success per task** |
+| **Results** | Append `#results` to the link. Live, no export step |
+
+**How to run it.** Send the link; do not sit with them, and do not explain the tree. Say only "click where you'd expect to find it, there are no wrong answers." Watching over someone's shoulder turns a findability test into a politeness test.
+
+**The first click is the measurement that matters.** It is the choice made before any hunting, which is the choice a real user makes. Someone who clicks Money, then Group, then finds the answer in Plan has told us the label is wrong even though they eventually succeeded.
+
+**What failing means.** A task below 80% means the label or the grouping is wrong, and we change it on the canvas. It does not mean participants failed, and it is not a reason to add a help tooltip. The three most likely failures and what each would tell us:
+
+| If this fails | It probably means |
+|---|---|
+| *Vote on dinner* → Plan | Polls under Plan is wrong, and Decisions needs to be its own destination — which breaks the four-destination ceiling in §7.2 |
+| *Where Ana is* → Plan | The map has no obvious home, which is the weakest part of D2 |
+| *Change the hotel* → Overview | "Where you're staying" is being read as a fact to view, not a thing to edit |
+
+### 10.2 One constraint on who can take part
+
+The test stores results, which makes the page organization-internal: **participants must be signed in to the same organization**. Colleagues, in practice.
+
+That is a real limitation and it biases the result in a specific direction — people who work at a travel company read travel words more fluently than the people we are designing for. A label that passes with colleagues has not been proven; a label that **fails** with colleagues is definitely broken. Treat a clean pass as weaker evidence than a failure, and if a result is marginal (say 70–85% on a task that matters), get it in front of someone outside the company before trusting it.
+
+### 10.3 Still to do
+
+- **The tree test has not been run.** The instrument is ready; it needs participants.
+- **First-click test** on a static Overview in each of the five phases: does the first click match the phase's intended primary action? The frames in §15 are usable for this as they stand, but the instrument above does not cover it.
 
 ## 11. Decisions
 
@@ -498,5 +529,6 @@ For slice 2, change the slice paragraph and the rules that reference parity; the
 | # | Item | Owner |
 |---|---|---|
 | 1 | Approval gate — status moves to `approved` before any code | Product owner |
-| 2 | Tree test in §10 has not been run | **TBD** |
-| 3 | Whether spec 002 (hosted event pilot) needs its own surface inside a trip (§4.2) | Blocked on 002 |
+| 2 | Tree test in §10 — instrument is built, needs 5–8 participants | **TBD** |
+| 3 | First-click test on the five Overview phases (§10.3) — not built | **TBD** |
+| 4 | Whether spec 002 (hosted event pilot) needs its own surface inside a trip (§4.2) | Blocked on 002 |
