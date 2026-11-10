@@ -44,6 +44,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 006 | [Transport updates](specs/006-transport-updates.md) | draft | — | — |
 | 007 | [Profiles and display names](specs/007-profiles-and-display-names.md) | draft | — | — |
 | 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
+| 010 | [Host edits their trip](specs/010-host-trip-edit.md) | draft | — | — |
 
 ## How a feature goes from idea to shipped
 
@@ -51,15 +52,26 @@ Adopted 2026-11-09. Any Claude account working in this repo follows the same sta
 
 | Stage | What | Output |
 |---|---|---|
-| 1. Benchmark | 3–5 comparable products (event apps, retreat tools, group planners): what they do, what we take, what we avoid, with source links | Benchmark section in the spec |
-| 2. Define | What works for us: options, trade-offs and a recommendation. Check the four product principles in [CLAUDE.md](../CLAUDE.md) and flag conflicts. | Experience and requirements in the spec |
-| 3. Wireframes | Lo-fi frames, one per screen, annotated. In Lucid if connected, otherwise HTML files in `wireframes/NNN-short-name/`. | Frames linked from the spec |
+| 0. Audit | What exists today for this feature: screenshots of the current screens, code paths, docs and backlog entries, plus gaps and risks found (kept apart from the requested scope) | Audit section in the spec; screenshots in `wireframes/NNN-short-name/current/` |
+| 1. Benchmark | 3–5 comparable products (2–3 for a medium feature): what they do, what we take, what we avoid, with source links | Benchmark section in the spec |
+| 2. Define | What works for us: options, trade-offs and a recommendation. Check the four product principles in [CLAUDE.md](../CLAUDE.md) and flag conflicts. Walk the impact checklist (permissions, live sync, notifications and activity, languages, validation, existing data, analytics). Mark each adjacent improvement as in scope, later or rejected. | Experience and requirements in the spec |
+| 3. Wireframes | Lo-fi frames, one per screen or state, annotated, current screen beside the proposed one, including empty, error and no-permission states. In Lucid if connected, otherwise HTML files in `wireframes/NNN-short-name/`. | Frames linked from the spec |
 | 4. Spec | Written from the template below, `Status: draft`, added to the specs table. Every product-owner decision is listed as an open decision with options and a recommendation, never answered for them. | `specs/NNN-short-name.md` |
 | **Gate** | **The product owner approves the spec. Status becomes `approved`. No code before this.** Open decisions do not block approval: each carries a recommendation that is the working default until the owner overrides it (D27). | Approved spec |
 | 5. Build | On a branch, in the spec's build order, checked against its acceptance criteria | Pull request |
 | 6. Docs | In the same pull request: see "When a spec ships" below | Updated docs |
 
-Small fixes with no new screen can skip stages 1 and 3.
+### Size decides the stages
+
+State the size and why at the start. The owner can override it.
+
+| Size | Typical case | Stages |
+|---|---|---|
+| Small | Fix or tweak, no new screen | 0, then build |
+| Medium | New UI or behavior on an existing screen | 0, 1 (light), 2, 3, 4 |
+| Large | New area, new model or a new kind of user | All |
+
+The stages are defined in general terms in `.claude/commands/feature.md`, so the same command works in other products. This file holds what is specific to Trip Planner.
 
 ## How to write a spec
 

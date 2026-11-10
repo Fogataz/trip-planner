@@ -1,16 +1,60 @@
 ---
-description: Take a feature from idea to shipped, following the staged process in docs/README.md
+description: Take a feature from idea to shipped through a staged process: audit, benchmark, define, wireframes, spec, gate, build, docs
 argument-hint: <feature name or spec number>
 ---
 
 Work on the feature: $ARGUMENTS
 
-The process is defined in `docs/README.md`, section "How a feature goes from idea to shipped". Read it first and follow it. Do not copy it here; if it changes, the README wins.
+This command is product-agnostic. It defines the stages. The project's own docs (`CLAUDE.md`, `AGENTS.md`, `docs/README.md` or the equivalent) define the specifics: folder names, spec template, status values, branch and merge rules, product principles, who may edit what. Read them first. Where they conflict with this file, the project docs win.
 
-1. Find the feature. If `$ARGUMENTS` is a spec number, open `docs/specs/NNN-*.md`. If it is a name, check `docs/specs/` and `docs/product/roadmap.md`. If no spec exists, start at stage 1 (Benchmark).
-2. Report the spec's current `Status:` and the next stage in the README table. Then do only that stage.
-3. Check the four product principles in `CLAUDE.md`. Flag any conflict before going further.
-4. Product decisions that belong to the product owner stay listed as open decisions with options and a recommendation. Never answer them. Never invent answers to **TBD** items.
-5. **Gate:** do not write code until the spec has `Status: approved` and its open decisions are answered. If it is not approved, stop and say what is missing.
-6. Once approved: work on a branch (never `main`), build in the spec's build order, check against its acceptance criteria, and in the same PR update the spec, `docs/features.md`, `docs/product/roadmap.md` and the specs table in `docs/README.md`.
-7. Pull at the start and commit and push at the end of the session. Open a PR to `main`; do not merge without the product owner's OK.
+## Before you start
+
+1. Find the feature. If `$ARGUMENTS` is a spec number, open that spec. If it is a name, check the specs folder, the backlog and the roadmap. If a backlog entry exists, start from it and do not duplicate it. If nothing exists, start at stage 0.
+2. Report the spec's current status and the next stage. Then do only that stage.
+3. Pull the latest main and your working branch. Work on a branch, never on `main`. If another session has uncommitted work in this checkout, use a separate worktree.
+4. Check the product principles. Flag any conflict before going further.
+5. Decisions that belong to the product owner stay listed as open decisions with options and a recommendation. Never answer them. Never invent answers to items marked TBD.
+
+## Size the work first
+
+State the size and the reason, and let the owner override it.
+
+| Size | Typical case | Stages |
+|---|---|---|
+| Small | Fix or tweak, no new screen | 0, then build |
+| Medium | New UI or behavior on an existing screen | 0, 1 (light: 2–3 comparable products), 2, 3, 4 |
+| Large | New area, new model, or a new kind of user | All stages, full benchmark |
+
+## Stages
+
+**0. Audit the current state.** Describe what exists today before proposing anything.
+- Save screenshots of the relevant screens in the wireframes folder under `current/`. Use the ones the owner attached, or capture them.
+- List what the product already does for this feature: the code paths (UI, API, data model), the docs and the backlog entries.
+- Write down gaps, bugs and risks you find, even outside the request. Keep them in a separate list from the requested scope.
+- Output: an "Audit" section in the spec.
+
+**1. Benchmark.** Look at comparable products. For each: what they do, what we take, what we avoid, with source links. Do not cite what you have not checked. Output: a "Benchmark" section.
+
+**2. Define.** Options, trade-offs and a recommendation. Include:
+- The principles check.
+- An impact checklist. Mark each line as affected, not affected, or open: who may do it (permissions); how other users see it (live sync, notifications, activity history); languages and locale; validation and error states; data that already exists and may be affected; analytics; migration.
+- Adjacent improvements found in the audit, each marked in scope, later, or rejected, with a reason.
+- Output: experience and requirements in the spec.
+
+**3. Wireframes.** Lo-fi frames, one per screen or state, annotated and tied to requirement IDs. Show the current screen beside the proposed one. Cover the empty, error, loading and no-permission states. Save them as files in the repo, so they survive across accounts and tools. Link them from the spec.
+
+**4. Spec.** Written from the project's template with `Status: draft`, added to the specs index. Every owner decision is an open decision with options and a recommendation. Acceptance criteria are testable and cover the impact checklist.
+
+**Gate.** Do not write code until the spec is approved and its decisions are answered or carry a recommendation the owner accepted as the working default. If it is not approved, stop and say what is missing.
+
+**5. Build.** On a branch, in the spec's build order, checked against its acceptance criteria. Add tests for the logic you add.
+
+**6. Docs.** In the same pull request: set the spec to shipped with date and PR; update the living feature reference, the roadmap and the specs index. Open the PR; do not merge without the owner's OK.
+
+## After the feature
+
+Note what slowed the process or what you had to guess. If a stage or checklist line would have helped, propose the change to this file in a separate pull request, and keep it general.
+
+## Session hygiene
+
+Commit and push at the end of every session, even for docs-only work, so other computers and accounts see it. Say which files changed.
