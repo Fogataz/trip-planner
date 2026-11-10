@@ -1,11 +1,13 @@
 # Spec 004: Trip Information Architecture
 
-Status: draft
-Owner: TBD · Shipped: — · PR: —
+Status: approved
+Owner: Alberto Calvo · Approved: 2026-11-10 · Shipped: — · PR: —
 Wireframes: [`wireframes/004-trip-ia-redesign/index.html`](../../wireframes/004-trip-ia-redesign/index.html)
 
-> Benchmark (§6) → define (§7) → wireframes (§15) → spec → **gate** → build (§13).
-> Stages 1–3 are done. The eight decisions in §11 were taken by the product owner on 2026-11-10. This spec is waiting on the approval gate in [docs/README.md](../README.md); no code before that.
+> Benchmark (§6) → define (§7) → wireframes (§15) → spec → gate → **build (§13)**.
+> **Approved on 2026-11-10.** The eight decisions in §11 were taken the same day. Build may start, in the slices in §13 and on a branch. The handoff for whoever builds it is §16.
+>
+> **Approved without the tree test in §10, deliberately.** Slice 1 is a parity move — it changes where things live, not what they do — so the design risk of starting is low, and the test stays open as item 2 in §17. The exposure, if a label later fails: slice 1's routes and its EN/PT/ES keys. Run the test before slice 2 builds anything on top of those labels.
 
 ## 1. The problem in one line
 
@@ -528,7 +530,7 @@ For slice 2, change the slice paragraph and the rules that reference parity; the
 
 | # | Item | Owner |
 |---|---|---|
-| 1 | Approval gate — status moves to `approved` before any code | Product owner |
-| 2 | Tree test in §10 — instrument is built, needs 5–8 participants | **TBD** |
+| 1 | ~~Approval gate~~ — approved 2026-11-10, without the tree test, deliberately | Done |
+| 2 | Tree test in §10 — instrument is built, needs 5–8 participants. **Run it before slice 2**, which builds on these labels | **TBD** |
 | 3 | First-click test on the five Overview phases (§10.3) — not built | **TBD** |
 | 4 | Whether spec 002 (hosted event pilot) needs its own surface inside a trip (§4.2) | Blocked on 002 |
