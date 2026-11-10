@@ -1,6 +1,6 @@
 import Expenses from '../../components/Expenses'
 import DestinationHeading from '../DestinationHeading'
-import { isTripLive } from '../format'
+import { isTripLive } from '../phase'
 import { useTrip } from '../TripContext'
 
 export default function Money() {

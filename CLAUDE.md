@@ -14,7 +14,7 @@ This file is read by both Claude Code (engineering) and the Claude Cowork projec
 
 - Server: `npm run dev` (nodemon) or `npm start`, run from the repo root.
 - Client: `npm run dev` or `npm run build`, run from `client/`.
-- There is no test suite yet. `npm test` is a placeholder.
+- Client tests: `npm test` in `client/` runs Vitest. The server has no test suite yet; its `npm test` is a placeholder.
 - Copy `.env.example` to `.env` for MongoDB, Firebase, and the optional Maps and Redis settings. Never commit `.env`.
 
 ## Product principles
