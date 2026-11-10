@@ -125,7 +125,7 @@ The product owner wants organisers to be able to rename a trip, probably from th
 
 | # | Decision | Recommendation | Status |
 |---|---|---|---|
-| D1 | Option A, B or C | A | **TBD** |
+| D1 | Option A, B or C | A | **Decided: A** (product owner, 2026-11-10) |
 | D2 | Phone height: 140 px cap, or shorter at the cost of the art | 140 px, because N2 allows it (+58 px) | **TBD** |
 | D3 | Ship the phone action sheet in the same PR | Yes. The big buttons are the worse half of the problem | **TBD** |
 | D4 | Who makes the 4 : 1 pod-gathering crop | Product owner. Engineering cannot judge the art | **TBD** |
