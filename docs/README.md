@@ -50,7 +50,7 @@ Adopted 2026-11-09. Any Claude account working in this repo follows the same sta
 |---|---|---|
 | 1. Benchmark | 3–5 comparable products (event apps, retreat tools, group planners): what they do, what we take, what we avoid, with source links | Benchmark section in the spec |
 | 2. Define | What works for us: options, trade-offs and a recommendation. Check the four product principles in [CLAUDE.md](../CLAUDE.md) and flag conflicts. | Experience and requirements in the spec |
-| 3. Wireframes | Lo-fi frames, one per screen, annotated. In Lucid if connected, otherwise HTML files in `wireframes/NNN-short-name/` (TODO: folder is created with the first wireframes). | Frames linked from the spec |
+| 3. Wireframes | Lo-fi frames, one per screen, annotated. In Lucid if connected, otherwise HTML files in `wireframes/NNN-short-name/`. | Frames linked from the spec |
 | 4. Spec | Written from the template below, `Status: draft`, added to the specs table. Every product-owner decision is listed as an open decision with options and a recommendation, never answered for them. | `specs/NNN-short-name.md` |
 | **Gate** | **The product owner approves the spec. Status becomes `approved`. No code before this.** Open decisions do not block approval: each carries a recommendation that is the working default until the owner overrides it (D27). | Approved spec |
 | 5. Build | On a branch, in the spec's build order, checked against its acceptance criteria | Pull request |
