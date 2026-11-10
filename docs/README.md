@@ -26,6 +26,9 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | [product/pilot-event-feature-list.md](product/pilot-event-feature-list.md) | Planning list for the first pilot event (spec 002): why each feature matters now and later, effort, risks and fallbacks |
 | [process/tracker.md](process/tracker.md) | How delivery is tracked in GitHub Issues and the Trip-Planner project: the three levels, fields, views, and how the board relates to specs |
 | [product/spec-backlog.md](product/spec-backlog.md) | Candidates for future specs: where each goes in the product, a recommendation and where to start in the code |
+| [product/premium-buyer-lens.md](product/premium-buyer-lens.md) | Analysis (2026-11-10): who should pay and at what price, using Alex Hormozi's market and pricing advice |
+| [product/destination-weddings.md](product/destination-weddings.md) | Analysis (2026-11-10): destination weddings as a niche, use cases, gaps, who pays, test plan |
+| [product/early-testers.md](product/early-testers.md) | Living register of early testers and design partners (no contact details) |
 | [features.md](features.md) | What the product does today, based on the current code |
 | [specs/](specs/) | One spec per feature, numbered |
 
