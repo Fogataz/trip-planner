@@ -41,7 +41,6 @@ Set on the issue (org-level issue fields), so they survive outside the board:
 | Layer | Epic | Core, Host, Money, Public, Content — from working-doc §2 |
 | Phase | Epic | 1–7 — from [roadmap.md](../product/roadmap.md). Historical; phases 1–4 are largely done |
 | Revenue Model | Initiative, Epic | All models, A…I — the "Models served" column in working-doc §4.1 |
-| Horizon | Initiative, Epic | Now, Next, Later. Roadmap and Backlog views can group by it |
 | Priority | all | |
 | Start date / Target date | Initiative, Epic | drives the Roadmap view |
 | Effort | — | deliberately unused. Two people, and it does not roll up |
@@ -50,7 +49,7 @@ Set on the board (project fields):
 
 | Field | Values |
 |---|---|
-| Horizon | Now, Next, Later (single select; mirrors the issue field above) |
+| Horizon | Now, Next, Later. Set on initiatives and epics. Roadmap and Backlog views can group by it |
 | Status | Backlog, Spec draft, Spec approved, In build, In review, Shipped |
 | Sprint | 1-week iterations, from Mon 10 Nov |
 
