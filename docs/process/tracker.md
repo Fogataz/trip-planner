@@ -79,8 +79,8 @@ Put the spec number in the epic title: `[002] Invite link, requests and approval
 
 ## Seeding
 
-[seed-board.sh](seed-board.sh) creates the initiatives, epics and stories below. It is one-off;
-delete it once it has run. Shipped specs 001 and 003 are **not** seeded — they are already recorded
+The initiatives, epics and stories below were created in `Fogataz/trip-planner` on 2026-11-10 by a one-off
+script, since removed (it is in git history). Shipped specs 001 and 003 are **not** seeded — they are already recorded
 in the specs table, and back-filling closed issues adds noise.
 
 ### Initiative 1 — Run the hosted event pilot (24–25 Nov)
