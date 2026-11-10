@@ -1,6 +1,6 @@
 # Trip Planner: Product Strategy Working Doc
 
-> **Living document.** Last updated 2026-11-09. This is where current product thinking lives. Update it as decisions are made. Items marked **TBD** are open decisions for the product owner.
+> **Living document.** Last updated 2026-11-10. This is where current product thinking lives. Update it as decisions are made. Items marked **TBD** are open decisions for the product owner.
 >
 > **Open questions are not blockers (D27).** TBD items are decided as we learn. Where a decision affects the build, its recommendation is the working default until the product owner overrides it. Only items marked **Blocks** stop work.
 >
@@ -32,6 +32,8 @@ Each revenue model is a mix of these layers. The core comes first because every 
 ## 3. Revenue models under consideration
 
 **Analysis done 2026-11-09:** see [revenue-models-analysis.md](revenue-models-analysis.md). It recommends **D (team offsites and company events)** as the lead model. A stays free as the core, C1 (retreat host tool) or H (operator client app) is the Phase 2 candidate, E is added in Phase 2, and F is parked. **Not decided yet (D3).**
+
+**Added 2026-11-10:** [premium-buyer-lens.md](premium-buyer-lens.md) applies Alex Hormozi's "sell to people who can pay" advice: the organiser with the budget pays, guests never pay, prices sit at two ends (self-serve and done-with-you), not the middle. It moves **premium group-trip operators** (C1/H) and **destination-wedding planners** up as Phase 2 candidates. [destination-weddings.md](destination-weddings.md) analyses weddings as a niche of model I: we'd be the trip around the wedding, sold to planners first.
 
 | # | Model | Payer | Layers needed |
 |---|---|---|---|
@@ -251,6 +253,10 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 | D25 | Where shared docs live | Superseded by D26 |
 | D27 | Do open product and strategy questions block the build? | **Decided 2026-11-09:** no. Recommendations are working defaults; the owner can override them later. Only items marked **Blocks** stop work. |
 | D28 | Portuguese variant | pt-BR shipped in spec 003. Confirm or switch to pt-PT later (one file). Not a blocker. |
+| D29 | Pricing rule: the organiser with the budget pays; guests never pay (premium-buyer lens P1) | Proposed |
+| D30 | Done-with-you tier as capped paid discovery (P2) | Proposed |
+| D31 | Phase 2 candidates: C1/H premium operators and destination-wedding planners, interviews first (P3, W-a, W-b) | Proposed |
+| D32 | Use the April 2027 bachelor trip in Costa Rica as a product test (W-c) | Proposed |
 | D26 | Where shared docs live, with two Claude accounts on two computers | **Decided 2026-11-09:** every durable doc lives in the repo's `docs/` (product, brand, specs). Claude Projects keep pointers only. See "Working across accounts and computers" in [docs/README.md](../README.md). |
 | D29 | Trip phase precedence (spec 004 §18.3 D9) | **Decided 2026-11-10:** the calendar wins. Countdown, Live and Wrap follow the dates even for a solo or plan-less trip |
 | D30 | Trips without an end date (spec 004 §18.3 D10) | **Decided 2026-11-10:** offer an approximate length (e.g. 8–10 days); phases use the longer estimate |
@@ -263,6 +269,9 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 - Brand foundations: [../brand/brand-foundations.md](../brand/brand-foundations.md) (platform, voice, architecture, naming rounds 1 and 2, visual moods, UX principles)
 - Gathering spec: [../specs/002-hosted-event-pilot.md](../specs/002-hosted-event-pilot.md)
 - Gathering build list: [pilot-event-feature-list.md](pilot-event-feature-list.md)
+- Premium buyer lens (Hormozi): [premium-buyer-lens.md](premium-buyer-lens.md)
+- Destination weddings use case: [destination-weddings.md](destination-weddings.md)
+- Early testers register: [early-testers.md](early-testers.md)
 - Feature workflow (benchmark → define → wireframes → spec → owner approval → build → docs): [docs/README.md](../README.md)
 
 ## 9. Brand
@@ -318,6 +327,8 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 - **Public event page:** a "made with [Name]" footer on any public page (when public pages exist).
 
 **Measure:** circle members, active design partners, referrals and intros per event, and the share of new organisers who came from a previous event.
+
+**Early testers (2026-11-10):** the first names are in [early-testers.md](early-testers.md): two Costa Rica trip operators, a photography-workshop operator, two Barcelona food-experience hosts, the bachelor trip (April 2027) and the pilot organisers. Contact details stay out of the repo.
 
 ## 11. Go-to-market
 
