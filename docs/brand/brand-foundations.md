@@ -377,7 +377,7 @@ This is a code-hosting namespace collision, not a trademark or consumer brand co
 
 - Keep the brand name as-is in the product, marketing and app stores.
 - Use a suffixed handle for the GitHub org or repo when one is needed: for example `fogata-app`, `usefogata`, `fogatahq` or `get-fogata`. This is a one-line, reversible engineering choice, not a naming decision.
-- The repo already lives at `barry-dempsey/trip-planner` (CLAUDE.md). Nothing here needs to change before the gathering; it only matters if and when the team wants the org name to match the brand.
+- The repo already lives at `Fogataz/trip-planner` (CLAUDE.md). Nothing here needs to change before the gathering; it only matters if and when the team wants the org name to match the brand.
 
 This is engineering's call to make when it's actually needed (tracked as B7 in section 7), not a reason to drop a name candidate.
 

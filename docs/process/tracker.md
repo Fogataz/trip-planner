@@ -127,9 +127,9 @@ Outcome: `features.md` matches the code, and the known defects are gone. Target 
 
 | Item | Type | Source |
 |---|---|---|
-| Confirm expense settlement and update features.md | Task | roadmap, next priority 1 |
+| Confirm expense settlement and update features.md | Task | roadmap, next priority 1. Settlement is built (`computeSettlements`, spec 004); what remains is recording a payment, tracked as [005] |
 | Real-time gaps: emit Q&A events, listen for accommodation changes | Story | working-doc §4.1 item 7 |
-| Activity feed: read endpoint, UI, log polls and expenses | Epic | working-doc §4.1 item 8 |
+| Activity feed: log polls and expenses, server-side read state | Epic | working-doc §4.1 item 8. The read endpoint, since-you-were-away and needs-me badges shipped in spec 004 slice 2; the rest is tracked as [008] |
 | Remove duplicate Mongoose index definitions | Task | roadmap, next priority 5 |
 | Fix the Redis URL configuration | Task | roadmap, next priority 5 |
 
@@ -138,7 +138,23 @@ Outcome: `features.md` matches the code, and the known defects are gone. Target 
 Outcome: members are alerted to delays that affect the schedule. No target date: blocked on the
 provider and budget (**TBD**). Phase 5.
 
+Alert slots already exist in Countdown and Live Overview (spec 004). Spec 006 recommends manual
+status first, then one flight API.
+
 | Item | Type |
 |---|---|
 | Spike: choose a transport data provider (coverage, budget) | Spike |
 | Transport delay alerts | Epic |
+
+### Initiative 5 — Give the product a structure
+
+Outcome: people can tell what the app is for and find the one thing that matters to them right now.
+Added after the first seed, when spec 004 was approved (2026-11-10). It is the foundation that specs
+005–008 build on.
+
+| Epic | Source |
+|---|---|
+| [004] Trip information architecture | [spec 004](../specs/004-trip-ia-redesign.md) §1. Built in three slices, PRs #11–#14 |
+
+Spec 007 (profiles and display names) is a separate epic under initiative 1, because it ships with
+Google sign-in.
