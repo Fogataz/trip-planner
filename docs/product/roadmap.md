@@ -12,7 +12,7 @@
 | 4. Location tracking | Opt-in live location shared within a trip | **In place** (in-memory only) |
 | 5. Transport API integration | Live transport delays and updates | **Not started** |
 | 6. Notifications | Push notifications through Firebase Cloud Messaging | **Partly in place.** Token registration and pushes for new expense, new poll, member joined, question asked and stop changes exist. Per-category preferences are in [spec 002](../specs/002-hosted-event-pilot.md) F27–F29 |
-| 7. Frontend and polish | Full web client and UX polish | **In progress** (React client exists). Trip covers shipped 2026-11-06 ([spec 001](../specs/001-trip-covers.md)). EN/PT/ES localization shipped ([spec 003](../specs/003-localization.md)). Trip information architecture ([spec 004](../specs/004-trip-ia-redesign.md)) built in three slices, in review as PRs #11–#14. Server errors and push text still English |
+| 7. Frontend and polish | Full web client and UX polish | **In progress** (React client exists). Trip covers shipped 2026-11-06 ([spec 001](../specs/001-trip-covers.md)). EN/PT/ES localization shipped ([spec 003](../specs/003-localization.md)). Trip information architecture ([spec 004](../specs/004-trip-ia-redesign.md)) shipped 2026-11-10, built in three slices (PRs #11–#14, landed on `main` by [#77](https://github.com/Fogataz/trip-planner/pull/77)). Server errors and push text still English |
 
 The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:updated`, `location:update`, `transport:update`) are partly implemented. `join-trip`, `leave-trip` and `location:update` exist. `trip:updated` and `transport:update` should be confirmed.
 
