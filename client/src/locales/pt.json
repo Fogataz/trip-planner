@@ -297,10 +297,27 @@
     "assistant": {
       "open": "Perguntar ao assistente",
       "title": "Assistente da viagem",
-      "close": "Fechar assistente"
-    },
-    "ideas": {
-      "summary": "Ideias de viagem do assistente"
+      "close": "Fechar assistente",
+      "disclaimer": "Tudo aqui é um rascunho. Confira horários e preços antes de contar com eles.",
+      "sections": {
+        "ask": "Perguntar",
+        "draft": "Rascunhar plano",
+        "ideas": "Ideias"
+      },
+      "preferencesLabel": "O que o grupo prefere?",
+      "preferencesPlaceholder": "ex.: orçamento, comida, ritmo tranquilo",
+      "draft": "Rascunhar paradas",
+      "redraft": "Rascunhar de novo",
+      "draftCount_one": "{{count}} parada em rascunho, ainda fora do plano",
+      "draftCount_other": "{{count}} paradas em rascunho, ainda fora do plano",
+      "addAll": "Adicionar todas ao plano",
+      "dismissAll": "Descartar todas",
+      "addToPlan": "Adicionar ao plano",
+      "dismiss": "Descartar",
+      "draftShort": "Rascunhar com IA",
+      "ideasCount_one": "{{count}} ideia do assistente",
+      "ideasCount_other": "{{count}} ideias do assistente",
+      "ideasHint": "Como chegar, como se locomover e o que fazer"
     },
     "group": {
       "notificationsTitle": "Notificações",

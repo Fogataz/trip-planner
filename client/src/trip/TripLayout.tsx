@@ -121,7 +121,7 @@ function TripChrome() {
                 ))}
               </ul>
             )}
-            <button type="button" className="btn-secondary assistant-open" onClick={() => setAssistantOpen(true)}>
+            <button type="button" className="btn-secondary assistant-open" onClick={() => setAssistantOpen('ask')}>
               {t('trip.assistant.open')}
             </button>
           </div>
@@ -153,7 +153,7 @@ function TripChrome() {
       <button
         type="button"
         className="assistant-fab"
-        onClick={() => setAssistantOpen(true)}
+        onClick={() => setAssistantOpen('ask')}
         aria-label={t('trip.assistant.open')}
       >
         <span aria-hidden="true">✦</span>

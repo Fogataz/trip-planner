@@ -297,10 +297,27 @@
     "assistant": {
       "open": "Ask the assistant",
       "title": "Trip assistant",
-      "close": "Close assistant"
-    },
-    "ideas": {
-      "summary": "Trip ideas from the assistant"
+      "close": "Close assistant",
+      "disclaimer": "Everything here is a draft. Check opening hours and prices before you rely on them.",
+      "sections": {
+        "ask": "Ask",
+        "draft": "Draft a plan",
+        "ideas": "Ideas"
+      },
+      "preferencesLabel": "Anything the group wants?",
+      "preferencesPlaceholder": "e.g. budget, food, a relaxed pace",
+      "draft": "Draft stops",
+      "redraft": "Draft again",
+      "draftCount_one": "{{count}} draft stop, not in the plan yet",
+      "draftCount_other": "{{count}} draft stops, not in the plan yet",
+      "addAll": "Add all to plan",
+      "dismissAll": "Dismiss all",
+      "addToPlan": "Add to plan",
+      "dismiss": "Dismiss",
+      "draftShort": "Draft with AI",
+      "ideasCount_one": "{{count}} idea from the assistant",
+      "ideasCount_other": "{{count}} ideas from the assistant",
+      "ideasHint": "Getting there, getting around, and what to do"
     },
     "group": {
       "notificationsTitle": "Notifications",

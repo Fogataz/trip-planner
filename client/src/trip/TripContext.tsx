@@ -44,6 +44,17 @@ export interface Trip {
   cover?: TripCoverData | null
 }
 
+/** Which part of the Trip assistant to show when it opens (spec 004 section 7.5) */
+export type AssistantSection = 'ask' | 'draft' | 'ideas'
+
+/** A stop the assistant proposed. Private to the person who asked until they add it to the plan. */
+export interface DraftStop {
+  stop: string
+  time: string
+  transport: string
+  notes: string
+}
+
 export interface SharedLocation {
   userId: string
   userEmail?: string
@@ -67,8 +78,10 @@ interface TripContextValue {
   push: ReturnType<typeof usePushNotifications>
   mapOpen: boolean
   setMapOpen: (open: boolean) => void
-  assistantOpen: boolean
-  setAssistantOpen: (open: boolean) => void
+  assistantOpen: AssistantSection | false
+  setAssistantOpen: (open: AssistantSection | false) => void
+  drafts: DraftStop[]
+  setDrafts: React.Dispatch<React.SetStateAction<DraftStop[]>>
   /** Where the trip is in its lifecycle (spec 004 section 5), in the viewer's timezone */
   phase: TripPhase
   polls: Remote<Poll[]>
@@ -107,7 +120,8 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
   const [activeUsers, setActiveUsers] = useState<any[]>([])
   const [locations, setLocations] = useState<Record<string, SharedLocation>>({})
   const [mapOpen, setMapOpen] = useState(false)
-  const [assistantOpen, setAssistantOpen] = useState(false)
+  const [assistantOpen, setAssistantOpen] = useState<AssistantSection | false>(false)
+  const [drafts, setDrafts] = useState<DraftStop[]>([])
   const hasTrip = useRef(false)
 
   const refetch = useCallback(async () => {
@@ -283,6 +297,8 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             setMapOpen,
             assistantOpen,
             setAssistantOpen,
+            drafts,
+            setDrafts,
             phase,
             polls,
             expenses,
@@ -291,7 +307,7 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             badges,
           }
         : null,
-    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, isOrganizer, push, mapOpen, assistantOpen, phase, polls, expenses, activity, seen, badges]
+    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, isOrganizer, push, mapOpen, assistantOpen, drafts, phase, polls, expenses, activity, seen, badges]
   )
 
   // Skeleton in the shape of the trip chrome and tabs, so nothing jumps when the trip arrives (N3, N4)
