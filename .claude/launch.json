@@ -12,6 +12,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["client/node_modules/vite/bin/vite.js", "client"],
       "port": 3000
+    },
+    {
+      "name": "wireframes",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4178", "--directory", "wireframes"],
+      "port": 4178
     }
   ]
 }
