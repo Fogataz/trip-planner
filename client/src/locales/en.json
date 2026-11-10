@@ -231,5 +231,80 @@
       "cannotOpen": "That image could not be opened.",
       "cannotProcess": "That image could not be processed in this browser."
     }
+  },
+  "trip": {
+    "tabs": {
+      "overview": "Overview",
+      "plan": "Plan",
+      "money": "Money",
+      "group": "Group"
+    },
+    "navLabel": "Trip sections",
+    "retry": "Try again",
+    "overview": {
+      "factsTitle": "The facts",
+      "summaryTitle": "In this trip",
+      "planSummary_one": "{{count}} stop planned",
+      "planSummary_other": "{{count}} stops planned",
+      "moneySummary": "Expenses and who owes whom",
+      "groupSummary_one": "{{count}} member",
+      "groupSummary_other": "{{count}} members",
+      "stayTitle": "Where you're staying"
+    },
+    "map": {
+      "open": "Where everyone is",
+      "close": "Close map",
+      "short": "Map"
+    },
+    "assistant": {
+      "open": "Ask the assistant",
+      "title": "Trip assistant",
+      "close": "Close assistant"
+    },
+    "ideas": {
+      "summary": "Trip ideas from the assistant"
+    },
+    "group": {
+      "notificationsTitle": "Notifications",
+      "notificationsHint": "Push notifications on this device"
+    },
+    "setup": {
+      "title": "Get the trip started",
+      "inviteBody": "A trip is better with people. Invite the group, then decide together.",
+      "inviteAction": "Invite the group",
+      "planBody": "Add the first stop, or let the AI draft a plan you can edit.",
+      "planAction": "Add the first stop",
+      "draftPlan": "Draft a plan with AI",
+      "setStay": "Add where you're staying"
+    },
+    "planEmpty": {
+      "title": "No plan yet",
+      "body": "Add stops as the group decides them, or let the AI draft a first plan you can edit."
+    },
+    "polls": {
+      "new": "+ New poll",
+      "emptyHint": "No decisions yet. Start a poll when the group needs to choose."
+    },
+    "money": {
+      "yourBalance": "Your balance",
+      "youOwe": "You owe {{amount}}",
+      "youAreOwed": "You're owed {{amount}}",
+      "settled": "You're all settled up",
+      "settledBody": "Nothing to pay, nothing to chase.",
+      "payTo": "Pay {{name}} {{amount}}",
+      "getFrom": "{{name}} pays you {{amount}}",
+      "tripTotal": "Trip total",
+      "everyone": "Everyone",
+      "isOwed": "is owed {{amount}}",
+      "owes": "owes {{amount}}",
+      "memberSettled": "settled",
+      "allExpenses": "All expenses",
+      "addExpense": "+ Add expense",
+      "you": "You",
+      "emptyTitle": "No expenses yet",
+      "emptyBody": "Log shared costs as you go. The app works out who owes whom.",
+      "emptyAction": "Add the first expense"
+    },
+    "groupEmpty": "Just you so far. Invite the group to start planning together."
   }
 }

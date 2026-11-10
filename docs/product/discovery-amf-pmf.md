@@ -68,6 +68,31 @@ Takeaways for us:
 - Gather and Bookinglayer sell host tools only. Neither shows a guest-side group experience. That gap is where our real-time trip product fits.
 - Playtomic shows the path: a tool clubs need, then a marketplace on top. Clubs complain about commission, so pricing is a lever and a risk.
 
+## 5.1 Candidate leads: retreat venues and hosts
+
+Specific venues and hosts worth tracking as interview targets, design partners, or (for C2) future marketplace supply. Add a row here whenever a new one is researched; keep the detail write-up short and factual.
+
+| Venue / host | Type | Audience | Booking stack | Prices | Status |
+|---|---|---|---|---|---|
+| [Quinta do Amor](https://www.quintamor.com/retreats) (Arrábida, Portugal) | Retreat venue; hosts facilitator-led retreats, also recruits facilitators to run their own | Women's wellness, solo parents, yoga/fitness, creatives in transition | Squarespace site; each facilitator books through their own tool (WeTravel, Luma, Mailchimp or an independent site) | Not listed | Researched 2026-11-10, not contacted |
+
+### Quinta do Amor (Quintamor)
+
+A retreat venue in Arrábida National Park near Lisbon, part of the Equilíbrio group. It does not run retreats itself: facilitators book the venue and run their own programme, and the site also pitches to facilitators who want a venue ("organise your own retreat here").
+
+Ten retreats are listed for 2026, one per facilitator, multi-day, mostly women-focused (JAM, Sistas, Babes on Waves, two Pilates retreats) alongside a solo-parent retreat (Ilo), a pole-training retreat (Slink) and others. flowDEEP caps at eight participants and offers follow-up after the retreat ends.
+
+There is no shared booking engine: each retreat links out to the facilitator's own page on WeTravel, Luma, Mailchimp or an independent site. No roommate matching, cost splitting or shared itinerary is visible anywhere. No prices are listed; the venue likely takes a hosting fee or revenue share from facilitators, but that isn't public.
+
+**Why it's relevant:**
+
+- It's a live example of the fragmented-booking pain the C1/C2 hypothesis targets (section 5), alongside Gather and Bookinglayer, but on the venue side rather than the single-host side: several facilitators at one venue, each on a different tool.
+- The paying decision-maker is each facilitator, not the venue, unless Quintamor positions itself as a marketplace operator later. A C1 pilot should likely target the facilitators (yoga teachers, retreat leads) directly, not the venue — though the venue could become an Organization-type partner for a C2 marketplace later (the Organization model in [working-doc.md](working-doc.md), section 4.2, would fit this: venue as Organization, each facilitator as host or co-host of their own retreat trip).
+- None of the group-planning features already built (itinerary, polls, expenses, real-time, live location) are visible on any linked facilitator tool. That's a gap the core product already covers.
+- Niche filters (women-only, solo-parent, capacity limits) match the "interests" idea parked in section 6 and could shape segment language if C1/C2 is pursued.
+
+Source: [quintamor.com/retreats](https://www.quintamor.com/retreats), fetched 2026-11-10.
+
 ## 6. Feature ideas from the notes
 
 These are backlog candidates, not specs. Each depends on the avenue chosen.
@@ -134,6 +159,7 @@ Marketplace discovery, public listings, payments, curator storefront and native 
 
 ## Sources
 
+- [Quinta do Amor (Quintamor)](https://www.quintamor.com/retreats)
 - [Arrival](https://arrival.com.au/)
 - [Bookinglayer](https://www.bookinglayer.com/)
 - [Gather](https://try-gather.co/)

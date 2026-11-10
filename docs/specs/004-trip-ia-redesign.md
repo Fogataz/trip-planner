@@ -1,7 +1,7 @@
 # Spec 004: Trip Information Architecture
 
-Status: approved
-Owner: Alberto Calvo · Approved: 2026-11-10 · Shipped: — · PR: —
+Status: building
+Owner: Alberto Calvo · Approved: 2026-11-10 · Shipped: — · PR: — (slice 1 on branch `feature/trip-ia-slice-1`)
 Wireframes: [`wireframes/004-trip-ia-redesign/index.html`](../../wireframes/004-trip-ia-redesign/index.html)
 
 > Benchmark (§6) → define (§7) → wireframes (§15) → spec → gate → **build (§13)**.
@@ -546,10 +546,10 @@ Four stacked pull requests, merged in this order with merge commits (not squash)
 
 | Order | PR | Contents |
 |---|---|---|
-| 1 | [#11](https://github.com/barry-dempsey/trip-planner/pull/11) | Slice 1: route shell, trip chrome, the four destinations, parity move, map mode, assistant sheet, 2 s poll removed. Also F6, F12, F14 and AC25 (see 18.2) |
-| 2 | [#12](https://github.com/barry-dempsey/trip-planner/pull/12) | `tripPhase(trip, now)` and the client's first test runner (Vitest) |
-| 3 | [#13](https://github.com/barry-dempsey/trip-planner/pull/13) | Slice 2: phase-adaptive Overview, needs-me badges, "since you were away", day-grouped Plan, grouped trips list, approximate trip length |
-| 4 | [#14](https://github.com/barry-dempsey/trip-planner/pull/14) | Slice 3: one Trip assistant (ask, draft a plan, ideas); AI stops arrive as drafts |
+| 1 | [#11](https://github.com/Fogataz/trip-planner/pull/11) | Slice 1: route shell, trip chrome, the four destinations, parity move, map mode, assistant sheet, 2 s poll removed. Also F6, F12, F14 and AC25 (see 18.2) |
+| 2 | [#12](https://github.com/Fogataz/trip-planner/pull/12) | `tripPhase(trip, now)` and the client's first test runner (Vitest) |
+| 3 | [#13](https://github.com/Fogataz/trip-planner/pull/13) | Slice 2: phase-adaptive Overview, needs-me badges, "since you were away", day-grouped Plan, grouped trips list, approximate trip length |
+| 4 | [#14](https://github.com/Fogataz/trip-planner/pull/14) | Slice 3: one Trip assistant (ask, draft a plan, ideas); AI stops arrive as drafts |
 
 Status stays `building` until all four merge. Then it becomes `shipped`, with the date and #14 as the PR.
 

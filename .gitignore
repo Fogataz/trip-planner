@@ -8,3 +8,6 @@ npm-debug.log*
 .idea/
 dist/
 build/
+
+# Claude Code worktrees
+.claude/worktrees/

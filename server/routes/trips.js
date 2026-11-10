@@ -98,6 +98,7 @@ function ensureSuggestions(trip, language) {
       let suggestions = await generateTravelSuggestions(trip, language);
       if (suggestions.error) suggestions = { ...suggestions, failedAt: new Date() };
       await Trip.findByIdAndUpdate(trip._id, { travelSuggestions: suggestions });
+      if (io) io.to(`trip:${trip.groupId}`).emit('trip:suggestionsUpdated', { travelSuggestions: suggestions });
     } catch (err) {
       console.error('Error in suggestions pipeline:', err.message);
     } finally {
