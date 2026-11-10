@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import Polls from '../../components/Polls'
 import DestinationHeading from '../DestinationHeading'
 import Ideas from '../Ideas'
 import { ItineraryItem, useTrip } from '../TripContext'
+import { useOneShotIntent } from '../useOneShotIntent'
 
 function transportIcon(transport: string): string {
   const t = transport.toLowerCase()
@@ -26,7 +27,8 @@ export default function Plan() {
   const { trip, refetch, socket, activeUsers, apiUrl, token, currentUid, isOrganizer, setMapOpen } = useTrip()
   const groupId = trip.groupId
 
-  const [showItineraryForm, setShowItineraryForm] = useState(false)
+  const intent = useOneShotIntent()
+  const [showItineraryForm, setShowItineraryForm] = useState(intent === 'addStop')
   const [itineraryForm, setItineraryForm] = useState({ stop: '', time: '', transport: '', notes: '' })
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
   const [conflictError, setConflictError] = useState<any>(null)
@@ -50,6 +52,15 @@ export default function Plan() {
       setGeneratingItinerary(false)
     }
   }
+
+  // "Draft a plan with AI" from Overview lands here and starts the same flow as the Generate button
+  const generateIntentHandled = useRef(false)
+  useEffect(() => {
+    if (intent !== 'generate' || generateIntentHandled.current) return
+    generateIntentHandled.current = true
+    handleGenerateItinerary()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleAddItinerary = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -146,6 +157,26 @@ export default function Plan() {
         </div>
       )}
 
+      {trip.itinerary.length === 0 && !showItineraryForm ? (
+        // Empty state (F14): one line of purpose, the primary action, then the low-effort path
+        <section className="itinerary-section empty-state">
+          <h2>{t('trip.planEmpty.title')}</h2>
+          <p>{t('trip.planEmpty.body')}</p>
+          <div className="row-actions">
+            <button type="button" onClick={() => setShowItineraryForm(true)}>
+              {t('trip.setup.planAction')}
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={handleGenerateItinerary}
+              disabled={generatingItinerary}
+            >
+              {generatingItinerary ? t('detail.generating') : t('trip.setup.draftPlan')}
+            </button>
+          </div>
+        </section>
+      ) : (
       <div className="itinerary-section">
         <div className="section-header">
           <h2>{t('detail.itinerary')}</h2>
@@ -221,10 +252,7 @@ export default function Plan() {
         )}
 
         <div className="itinerary-list">
-          {trip.itinerary.length === 0 ? (
-            <p className="empty">{t('detail.noStops')}</p>
-          ) : (
-            trip.itinerary.map((item) => {
+          {trip.itinerary.map((item) => {
               const editingUser = activeUsers.find((u) => u.editingItemId === item._id)
               return (
                 <div key={item._id} className={`itinerary-item${editingUser ? ' editing' : ''}`}>
@@ -251,10 +279,10 @@ export default function Plan() {
                   </div>
                 </div>
               )
-            })
-          )}
+            })}
         </div>
       </div>
+      )}
 
       <Polls
         groupId={trip.groupId}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import DestinationHeading from '../DestinationHeading'
 import { useTrip } from '../TripContext'
@@ -39,10 +39,56 @@ export default function Overview() {
   }
 
   const hasStay = !!(trip.accommodation?.name || trip.accommodation?.address)
+  const navigate = useNavigate()
+  const startEditingStay = () => {
+    setStayName(trip.accommodation?.name || '')
+    setStayAddress(trip.accommodation?.address || '')
+    setEditingStay(true)
+  }
+
+  // A new trip gets ONE clear next step instead of several empty sections (AC25).
+  // Same trigger as the Setup phase in spec 004 section 5: no stops yet, or fewer than two active members.
+  const activeMembers = trip.members.filter((m) => m.status === 'active').length
+  const needsGroup = activeMembers < 2
+  const needsPlan = trip.itinerary.length === 0
+  const inSetup = needsGroup || needsPlan
 
   return (
     <>
       <DestinationHeading name="overview" />
+
+      {inSetup && (
+        <section className="overview-card setup-card">
+          <h2>{t('trip.setup.title')}</h2>
+          <p>{needsGroup ? t('trip.setup.inviteBody') : t('trip.setup.planBody')}</p>
+          <button
+            type="button"
+            onClick={() =>
+              needsGroup
+                ? navigate('group', { state: { intent: 'invite' } })
+                : navigate('plan', { state: { intent: 'addStop' } })
+            }
+          >
+            {needsGroup ? t('trip.setup.inviteAction') : t('trip.setup.planAction')}
+          </button>
+          <ul className="setup-secondary">
+            {needsPlan && (
+              <li>
+                <Link to="plan" state={{ intent: 'generate' }}>
+                  {t('trip.setup.draftPlan')}
+                </Link>
+              </li>
+            )}
+            {!hasStay && (
+              <li>
+                <button type="button" className="btn-link" onClick={startEditingStay}>
+                  {t('trip.setup.setStay')}
+                </button>
+              </li>
+            )}
+          </ul>
+        </section>
+      )}
 
       <section className="overview-card">
         <h2>{t('trip.overview.factsTitle')}</h2>
@@ -102,11 +148,7 @@ export default function Overview() {
               <button
                 type="button"
                 className="btn-secondary btn-sm"
-                onClick={() => {
-                  setStayName(trip.accommodation?.name || '')
-                  setStayAddress(trip.accommodation?.address || '')
-                  setEditingStay(true)
-                }}
+                onClick={startEditingStay}
               >
                 {hasStay ? t('common.edit') : t('common.add')}
               </button>

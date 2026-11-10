@@ -267,6 +267,44 @@
     "group": {
       "notificationsTitle": "Notificaciones",
       "notificationsHint": "Notificaciones push en este dispositivo"
-    }
+    },
+    "setup": {
+      "title": "Pon en marcha el viaje",
+      "inviteBody": "Un viaje es mejor en compañía. Invita al grupo y decidid juntos.",
+      "inviteAction": "Invitar al grupo",
+      "planBody": "Añade la primera parada o deja que la IA prepare un plan que podéis editar.",
+      "planAction": "Añadir la primera parada",
+      "draftPlan": "Preparar un plan con IA",
+      "setStay": "Añadir dónde os alojáis"
+    },
+    "planEmpty": {
+      "title": "Aún no hay plan",
+      "body": "Añade paradas a medida que el grupo decida, o deja que la IA prepare un primer plan editable."
+    },
+    "polls": {
+      "new": "+ Nueva encuesta",
+      "emptyHint": "Aún no hay decisiones. Crea una encuesta cuando el grupo tenga que elegir."
+    },
+    "money": {
+      "yourBalance": "Tu saldo",
+      "youOwe": "Debes {{amount}}",
+      "youAreOwed": "Te deben {{amount}}",
+      "settled": "Estáis en paz",
+      "settledBody": "Nada que pagar, nada que reclamar.",
+      "payTo": "Paga {{amount}} a {{name}}",
+      "getFrom": "{{name}} te paga {{amount}}",
+      "tripTotal": "Total del viaje",
+      "everyone": "Todos",
+      "isOwed": "le deben {{amount}}",
+      "owes": "debe {{amount}}",
+      "memberSettled": "en paz",
+      "allExpenses": "Todos los gastos",
+      "addExpense": "+ Añadir gasto",
+      "you": "Tú",
+      "emptyTitle": "Aún no hay gastos",
+      "emptyBody": "Apunta los gastos compartidos sobre la marcha. La app calcula quién debe a quién.",
+      "emptyAction": "Añadir el primer gasto"
+    },
+    "groupEmpty": "Por ahora solo tú. Invita al grupo para planear juntos."
   }
 }

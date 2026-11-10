@@ -35,11 +35,14 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
   const [allowMultiple, setAllowMultiple] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loadFailed, setLoadFailed] = useState(false)
+  // The create form sits behind an explicit button (spec 004 F6)
+  const [showForm, setShowForm] = useState(false)
 
   const base = `${apiUrl}/api/polls/trip/${groupId}`
   const headers = { Authorization: `Bearer ${token}` }
 
-  useEffect(() => {
+  const load = () => {
+    setError(null)
     axios
       .get<Poll[]>(base, { headers })
       .then((res) => {
@@ -50,6 +53,10 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
         setLoadFailed(true)
         setError(err.response?.data?.error || t('polls.loadFailed'))
       })
+  }
+
+  useEffect(() => {
+    load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId])
 
@@ -93,6 +100,7 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
       setQuestion('')
       setOptions(['', ''])
       setAllowMultiple(false)
+      setShowForm(false)
     })
   }
 
@@ -118,10 +126,23 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
     <div className="qa-section">
       <div className="section-header">
         <h2>{t('polls.title')}</h2>
+        <button type="button" className="btn-secondary" onClick={() => setShowForm(!showForm)}>
+          {showForm ? t('common.cancel') : t('trip.polls.new')}
+        </button>
       </div>
 
-      {error && <p className="text-error">{error}</p>}
+      {error && (
+        <p className="text-error" role="alert">
+          {error}{' '}
+          {loadFailed && (
+            <button type="button" className="btn-link" onClick={load}>
+              {t('trip.retry')}
+            </button>
+          )}
+        </p>
+      )}
 
+      {showForm && (
       <form className="question-form" onSubmit={createPoll}>
         <input
           value={question}
@@ -160,10 +181,11 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
           {t('polls.create')}
         </button>
       </form>
+      )}
 
       <div className="comments-list">
         {polls.length === 0 ? (
-          loadFailed ? null : <p className="empty">{t('polls.empty')}</p>
+          loadFailed || showForm ? null : <p className="hint">{t('trip.polls.emptyHint')}</p>
         ) : (
           polls.map((poll) => {
             const total = poll.options.reduce((sum, o) => sum + o.votes.length, 0)

@@ -12,10 +12,10 @@ This page describes what the product does today, based on the code in `server/` 
 
 - Create, list, view, update and delete trips
 - **Trip page structure (spec 004, slice 1):** a trip opens on one of four destinations, each its own URL under `/trips/:groupId`: Overview (`/`), Plan (`/plan`), Money (`/money`) and Group (`/group`). The cover, title, route, dates and presence stay on screen across all four. The tabs are a bottom bar on phones (up to 768px) and a segmented bar above that. See [spec 004](specs/004-trip-ia-redesign.md)
-  - **Overview:** key facts and the Stay (accommodation) card, plus links to the other destinations and the live map
-  - **Plan:** itinerary (add, edit, delete, generate with AI), polls, and the AI travel suggestions as a collapsed "Trip ideas" card
-  - **Money:** expenses and settle up
-  - **Group:** members, invite by email and link, and push notifications for this device
+  - **Overview:** key facts and the Stay (accommodation) card, plus links to the other destinations and the live map. While a trip has no stops or fewer than two active members, a "Get the trip started" card leads with one next step (invite the group, or add the first stop) and quiet links to draft a plan with AI or set the stay
+  - **Plan:** itinerary (add, edit, delete, generate with AI), polls, and the AI travel suggestions as a collapsed "Trip ideas" card. Add stop is the one primary action. The poll form opens from "+ New poll". With no stops, Plan shows a single empty state with Add the first stop and Draft a plan with AI
+  - **Money:** balance first. Your own position ("You owe €42.00" with who to pay, or "You're all settled up"), then the trip total and everyone's balance, then the expense list. The add form opens from "+ Add expense", except while the trip is happening (start day to end day in the viewer's timezone), when it stays open at the top. Marking a payment as settled is not built yet (roadmap R2)
+  - **Group:** members, invite by email and link, and push notifications for this device. A trip with only you says so and points to Invite
   - **Map:** live location opens as a full-screen mode from Overview or Plan, and closes with Esc. Closing it stops sharing
   - **Assistant:** the "Ask the assistant" button (a floating button on phones) opens the Q&A from any destination
   - The trip header is compact (110px cover on desktop, 86px on phones) so each destination starts on the first screen. On desktop the tabs stay pinned under the app header

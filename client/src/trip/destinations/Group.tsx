@@ -3,13 +3,15 @@ import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import DestinationHeading from '../DestinationHeading'
 import { TripMember, useTrip } from '../TripContext'
+import { useOneShotIntent } from '../useOneShotIntent'
 
 export default function Group() {
   const { t } = useTranslation()
   const { trip, refetch, apiUrl, token, isOrganizer, push } = useTrip()
   const groupId = trip.groupId
 
-  const [showInviteForm, setShowInviteForm] = useState(false)
+  const intent = useOneShotIntent()
+  const [showInviteForm, setShowInviteForm] = useState(intent === 'invite')
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviting, setInviting] = useState(false)
   const [inviteToken, setInviteToken] = useState<string | null>(null)
@@ -61,10 +63,13 @@ export default function Group() {
           </button>
         </div>
 
+        {trip.members.length < 2 && !showInviteForm && <p className="hint">{t('trip.groupEmpty')}</p>}
+
         {showInviteForm && (
           <>
             <form className="question-form" onSubmit={handleInviteMember}>
               <input
+                autoFocus
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
