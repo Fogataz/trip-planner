@@ -1,0 +1,625 @@
+/* Trip shell: chrome, destination tabs, assistant sheet and map mode.
+   Uses the existing tokens from index.css only. */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.trip-destination {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.trip-subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  margin-bottom: 8px;
+}
+
+/* ---------- Presence ---------- */
+.avatar-cluster {
+  display: inline-flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  margin-left: -6px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 2px solid var(--success);
+}
+
+.avatar:first-child {
+  margin-left: 0;
+}
+
+.avatar.editing {
+  border-color: var(--warning);
+}
+
+/* ---------- Destination tabs ---------- */
+.trip-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.trip-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.trip-tab:hover {
+  background: var(--primary-soft);
+}
+
+.trip-tab[aria-current='page'] {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+/* Bottom tab bar on phones, reachable one-handed */
+@media (max-width: 768px) {
+  .trip-tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 900;
+    border-radius: 0;
+    border-width: 1px 0 0;
+    padding: 4px 8px;
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+  }
+
+}
+
+/* ---------- Overview ---------- */
+.overview-card,
+.group-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  min-width: 0;
+}
+
+.overview-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.summary-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.summary-links a,
+.summary-link-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 12px 14px;
+  text-align: left;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 400;
+}
+
+.summary-links a:hover,
+.summary-link-button:hover:not(:disabled) {
+  background: var(--primary-soft);
+}
+
+.summary-links span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---------- Ideas ---------- */
+.ideas-card summary {
+  cursor: pointer;
+  font-weight: 700;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+}
+
+/* ---------- Group ---------- */
+.member-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+}
+
+.member-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---------- Assistant sheet ---------- */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(15, 17, 26, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 440px;
+  max-height: 85vh;
+  max-height: 85dvh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.sheet-header h2 {
+  font-size: 20px;
+}
+
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qa-item {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  overflow-wrap: anywhere;
+}
+
+.qa-answer {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--success-soft);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+@media (min-width: 1024px) {
+  .sheet-backdrop {
+    align-items: stretch;
+  }
+
+  .sheet {
+    max-height: none;
+    border-radius: 0;
+  }
+}
+
+/* ---------- Map mode ---------- */
+.map-mode {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Full bleed: the map card loses its card chrome and the map takes the rest of the screen */
+.map-mode .qa-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.map-mode .live-map {
+  flex: 1;
+  height: auto;
+  min-height: 260px;
+  max-height: none;
+}
+
+/* ---------- Compact trip chrome ----------
+   The chrome now persists across four destinations (F3), so it has to be short enough that each
+   destination's content starts on the first screen (spec 004 section 14 guardrail). The wireframes
+   use a 110px cover on desktop and 86px on phones; the spec 001 banner was sized for the old single page. */
+.back-link {
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  padding: 0 2px;
+  min-height: var(--tap);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.back-link:hover:not(:disabled) {
+  background: none;
+  color: var(--text);
+}
+
+.trip-detail .cover-band,
+.trip-detail .cover-band--empty {
+  height: 110px;
+}
+
+.trip-detail .trip-title-row {
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  margin-bottom: 0;
+}
+
+.trip-title-text {
+  min-width: 0;
+}
+
+.trip-title-aside {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.trip-detail .trip-subtitle {
+  margin: 4px 0 0;
+}
+
+/* Desktop: the tabs stay under the app header while the page scrolls */
+@media (min-width: 769px) {
+  .trip-tabs {
+    position: sticky;
+    top: var(--app-header-height, 65px);
+    z-index: 800;
+  }
+
+  .assistant-fab {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .trip-detail {
+    gap: 12px;
+  }
+
+  .trip-detail .cover-band,
+  .trip-detail .cover-band--empty {
+    height: 86px;
+  }
+
+  .trip-cover-head.has-cover .trip-header {
+    margin-top: -16px;
+  }
+
+  .trip-detail .trip-header {
+    padding: 14px 16px;
+  }
+
+  .trip-detail .trip-header h1 {
+    font-size: 20px;
+  }
+
+  .trip-detail .trip-subtitle {
+    font-size: 13px;
+  }
+
+  .assistant-open {
+    display: none;
+  }
+
+  .assistant-fab {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: calc(var(--tap) + 24px + env(safe-area-inset-bottom));
+    z-index: 900;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 20px;
+    box-shadow: var(--shadow-hover);
+  }
+
+  .trip-detail {
+    padding-bottom: calc(var(--tap) + 96px + env(safe-area-inset-bottom));
+  }
+
+  .overview-card .trip-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The primary action gets its own full-width row; secondary actions share the row below */
+  .plan-actions .add-button {
+    order: -1;
+    flex-basis: 100%;
+  }
+
+  .overview-card,
+  .group-section {
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+}
+
+/* ---------- Loading skeleton ---------- */
+.trip-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-block {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-back { width: 120px; height: 24px; border-radius: 8px; }
+.skeleton-cover { height: 110px; }
+.skeleton-title { height: 76px; }
+.skeleton-tabs { height: 54px; }
+.skeleton-card { height: 220px; }
+
+@keyframes skeleton-pulse {
+  50% { opacity: 0.55; }
+}
+
+@media (max-width: 768px) {
+  .skeleton-cover { height: 86px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-tab,
+  .poll-bar > span {
+    transition: none;
+  }
+
+  .skeleton-block {
+    animation: none;
+  }
+}
+
+/* ---------- Empty states and setup (F14, AC25) ---------- */
+.empty-state h2,
+.setup-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.empty-state > p,
+.setup-card > p {
+  color: var(--muted);
+  margin-bottom: 14px;
+  max-width: 52ch;
+}
+
+.setup-card {
+  border-color: var(--primary);
+}
+
+.setup-secondary {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+
+.setup-secondary a,
+.setup-secondary .btn-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ---------- Money (F12) ---------- */
+.money-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  min-width: 0;
+}
+
+.money-skeleton {
+  height: 180px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.balance-card .balance-amount {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.balance-card.is-owing .balance-amount {
+  color: var(--warning);
+}
+
+.balance-card.is-settled h2 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.settle-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+}
+
+.settle-others {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.money-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.money-total strong {
+  font-size: 22px;
+}
+
+.money-people,
+.ledger {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.money-people li,
+.ledger-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+
+.money-people li:last-child,
+.ledger-row:last-child {
+  border-bottom: 0;
+}
+
+.ledger-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ledger-main .muted,
+.money-people .muted {
+  font-size: 13px;
+}
+
+.ledger-side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .money-card {
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+
+  .balance-card .balance-amount {
+    font-size: 24px;
+  }
+}
