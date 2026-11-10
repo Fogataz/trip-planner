@@ -1,10 +1,10 @@
 # Spec 009: Trip cover layout
 
-Status: building
-Owner: Alberto (product)   Shipped: —   PR: —
+Status: shipped
+Owner: Alberto (product)   Shipped: 2026-11-10   PR: [#78](https://github.com/Fogataz/trip-planner/pull/78)
 Comes from: [spec 001](001-trip-covers.md) (covers) and [spec 004](004-trip-ia-redesign.md) §18 (the compact header, which shrank the cover).
 
-> Stage 3 of 3, build in progress (2026-11-10). Wireframes in [wireframes/009-trip-cover-layout](../../wireframes/009-trip-cover-layout/index.html). Option A approved by the product owner on 2026-11-10; see §13 for build status. Items waiting on the product owner are marked **TBD**.
+> Stage 3 of 3, built (2026-11-10). Wireframes in [wireframes/009-trip-cover-layout](../../wireframes/009-trip-cover-layout/index.html). Option A approved by the product owner on 2026-11-10; see §13 for build status. Items waiting on the product owner are marked **TBD**.
 
 ## 1. The problem in one line
 
