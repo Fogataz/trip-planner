@@ -52,5 +52,8 @@ to match.
 
 ## Status
 
-Frames complete. The tree test in §10 of the spec has **not** been run, so these have not
-been validated with users. The spec is `draft` and has not passed the approval gate.
+Frames complete. The spec was approved on 2026-11-10, so build may start.
+
+The tree test in §10 of the spec has **not** been run, so these labels have not been
+validated with users — that was a deliberate call, not an oversight. If a label changes
+after the test, it changes here first and in the code second.
