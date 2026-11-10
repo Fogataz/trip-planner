@@ -4,7 +4,7 @@ Status: shipped
 Shipped: 2026-11-09 · PR: [#5](https://github.com/barry-dempsey/trip-planner/pull/5)
 Current behavior: [features.md → Languages](../features.md#languages)
 
-> Native-speaker review of the translations is still pending. English, Portuguese (pt-BR) and Spanish (es-ES). Code review feedback applied on this PR.
+> Native-speaker review of the translations is in review. English, Portuguese (pt-BR) and Spanish (es-ES).
 
 ## 1. Goal
 
@@ -54,7 +54,7 @@ IP is only a hint: VPNs, expats and travellers can be wrong, and a country does 
 - **Server error messages** and the "Unable to generate answer" fallback are English.
 - **Push notification text** is English.
 - Itinerary weekday names sent to the AI are English by design, so the model can check opening days reliably.
-- PT and ES wording was written without native review. **TBD:** reviewer.
+- PT and ES wording was written without native review. **In review:** native-speaker review is under way.
 - Mixed-language trips: suggestions follow whoever opened the trip last, subject to the cooldown.
 
 ## 7. Adding a language
