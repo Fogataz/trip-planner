@@ -252,6 +252,9 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 | D27 | Do open product and strategy questions block the build? | **Decided 2026-11-09:** no. Recommendations are working defaults; the owner can override them later. Only items marked **Blocks** stop work. |
 | D28 | Portuguese variant | pt-BR shipped in spec 003. Confirm or switch to pt-PT later (one file). Not a blocker. |
 | D26 | Where shared docs live, with two Claude accounts on two computers | **Decided 2026-11-09:** every durable doc lives in the repo's `docs/` (product, brand, specs). Claude Projects keep pointers only. See "Working across accounts and computers" in [docs/README.md](../README.md). |
+| D29 | Trip phase precedence (spec 004 §18.3 D9) | **Decided 2026-11-10:** the calendar wins. Countdown, Live and Wrap follow the dates even for a solo or plan-less trip |
+| D30 | Trips without an end date (spec 004 §18.3 D10) | **Decided 2026-11-10:** offer an approximate length (e.g. 8–10 days); phases use the longer estimate |
+| D31 | Build spec 004 slices 2 and 3 before the tree test (spec 004 §18.3 D11) | **Decided 2026-11-10:** yes. Run the tree test before the labels ship |
 
 ## 8. Related
 
@@ -356,3 +359,4 @@ Proposal, assuming D leads (D3). It changes if C1 or I leads instead.
 | 2026-11-09 | Spec 003 shipped (PR #5): the interface in English, Spanish and Portuguese (pt-BR), language by saved choice, country from IP, then browser. AI output follows the UI language. |
 | 2026-11-09 | D27: open product and strategy questions are not blockers. Recommendations act as working defaults; the next two weeks focus on the spec 002 build. |
 | 2026-11-09 | D26: with two Claude accounts on two computers, every durable doc lives in the repo. The working doc, revenue analysis and brand foundations moved to `docs/`. Claude Projects keep pointers only. |
+| 2026-11-10 | Spec 004 (trip information architecture) built in three slices, in review as PRs #11–#14. D29: trip phases follow the calendar. D30: trips without an end date take an approximate length. D31: slices 2–3 built before the tree test. Follow-ups seeded as specs 005–008 and the [spec backlog](spec-backlog.md). |
