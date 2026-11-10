@@ -1,7 +1,7 @@
 # Spec 003: Localization
 
 Status: shipped
-Shipped: 2026-11-09 · PR: [#5](https://github.com/barry-dempsey/trip-planner/pull/5)
+Shipped: 2026-11-09 · PR: [#5](https://github.com/Fogataz/trip-planner/pull/5)
 Current behavior: [features.md → Languages](../features.md#languages)
 
 > Native-speaker review of the translations is in review. English, Portuguese (pt-BR) and Spanish (es-ES).

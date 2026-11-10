@@ -1,7 +1,7 @@
 # Spec 001: Trip Covers
 
 Status: shipped
-Shipped: 2026-11-06 · PR: [#3](https://github.com/barry-dempsey/trip-planner/pull/3)
+Shipped: 2026-11-06 · PR: [#3](https://github.com/Fogataz/trip-planner/pull/3)
 Current behavior: [features.md → Trip covers](../features.md#trip-covers)
 
 > Ideation (approved 2026-11-05) → lo-fi wireframe (signed off 2026-11-06) → build (merged 2026-11-06).

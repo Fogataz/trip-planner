@@ -33,9 +33,9 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 
 | # | Spec | Status | Shipped | PR |
 |---|---|---|---|---|
-| 001 | [Trip covers](specs/001-trip-covers.md) | shipped | 2026-11-06 | [#3](https://github.com/barry-dempsey/trip-planner/pull/3) |
+| 001 | [Trip covers](specs/001-trip-covers.md) | shipped | 2026-11-06 | [#3](https://github.com/Fogataz/trip-planner/pull/3) |
 | 002 | [Hosted event pilot](specs/002-hosted-event-pilot.md) | draft | — | — |
-| 003 | [Localization (EN/PT/ES)](specs/003-localization.md) | shipped | 2026-11-09 | [#5](https://github.com/barry-dempsey/trip-planner/pull/5) |
+| 003 | [Localization (EN/PT/ES)](specs/003-localization.md) | shipped | 2026-11-09 | [#5](https://github.com/Fogataz/trip-planner/pull/5) |
 | 004 | [Trip information architecture](specs/004-trip-ia-redesign.md) | building | — | — |
 | 005 | [Settle up](specs/005-settle-up.md) | draft | — | — |
 | 006 | [Transport updates](specs/006-transport-updates.md) | draft | — | — |
