@@ -1,22 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
-import type { Socket } from 'socket.io-client'
-
-interface PollOption {
-  _id: string
-  text: string
-  votes: string[]
-}
-
-interface Poll {
-  _id: string
-  question: string
-  options: PollOption[]
-  allowMultiple: boolean
-  status: 'open' | 'closed'
-  createdBy: string
-}
+import { useTrip } from '../trip/TripContext'
+import type { Poll } from '../trip/tripData'
 
 interface Props {
   groupId: string
@@ -24,17 +10,19 @@ interface Props {
   token: string | null
   currentUid?: string
   isOrganizer: boolean
-  socket: Socket | null
 }
 
-export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer, socket }: Props) {
+export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer }: Props) {
   const { t } = useTranslation()
-  const [polls, setPolls] = useState<Poll[]>([])
+  // Polls live in TripContext so the Plan badge and Overview see the same list (spec 004 section 7.6)
+  const { polls: remote } = useTrip()
+  const polls = remote.data
+  const setPolls = remote.set
   const [question, setQuestion] = useState('')
   const [options, setOptions] = useState(['', ''])
   const [allowMultiple, setAllowMultiple] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [loadFailed, setLoadFailed] = useState(false)
+  const loadFailed = !!remote.error
   // The create form sits behind an explicit button (spec 004 F6)
   const [showForm, setShowForm] = useState(false)
 
@@ -43,41 +31,8 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
 
   const load = () => {
     setError(null)
-    axios
-      .get<Poll[]>(base, { headers })
-      .then((res) => {
-        setPolls(res.data)
-        setLoadFailed(false)
-      })
-      .catch((err) => {
-        setLoadFailed(true)
-        setError(err.response?.data?.error || t('polls.loadFailed'))
-      })
+    remote.reload()
   }
-
-  useEffect(() => {
-    load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupId])
-
-  useEffect(() => {
-    if (!socket) return
-    const onCreated = ({ poll }: { poll: Poll }) =>
-      setPolls((prev) => (prev.some((p) => p._id === poll._id) ? prev : [poll, ...prev]))
-    const onUpdated = ({ poll }: { poll: Poll }) =>
-      setPolls((prev) => prev.map((p) => (p._id === poll._id ? poll : p)))
-    const onDeleted = ({ pollId }: { pollId: string }) =>
-      setPolls((prev) => prev.filter((p) => p._id !== pollId))
-
-    socket.on('poll:created', onCreated)
-    socket.on('poll:updated', onUpdated)
-    socket.on('poll:deleted', onDeleted)
-    return () => {
-      socket.off('poll:created', onCreated)
-      socket.off('poll:updated', onUpdated)
-      socket.off('poll:deleted', onDeleted)
-    }
-  }, [socket])
 
   const run = async (fn: () => Promise<void>) => {
     setError(null)
@@ -131,9 +86,9 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer,
         </button>
       </div>
 
-      {error && (
+      {(error || loadFailed) && (
         <p className="text-error" role="alert">
-          {error}{' '}
+          {error || t('polls.loadFailed')}{' '}
           {loadFailed && (
             <button type="button" className="btn-link" onClick={load}>
               {t('trip.retry')}

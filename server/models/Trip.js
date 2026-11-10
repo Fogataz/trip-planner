@@ -47,6 +47,11 @@ const tripSchema = new mongoose.Schema({
   },
   startDate: Date,
   endDate: Date,
+  // When the end date is not known yet: an approximate length in days, e.g. 8 to 10
+  durationDays: {
+    min: { type: Number, min: 1, max: 365 },
+    max: { type: Number, min: 1, max: 365 },
+  },
   members: [
     {
       userId: String,

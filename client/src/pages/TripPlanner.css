@@ -120,3 +120,59 @@
     font-size: 22px;
   }
 }
+
+/* ---------- Grouped trips list (spec 004 F15) ---------- */
+.trip-group + .trip-group {
+  margin-top: 24px;
+}
+
+.trip-group-heading {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+/* ---------- Trip length: end date or approximate days ---------- */
+.trip-length {
+  border: 0;
+  padding: 0;
+  margin: 0 0 14px;
+  min-width: 0;
+}
+
+.trip-length legend {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 8px;
+}
+
+.segmented label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  cursor: pointer;
+}
+
+.segmented input {
+  width: auto;
+}
+
+.length-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.length-range input {
+  width: 84px;
+}

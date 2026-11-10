@@ -67,7 +67,25 @@
     "empty": "No trips yet. Create one to get started!",
     "members_one": "{{count}} member",
     "members_other": "{{count}} members",
-    "confirmDelete": "Delete this trip?"
+    "confirmDelete": "Delete this trip?",
+    "endBeforeStart": "The end date is before the start date",
+    "invalidLength": "Enter a length between 1 and 365 days, shortest first",
+    "length": "How long?",
+    "lengthEnd": "End date",
+    "lengthApprox": "Approximate length",
+    "endDate": "End date",
+    "minDays": "Shortest length in days",
+    "maxDays": "Longest length in days",
+    "days": "days",
+    "lengthHint": "Optional. Not sure yet? Give a range, for example 8 to 10 days.",
+    "inDays_one": "in {{count}} day",
+    "inDays_other": "in {{count}} days",
+    "dayOf": "day {{n}} of {{total}}",
+    "group": {
+      "live": "Live now",
+      "upcoming": "Upcoming",
+      "past": "Past"
+    }
   },
   "expenses": {
     "title": "Expenses",
@@ -243,13 +261,33 @@
     "retry": "Try again",
     "overview": {
       "factsTitle": "The facts",
-      "summaryTitle": "In this trip",
+      "summaryTitle": "Trip summary",
       "planSummary_one": "{{count}} stop planned",
       "planSummary_other": "{{count}} stops planned",
-      "moneySummary": "Expenses and who owes whom",
-      "groupSummary_one": "{{count}} member",
-      "groupSummary_other": "{{count}} members",
-      "stayTitle": "Where you're staying"
+      "stayTitle": "Where you're staying",
+      "needsVote": "Needs your vote",
+      "votedCount": "{{voted}} of {{total}} voted",
+      "vote": "Vote",
+      "yourPlan": "Your plan",
+      "daysPlanned": "{{planned}} of {{total}} days planned",
+      "daysToGo_one": "{{count}} day to go",
+      "daysToGo_other": "{{count}} days to go",
+      "leaves": "Leaves {{when}}",
+      "dayOne": "Day 1",
+      "dayOneEmpty": "Nothing planned for day 1 yet",
+      "stayLine": "Staying at {{stay}}",
+      "notJoined_one": "{{count}} invite not accepted yet",
+      "notJoined_other": "{{count}} invites not accepted yet",
+      "nothingYet": "Nothing on right now",
+      "nothingToday": "Nothing planned for today",
+      "restOfToday": "Rest of today",
+      "statDays_one": "day",
+      "statDays_other": "days",
+      "statStops_one": "stop",
+      "statStops_other": "stops",
+      "statSpent": "spent",
+      "statPeople_one": "person",
+      "statPeople_other": "people"
     },
     "map": {
       "open": "Where everyone is",
@@ -305,6 +343,33 @@
       "emptyBody": "Log shared costs as you go. The app works out who owes whom.",
       "emptyAction": "Add the first expense"
     },
-    "groupEmpty": "Just you so far. Invite the group to start planning together."
+    "groupEmpty": "Just you so far. Invite the group to start planning together.",
+    "badge_one": "{{count}} item needs you",
+    "badge_other": "{{count}} items need you",
+    "duration": {
+      "exact_one": "{{count}} day",
+      "exact_other": "{{count}} days",
+      "range": "{{min}}–{{max}} days"
+    },
+    "plan": {
+      "dayHeading": "Day {{n}} · {{date}}",
+      "today": "Today",
+      "now": "Now",
+      "next": "Next",
+      "editStop": "Edit {{stop}}",
+      "deleteStop": "Delete {{stop}}"
+    },
+    "activity": {
+      "title": "Since you were away",
+      "stopAdded": "{{name}} added {{stop}}",
+      "stopUpdated": "{{name}} changed {{stop}}",
+      "stopDeleted": "{{name}} removed {{stop}}",
+      "joined": "{{name}} joined the trip",
+      "memberAdded": "{{name}} added {{other}}",
+      "invited": "{{name}} invited {{other}}",
+      "memberRemoved": "{{name}} removed {{other}}",
+      "roleChanged": "{{name}} changed the role of {{other}}",
+      "tripUpdated": "{{name}} updated the trip"
+    }
   }
 }

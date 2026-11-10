@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next'
+
 /** "24–25 Nov" in the viewer's locale; the year only appears when it is not this year (N8) */
 export function formatDateRange(start: string, end: string | undefined, locale: string, tbd: string): string {
   const s = new Date(start)
@@ -17,4 +19,21 @@ export function formatDateRange(start: string, end: string | undefined, locale: 
   const f = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', timeZone: 'UTC', ...(showYear ? { year: 'numeric' } : {}) })
   const withRange = f as Intl.DateTimeFormat & { formatRange?: (a: Date, b: Date) => string }
   return withRange.formatRange ? withRange.formatRange(s, e) : `${f.format(s)} – ${f.format(e)}`
+}
+
+
+/**
+ * The trip's dates for display: a real range when there is an end date, otherwise the start
+ * day plus the approximate length ("Nov 24 · 8–10 days"), otherwise the start day and "TBD".
+ */
+export function formatTripDates(
+  trip: { startDate: string; endDate?: string; durationDays?: { min: number; max: number } | null },
+  locale: string,
+  t: TFunction
+): string {
+  if (trip.endDate || !trip.durationDays) return formatDateRange(trip.startDate, trip.endDate, locale, t('detail.tbd'))
+  const start = formatDateRange(trip.startDate, trip.startDate, locale, '')
+  const { min, max } = trip.durationDays
+  const length = min === max ? t('trip.duration.exact', { count: max }) : t('trip.duration.range', { min, max })
+  return `${start} · ${length}`
 }

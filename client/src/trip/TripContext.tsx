@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { io, Socket } from 'socket.io-client'
 import { TripCoverData } from '../covers'
 import { usePushNotifications } from '../hooks/usePushNotifications'
+import { ActivityEntry, ExpenseSummary, Poll, Remote, SeenKey, useActivity, useExpenses, usePolls, useSeen } from './tripData'
+import { Badges, computeBadges } from './badges'
+import { TripPhase, tripPhase } from './phase'
 
 export interface ItineraryItem {
   _id: string
@@ -20,6 +23,8 @@ export interface TripMember {
   email?: string
   role: string
   status?: string
+  invitedBy?: string
+  invitedAt?: string
 }
 
 export interface Trip {
@@ -29,7 +34,9 @@ export interface Trip {
   destination: { address: string; lat?: number; lng?: number }
   origin: { address: string; lat?: number; lng?: number }
   startDate: string
-  endDate: string
+  endDate?: string
+  /** Approximate length in days when the end date is not known yet */
+  durationDays?: { min: number; max: number } | null
   itinerary: ItineraryItem[]
   members: TripMember[]
   travelSuggestions?: any
@@ -62,6 +69,14 @@ interface TripContextValue {
   setMapOpen: (open: boolean) => void
   assistantOpen: boolean
   setAssistantOpen: (open: boolean) => void
+  /** Where the trip is in its lifecycle (spec 004 section 5), in the viewer's timezone */
+  phase: TripPhase
+  polls: Remote<Poll[]>
+  expenses: Remote<ExpenseSummary>
+  activity: Remote<ActivityEntry[]>
+  /** Last looks at Overview and Plan: `since` is the snapshot from when the trip was opened */
+  seen: { since: Partial<Record<SeenKey, string>>; mark: (what: SeenKey) => void }
+  badges: Badges
 }
 
 const TripContext = createContext<TripContextValue | null>(null)
@@ -221,6 +236,34 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
 
   const isOrganizer = !!trip?.members.some((m) => m.role === 'organizer' && m.userId === currentUid)
 
+  const polls = usePolls(apiUrl, token, groupId, socket)
+  const expenses = useExpenses(apiUrl, token, groupId, socket)
+  const activity = useActivity(apiUrl, token, groupId, socket)
+  const seenState = useSeen(groupId, currentUid)
+
+  // Re-evaluate the phase each minute so a trip moves into Live at midnight without a reload
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60_000)
+    return () => clearInterval(timer)
+  }, [])
+  const phase = trip ? tripPhase(trip, now) : 'setup'
+
+  const badges = useMemo(
+    () =>
+      computeBadges({
+        currentUid,
+        isOrganizer,
+        members: trip?.members ?? [],
+        polls: polls.data,
+        expenses: expenses.data,
+        activity: activity.data,
+        seen: seenState.seen,
+      }),
+    [currentUid, isOrganizer, trip?.members, polls.data, expenses.data, activity.data, seenState.seen]
+  )
+  const seen = useMemo(() => ({ since: seenState.since, mark: seenState.mark }), [seenState.since, seenState.mark])
+
   const value = useMemo<TripContextValue | null>(
     () =>
       trip
@@ -240,9 +283,15 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             setMapOpen,
             assistantOpen,
             setAssistantOpen,
+            phase,
+            polls,
+            expenses,
+            activity,
+            seen,
+            badges,
           }
         : null,
-    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, isOrganizer, push, mapOpen, assistantOpen]
+    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, isOrganizer, push, mapOpen, assistantOpen, phase, polls, expenses, activity, seen, badges]
   )
 
   // Skeleton in the shape of the trip chrome and tabs, so nothing jumps when the trip arrives (N3, N4)
