@@ -18,23 +18,3 @@ export function formatDateRange(start: string, end: string | undefined, locale: 
   const withRange = f as Intl.DateTimeFormat & { formatRange?: (a: Date, b: Date) => string }
   return withRange.formatRange ? withRange.formatRange(s, e) : `${f.format(s)} – ${f.format(e)}`
 }
-
-/**
- * Trip dates are calendar days, stored as UTC midnight. Read them back as that calendar day,
- * not as an instant, so a trip never starts a day early west of UTC.
- */
-function calendarDay(value: string): string {
-  return new Date(value).toISOString().slice(0, 10)
-}
-
-function localToday(now: Date): string {
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
-}
-
-/** True from the start day 00:00 to the end day 23:59 in the viewer's timezone (spec 004 D4) */
-export function isTripLive(startDate: string, endDate: string | undefined, now = new Date()): boolean {
-  if (!startDate) return false
-  const today = localToday(now)
-  return calendarDay(startDate) <= today && today <= calendarDay(endDate || startDate)
-}
