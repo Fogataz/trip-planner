@@ -21,11 +21,11 @@ This page describes what the product does today, based on the code in `server/` 
     - Dates decide Countdown, Live and Wrap even for a solo or plan-less trip. Every phase also shows "Since you were away" and the facts with the Stay card
   - **Since you were away:** changes by others since your last visit to Overview on this device, from the activity log (`GET /api/trips/:groupId/activity`). Stop changes, members and cover updates are logged; polls and expenses are not
   - **Badges:** a count on a tab when something needs you, nothing at zero. Plan counts open polls you haven't voted in plus stop changes by others since you last opened Plan. Money shows 1 when your balance isn't zero. Group counts pending invites (organizer only). Overview counts new activity. "Last visit" is kept per device in the browser
-  - **Plan:** itinerary (add, edit, delete, generate with AI), polls, and the AI travel suggestions as a collapsed "Trip ideas" card. Add stop is the one primary action. The poll form opens from "+ New poll". With no stops, Plan shows a single empty state with Add the first stop and Draft a plan with AI Stops are grouped by day ("Day 2 · Tue, Dec 1"); during the trip today is marked, Plan opens on it, and the current and next stops are labelled
+  - **Plan:** itinerary (add, edit, delete, generate with AI), polls, and a link to the assistant's ideas. Add stop is the one primary action; "Draft with AI" opens the assistant. The poll form opens from "+ New poll". With no stops, Plan shows a single empty state with Add the first stop and Draft a plan with AI Stops are grouped by day ("Day 2 · Tue, Dec 1"); during the trip today is marked, Plan opens on it, and the current and next stops are labelled
   - **Money:** balance first. Your own position ("You owe €42.00" with who to pay, or "You're all settled up"), then the trip total and everyone's balance, then the expense list. The add form opens from "+ Add expense", except while the trip is happening (start day to end day in the viewer's timezone), when it stays open at the top. Marking a payment as settled is not built yet (roadmap R2)
   - **Group:** members, invite by email and link, and push notifications for this device. A trip with only you says so and points to Invite
   - **Map:** live location opens as a full-screen mode from Overview or Plan, and closes with Esc. Closing it stops sharing
-  - **Assistant:** the "Ask the assistant" button (a floating button on phones) opens the Q&A from any destination
+  - **Trip assistant:** one sheet for all AI, opened from "Ask the assistant" (a floating button on phones) or from Plan and Overview. Three parts: **Ask** (the Q&A), **Draft a plan** (AI proposes stops; each arrives as a draft with Add to plan or Dismiss, and nothing reaches the shared plan until someone adds it), and **Ideas** (the AI travel suggestions, split into cards). The accuracy disclaimer appears once, on the assistant. Drafts are private to the person who asked and are kept until they leave the trip page
   - The trip header is compact (110px cover on desktop, 86px on phones) so each destination starts on the first screen. On desktop the tabs stay pinned under the app header
   - The trip is fetched once and shared by all four destinations, which stay current through the trip's socket. AI travel suggestions arrive by the `trip:suggestionsUpdated` socket event, with a short backed-off re-fetch as a fallback
 - Each trip has a name, destination, origin, start date, accommodation, and either an end date or an approximate length in days (for example 8 to 10). Without an end date, the trip is treated as lasting the longer estimate
@@ -50,7 +50,7 @@ This page describes what the product does today, based on the code in `server/` 
 ## Itinerary
 
 - Add, edit and delete itinerary items (stop, time, transport, notes)
-- Generate an itinerary suggestion with AI from the trip's details (`POST /api/trips/:groupId/itinerary/generate`)
+- Draft stops with AI from the trip's details (`POST /api/trips/:groupId/itinerary/generate` with `draft: true` returns proposals without saving them; accepted stops are added through the normal add-stop route)
 - Live presence shows who is viewing or editing an item
 
 ## Polls

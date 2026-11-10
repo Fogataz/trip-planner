@@ -8,6 +8,7 @@ import { formatTripDates } from '../format'
 import { calendarDay, localToday, tripEndDay } from '../phase'
 import { groupByDay, nowAndNext } from '../itineraryDays'
 import SinceAway from '../SinceAway'
+import { chunkIdeas } from '../ideas'
 
 function daysBetween(from: string, to: string): number {
   return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000)
@@ -48,7 +49,7 @@ export default function Overview() {
 function SetupBlocks() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { trip } = useTrip()
+  const { trip, setAssistantOpen } = useTrip()
   const activeMembers = trip.members.filter((m) => m.status === 'active').length
   const needsGroup = activeMembers < 2
   const needsPlan = trip.itinerary.length === 0
@@ -71,9 +72,9 @@ function SetupBlocks() {
       <ul className="setup-secondary">
         {needsPlan && (
           <li>
-            <Link to="plan" state={{ intent: 'generate' }}>
+            <button type="button" className="btn-link" onClick={() => setAssistantOpen('draft')}>
               {t('trip.setup.draftPlan')}
-            </Link>
+            </button>
           </li>
         )}
         {!hasStay && (
@@ -96,7 +97,8 @@ function SetupBlocks() {
 
 function PlanningBlocks() {
   const { t } = useTranslation()
-  const { trip, polls, currentUid } = useTrip()
+  const { trip, polls, currentUid, setAssistantOpen } = useTrip()
+  const ideaCount = chunkIdeas(trip.travelSuggestions?.raw_suggestions).length
   const unvoted = polls.data.filter(
     (p) => p.status === 'open' && !p.options.some((o) => !!currentUid && o.votes.includes(currentUid))
   )
@@ -143,10 +145,11 @@ function PlanningBlocks() {
         )}
       </Link>
 
-      {trip.travelSuggestions?.raw_suggestions && (
-        <Link to="plan" className="overview-card summary-card">
-          <strong>{t('trip.ideas.summary')}</strong>
-        </Link>
+      {ideaCount > 0 && (
+        <button type="button" className="overview-card summary-card ideas-link" onClick={() => setAssistantOpen('ideas')}>
+          <strong>{t('trip.assistant.ideasCount', { count: ideaCount })}</strong>
+          <span className="muted">{t('trip.assistant.ideasHint')}</span>
+        </button>
       )}
     </>
   )

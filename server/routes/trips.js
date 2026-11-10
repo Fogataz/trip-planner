@@ -415,6 +415,12 @@ router.post('/:groupId/itinerary/generate', async (req, res) => {
       return res.status(502).json({ error: 'AI did not return any stops. Please try again.' });
     }
 
+    // Draft mode (spec 004 section 7.5): the assistant proposes, the group decides. Nothing is saved;
+    // each stop the person accepts is added through the normal add-stop route, which logs and broadcasts it.
+    if (req.body?.draft) {
+      return res.json({ drafts: items });
+    }
+
     // Re-read so items added while the AI was working are not overwritten
     const fresh = await Trip.findOne({ groupId: req.params.groupId });
     const before = fresh.itinerary.length;

@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import Polls from '../../components/Polls'
 import DestinationHeading from '../DestinationHeading'
-import Ideas from '../Ideas'
+import { chunkIdeas } from '../ideas'
 import { ItineraryItem, useTrip } from '../TripContext'
 import { useOneShotIntent } from '../useOneShotIntent'
 import { groupByDay, nowAndNext } from '../itineraryDays'
@@ -25,10 +25,11 @@ function transportIcon(transport: string): string {
 export default function Plan() {
   const { t, i18n } = useTranslation()
   const locale = i18n.resolvedLanguage || 'en'
-  const { trip, refetch, socket, activeUsers, apiUrl, token, currentUid, isOrganizer, setMapOpen, phase, seen, activity } =
+  const { trip, refetch, socket, activeUsers, apiUrl, token, currentUid, isOrganizer, setMapOpen, setAssistantOpen, phase, seen, activity } =
     useTrip()
   const groupId = trip.groupId
   const live = phase === 'live'
+  const ideaCount = chunkIdeas(trip.travelSuggestions?.raw_suggestions).length
   const [now] = useState(() => new Date())
   const current = nowAndNext(trip.itinerary, now)
 
@@ -50,34 +51,6 @@ export default function Plan() {
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
   const [conflictError, setConflictError] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
-  const [generatingItinerary, setGeneratingItinerary] = useState(false)
-
-  const handleGenerateItinerary = async () => {
-    const preferences = window.prompt(t('detail.aiPreferencesPrompt'), '')
-    if (preferences === null) return
-    setGeneratingItinerary(true)
-    try {
-      await axios.post(
-        `${apiUrl}/api/trips/${groupId}/itinerary/generate`,
-        { preferences },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      refetch()
-    } catch (err: any) {
-      alert(t('common.errorPrefix', { message: err.response?.data?.error || t('detail.generateFailed') }))
-    } finally {
-      setGeneratingItinerary(false)
-    }
-  }
-
-  // "Draft a plan with AI" from Overview lands here and starts the same flow as the Generate button
-  const generateIntentHandled = useRef(false)
-  useEffect(() => {
-    if (intent !== 'generate' || generateIntentHandled.current) return
-    generateIntentHandled.current = true
-    handleGenerateItinerary()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const handleAddItinerary = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -183,13 +156,8 @@ export default function Plan() {
             <button type="button" onClick={() => setShowItineraryForm(true)}>
               {t('trip.setup.planAction')}
             </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={handleGenerateItinerary}
-              disabled={generatingItinerary}
-            >
-              {generatingItinerary ? t('detail.generating') : t('trip.setup.draftPlan')}
+            <button type="button" className="btn-secondary" onClick={() => setAssistantOpen('draft')}>
+              {t('trip.setup.draftPlan')}
             </button>
           </div>
         </section>
@@ -202,13 +170,9 @@ export default function Plan() {
             <button type="button" className="btn-secondary" onClick={() => setMapOpen(true)}>
               {t('trip.map.short')}
             </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={handleGenerateItinerary}
-              disabled={generatingItinerary}
-            >
-              {generatingItinerary ? t('detail.generating') : t('detail.generate')}
+            {/* AI drafting lives in the Trip assistant: it proposes, the group decides (section 7.5) */}
+            <button type="button" className="btn-secondary" onClick={() => setAssistantOpen('draft')}>
+              {t('trip.assistant.draftShort')}
             </button>
             <button
               type="button"
@@ -219,8 +183,6 @@ export default function Plan() {
             </button>
           </div>
         </div>
-
-        <p className="hint">{t('detail.itineraryDisclaimer')}</p>
 
         {showItineraryForm && (
           <form className="itinerary-form" onSubmit={handleAddItinerary}>
@@ -342,7 +304,12 @@ export default function Plan() {
         isOrganizer={isOrganizer}
       />
 
-      <Ideas />
+      {ideaCount > 0 && (
+        <button type="button" className="overview-card summary-card ideas-link" onClick={() => setAssistantOpen('ideas')}>
+          <strong>{t('trip.assistant.ideasCount', { count: ideaCount })}</strong>
+          <span className="muted">{t('trip.assistant.ideasHint')}</span>
+        </button>
+      )}
     </>
   )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-export type TripIntent = 'invite' | 'addStop' | 'generate'
+export type TripIntent = 'invite' | 'addStop'
 
 /**
  * Overview links into a destination with an intent, e.g. "open the invite form".
