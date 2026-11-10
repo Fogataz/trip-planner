@@ -67,7 +67,25 @@
     "empty": "Aún no hay viajes. ¡Crea uno para empezar!",
     "members_one": "{{count}} miembro",
     "members_other": "{{count}} miembros",
-    "confirmDelete": "¿Eliminar este viaje?"
+    "confirmDelete": "¿Eliminar este viaje?",
+    "endBeforeStart": "La fecha de fin es anterior a la de inicio",
+    "invalidLength": "Indica una duración entre 1 y 365 días, la menor primero",
+    "length": "¿Cuánto dura?",
+    "lengthEnd": "Fecha de fin",
+    "lengthApprox": "Duración aproximada",
+    "endDate": "Fecha de fin",
+    "minDays": "Duración mínima en días",
+    "maxDays": "Duración máxima en días",
+    "days": "días",
+    "lengthHint": "Opcional. ¿Aún no lo sabes? Indica un rango, por ejemplo de 8 a 10 días.",
+    "inDays_one": "en {{count}} día",
+    "inDays_other": "en {{count}} días",
+    "dayOf": "día {{n}} de {{total}}",
+    "group": {
+      "live": "En curso",
+      "upcoming": "Próximos",
+      "past": "Pasados"
+    }
   },
   "expenses": {
     "title": "Gastos",
@@ -243,13 +261,33 @@
     "retry": "Reintentar",
     "overview": {
       "factsTitle": "Los datos",
-      "summaryTitle": "En este viaje",
+      "summaryTitle": "Resumen del viaje",
       "planSummary_one": "{{count}} parada planeada",
       "planSummary_other": "{{count}} paradas planeadas",
-      "moneySummary": "Gastos y quién debe a quién",
-      "groupSummary_one": "{{count}} miembro",
-      "groupSummary_other": "{{count}} miembros",
-      "stayTitle": "Dónde os alojáis"
+      "stayTitle": "Dónde os alojáis",
+      "needsVote": "Necesita tu voto",
+      "votedCount": "Han votado {{voted}} de {{total}}",
+      "vote": "Votar",
+      "yourPlan": "Tu plan",
+      "daysPlanned": "{{planned}} de {{total}} días planeados",
+      "daysToGo_one": "Falta {{count}} día",
+      "daysToGo_other": "Faltan {{count}} días",
+      "leaves": "Salida {{when}}",
+      "dayOne": "Día 1",
+      "dayOneEmpty": "Aún no hay nada para el día 1",
+      "stayLine": "Alojamiento: {{stay}}",
+      "notJoined_one": "{{count}} invitación sin aceptar",
+      "notJoined_other": "{{count}} invitaciones sin aceptar",
+      "nothingYet": "Nada en marcha ahora",
+      "nothingToday": "Nada planeado para hoy",
+      "restOfToday": "Resto del día",
+      "statDays_one": "día",
+      "statDays_other": "días",
+      "statStops_one": "parada",
+      "statStops_other": "paradas",
+      "statSpent": "gastado",
+      "statPeople_one": "persona",
+      "statPeople_other": "personas"
     },
     "map": {
       "open": "Dónde está cada uno",
@@ -305,6 +343,33 @@
       "emptyBody": "Apunta los gastos compartidos sobre la marcha. La app calcula quién debe a quién.",
       "emptyAction": "Añadir el primer gasto"
     },
-    "groupEmpty": "Por ahora solo tú. Invita al grupo para planear juntos."
+    "groupEmpty": "Por ahora solo tú. Invita al grupo para planear juntos.",
+    "badge_one": "{{count}} elemento te necesita",
+    "badge_other": "{{count}} elementos te necesitan",
+    "duration": {
+      "exact_one": "{{count}} día",
+      "exact_other": "{{count}} días",
+      "range": "{{min}}–{{max}} días"
+    },
+    "plan": {
+      "dayHeading": "Día {{n}} · {{date}}",
+      "today": "Hoy",
+      "now": "Ahora",
+      "next": "Siguiente",
+      "editStop": "Editar {{stop}}",
+      "deleteStop": "Eliminar {{stop}}"
+    },
+    "activity": {
+      "title": "Mientras no estabas",
+      "stopAdded": "{{name}} añadió {{stop}}",
+      "stopUpdated": "{{name}} cambió {{stop}}",
+      "stopDeleted": "{{name}} quitó {{stop}}",
+      "joined": "{{name}} se unió al viaje",
+      "memberAdded": "{{name}} añadió a {{other}}",
+      "invited": "{{name}} invitó a {{other}}",
+      "memberRemoved": "{{name}} quitó a {{other}}",
+      "roleChanged": "{{name}} cambió el rol de {{other}}",
+      "tripUpdated": "{{name}} actualizó el viaje"
+    }
   }
 }

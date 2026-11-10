@@ -9,6 +9,7 @@ const { GALLERY, isGalleryKey, isCoverAssetId } = require('../config/coverGaller
 const { generateTravelSuggestions } = require('../services/travelSuggestions');
 const { requestLanguage } = require('../services/language');
 const { generateItinerary } = require('../services/itineraryBuilder');
+const ActivityLog = require('../models/ActivityLog');
 const { logItineraryChange, logTripUpdate } = require('../services/activityLogger');
 const { notifyTrip } = require('../services/notifications');
 
@@ -30,10 +31,20 @@ function denyUnlessMember(trip, req, res, { organizerOnly = false } = {}) {
   return false;
 }
 
+// Approximate trip length, used when there is no end date. Returns undefined when absent or invalid.
+function parseDuration(value) {
+  if (!value || typeof value !== 'object') return undefined;
+  const min = Math.round(Number(value.min));
+  const max = Math.round(Number(value.max ?? value.min));
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min < 1 || max > 365 || min > max) return undefined;
+  return { min, max };
+}
+
 // Create a new trip
 router.post('/', async (req, res) => {
   try {
     const { name, destination, origin, startDate, endDate } = req.body;
+    const durationDays = endDate ? undefined : parseDuration(req.body.durationDays);
     const groupId = uuidv4();
     const userId = req.user.uid;
 
@@ -48,6 +59,7 @@ router.post('/', async (req, res) => {
       origin,
       startDate,
       endDate,
+      durationDays,
       createdBy: userId,
       members: [{ userId, email: userEmail, role: 'organizer', status: 'active' }],
     });
@@ -107,6 +119,29 @@ function ensureSuggestions(trip, language) {
   })();
 }
 
+// Recent activity for a trip ("since you were away" on Overview). Members only.
+router.get('/:groupId/activity', async (req, res) => {
+  try {
+    const trip = await Trip.findOne({ groupId: req.params.groupId });
+    if (!trip) return res.status(404).json({ error: 'Trip not found' });
+    if (denyUnlessMember(trip, req, res)) return;
+
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
+    const since = req.query.since ? new Date(req.query.since) : null;
+    const query = { groupId: trip.groupId };
+    if (since && !isNaN(since)) query.timestamp = { $gt: since };
+
+    const entries = await ActivityLog.find(query)
+      .sort({ timestamp: -1 })
+      .limit(limit)
+      .select('action targetType targetId targetDetails changes description userId userEmail timestamp')
+      .lean();
+    res.json(entries);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // Get a specific trip
 router.get('/:groupId', async (req, res) => {
   try {
@@ -135,6 +170,10 @@ router.put('/:groupId', async (req, res) => {
         origin,
         startDate,
         endDate,
+        // An end date replaces the approximate length; without one, keep or set it
+        ...(endDate
+          ? { $unset: { durationDays: 1 } }
+          : req.body.durationDays !== undefined && { durationDays: parseDuration(req.body.durationDays) }),
         updatedAt: new Date(),
       },
       { new: true }
@@ -434,7 +473,7 @@ router.post('/:groupId/itinerary', async (req, res) => {
       user?.email,
       addedItem._id.toString(),
       'itinerary_added',
-      null,
+      { after: { stop, time } },
       `Added stop: ${stop}`
     ).catch((err) => console.error('Activity log error:', err.message));
 

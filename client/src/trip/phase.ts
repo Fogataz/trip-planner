@@ -14,12 +14,14 @@
  *    that window, Setup's trigger wins. So Planning needs both an itinerary item and at least
  *    2 active members, even though §5 words Planning as "a plan *or* a group".
  *
- * Both rules are engineering defaults, not product decisions. They are **TBD** for product.
+ * Rule 1 was confirmed by the product owner on 2026-11-10 ("calendar wins").
  *
- * Other defaults:
+ * Other rules:
  * - No start date: there is no date window, so the phase is Setup or Planning by rule 2.
- * - No end date: the trip is treated as one day long (end = start), the same as `isTripLive`
- *   did before. **TBD** for product.
+ * - No end date but an approximate length (`durationDays`, e.g. 8 to 10 days): the trip ends on
+ *   the last day of the LONGER estimate, so nobody's trip is "over" while they are still on it.
+ *   Product owner decision, 2026-11-10.
+ * - Neither: the trip is treated as one day long (end = start).
  * - An end date before the start date is treated as the start date.
  * - "Active member" means `status === 'active'`, the same count Overview uses.
  */
@@ -34,6 +36,7 @@ export interface TripPhaseInput {
   endDate?: string | null
   itinerary?: readonly unknown[] | null
   members?: readonly { status?: string }[] | null
+  durationDays?: { min?: number; max?: number } | null
 }
 
 /**
@@ -58,10 +61,32 @@ function daysBetween(from: string, to: string): number {
 type DateWindow = 'before' | 'countdown' | 'live' | 'after'
 
 /** Where `now` falls against the trip's dates, in the viewer's timezone. Null without a start date. */
-function dateWindow(startDate: string | null | undefined, endDate: string | null | undefined, now: Date): DateWindow | null {
+/** Calendar day `days` after calendar day `day` (both YYYY-MM-DD) */
+function addDays(day: string, days: number): string {
+  return new Date(Date.parse(`${day}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10)
+}
+
+/** The trip's last calendar day: the end date, else start + the longer approximate length, else the start */
+export function tripEndDay(
+  startDate: string,
+  endDate?: string | null,
+  durationDays?: { min?: number; max?: number } | null
+): string {
+  const start = calendarDay(startDate)
+  if (endDate) return calendarDay(endDate)
+  const longest = Math.max(durationDays?.max ?? 0, durationDays?.min ?? 0)
+  return longest >= 1 ? addDays(start, Math.round(longest) - 1) : start
+}
+
+function dateWindow(
+  startDate: string | null | undefined,
+  endDate: string | null | undefined,
+  now: Date,
+  durationDays?: { min?: number; max?: number } | null
+): DateWindow | null {
   if (!startDate) return null
   const start = calendarDay(startDate)
-  const endRaw = endDate ? calendarDay(endDate) : start
+  const endRaw = tripEndDay(startDate, endDate, durationDays)
   const end = endRaw < start ? start : endRaw
   const today = localToday(now)
   if (today > end) return 'after'
@@ -70,7 +95,7 @@ function dateWindow(startDate: string | null | undefined, endDate: string | null
 }
 
 export function tripPhase(trip: TripPhaseInput, now: Date = new Date()): TripPhase {
-  const window = dateWindow(trip.startDate, trip.endDate, now)
+  const window = dateWindow(trip.startDate, trip.endDate, now, trip.durationDays)
   if (window === 'after') return 'wrap'
   if (window === 'live') return 'live'
   if (window === 'countdown') return 'countdown'
@@ -81,6 +106,11 @@ export function tripPhase(trip: TripPhaseInput, now: Date = new Date()): TripPha
 }
 
 /** True from the start day 00:00 to the end day 23:59 in the viewer's timezone (spec 004 D4) */
-export function isTripLive(startDate: string | null | undefined, endDate?: string | null, now: Date = new Date()): boolean {
-  return dateWindow(startDate, endDate, now) === 'live'
+export function isTripLive(
+  startDate: string | null | undefined,
+  endDate?: string | null,
+  now: Date = new Date(),
+  durationDays?: { min?: number; max?: number } | null
+): boolean {
+  return dateWindow(startDate, endDate, now, durationDays) === 'live'
 }
