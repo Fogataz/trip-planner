@@ -17,7 +17,8 @@ This page describes what the product does today, based on the code in `server/` 
   - **Money:** expenses and settle up
   - **Group:** members, invite by email and link, and push notifications for this device
   - **Map:** live location opens as a full-screen mode from Overview or Plan, and closes with Esc. Closing it stops sharing
-  - **Assistant:** the "Ask the assistant" button opens the Q&A from any destination
+  - **Assistant:** the "Ask the assistant" button (a floating button on phones) opens the Q&A from any destination
+  - The trip header is compact (110px cover on desktop, 86px on phones) so each destination starts on the first screen. On desktop the tabs stay pinned under the app header
   - The trip is fetched once and shared by all four destinations, which stay current through the trip's socket. AI travel suggestions arrive by the `trip:suggestionsUpdated` socket event, with a short backed-off re-fetch as a fallback
 - Each trip has a name, destination, origin, start and end dates, and accommodation
 - Only active members can view a trip, and only the organizer can change or delete it (see `server/routes/trips.js`)

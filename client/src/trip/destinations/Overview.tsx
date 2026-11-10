@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import DestinationHeading from '../DestinationHeading'
 import { useTrip } from '../TripContext'
+import { formatDateRange } from '../format'
 
 /**
  * Slice 1: key facts, the Stay card and summaries that link to the destination that owns each thing.
@@ -53,8 +54,7 @@ export default function Overview() {
             <strong>{t('detail.to')}</strong> {trip.destination?.address || t('common.unknown')}
           </p>
           <p>
-            <strong>{t('detail.dates')}</strong> {new Date(trip.startDate).toLocaleDateString(locale)} -{' '}
-            {trip.endDate ? new Date(trip.endDate).toLocaleDateString(locale) : t('detail.tbd')}
+            <strong>{t('detail.dates')}</strong> {formatDateRange(trip.startDate, trip.endDate, locale, t('detail.tbd'))}
           </p>
           <p>
             <strong>{t('detail.members')}</strong> {trip.members.length}

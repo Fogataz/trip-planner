@@ -253,7 +253,8 @@
     },
     "map": {
       "open": "Onde está cada um",
-      "close": "Fechar mapa"
+      "close": "Fechar mapa",
+      "short": "Mapa"
     },
     "assistant": {
       "open": "Perguntar ao assistente",

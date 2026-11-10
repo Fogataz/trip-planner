@@ -245,7 +245,17 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
     [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, isOrganizer, push, mapOpen, assistantOpen]
   )
 
-  if (loading) return <div className="loading">{t('detail.loading')}</div>
+  // Skeleton in the shape of the trip chrome and tabs, so nothing jumps when the trip arrives (N3, N4)
+  if (loading)
+    return (
+      <div className="trip-skeleton" role="status" aria-label={t('detail.loading')}>
+        <div className="skeleton-block skeleton-back" />
+        <div className="skeleton-block skeleton-cover" />
+        <div className="skeleton-block skeleton-title" />
+        <div className="skeleton-block skeleton-tabs" />
+        <div className="skeleton-block skeleton-card" />
+      </div>
+    )
   if (error)
     return (
       <div className="error">

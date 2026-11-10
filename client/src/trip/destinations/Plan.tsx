@@ -149,14 +149,21 @@ export default function Plan() {
       <div className="itinerary-section">
         <div className="section-header">
           <h2>{t('detail.itinerary')}</h2>
-          <div className="section-actions">
+          <div className="section-actions plan-actions">
+            {/* One primary action per destination (F7): Add stop. The rest are secondary. */}
             <button type="button" className="btn-secondary" onClick={() => setMapOpen(true)}>
-              {t('trip.map.open')}
+              {t('trip.map.short')}
             </button>
-            <button className="add-button" onClick={handleGenerateItinerary} disabled={generatingItinerary}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={handleGenerateItinerary}
+              disabled={generatingItinerary}
+            >
               {generatingItinerary ? t('detail.generating') : t('detail.generate')}
             </button>
             <button
+              type="button"
               className="add-button"
               onClick={() => (showItineraryForm ? handleCancelEdit() : setShowItineraryForm(true))}
             >
@@ -226,7 +233,7 @@ export default function Plan() {
                       <div className="editing-note">{t('detail.isEditing', { name: editingUser.userEmail })}</div>
                     )}
                     <h3>{item.stop}</h3>
-                    <p className="time">{new Date(item.time).toLocaleString(locale)}</p>
+                    <p className="time">{new Date(item.time).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' })}</p>
                     {item.transport && (
                       <p className="transport">
                         {transportIcon(item.transport)} {item.transport}

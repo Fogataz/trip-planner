@@ -253,7 +253,8 @@
     },
     "map": {
       "open": "Where everyone is",
-      "close": "Close map"
+      "close": "Close map",
+      "short": "Map"
     },
     "assistant": {
       "open": "Ask the assistant",

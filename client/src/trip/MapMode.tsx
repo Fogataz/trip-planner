@@ -10,10 +10,10 @@ import { useTrip } from './TripContext'
 export default function MapMode() {
   const { t } = useTranslation()
   const { trip, socket, currentUid, locations, setMapOpen } = useTrip()
-  const closeRef = useRef<HTMLButtonElement>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    closeRef.current?.focus()
+    rootRef.current?.querySelector<HTMLButtonElement>('.map-close')?.focus()
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMapOpen(false)
@@ -25,21 +25,16 @@ export default function MapMode() {
   }, [setMapOpen])
 
   return (
-    <div className="map-mode" role="dialog" aria-modal="true" aria-label={t('trip.map.open')}>
-      <div className="map-mode__bar">
-        <button ref={closeRef} type="button" className="btn-secondary" onClick={() => setMapOpen(false)}>
-          {t('trip.map.close')}
-        </button>
-      </div>
-      <div className="map-mode__body">
-        <LiveLocationMap
-          groupId={trip.groupId}
-          socket={socket}
-          currentUid={currentUid}
-          destination={trip.destination}
-          initialLocations={locations}
-        />
-      </div>
+    <div ref={rootRef} className="map-mode" role="dialog" aria-modal="true" aria-label={t('trip.map.open')}>
+      <LiveLocationMap
+        groupId={trip.groupId}
+        socket={socket}
+        currentUid={currentUid}
+        destination={trip.destination}
+        initialLocations={locations}
+        onClose={() => setMapOpen(false)}
+        closeLabel={t('trip.map.close')}
+      />
     </div>
   )
 }

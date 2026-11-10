@@ -20,6 +20,9 @@ interface Props {
   destination?: { lat?: number; lng?: number; address?: string }
   /** Who is sharing right now, so the map can open after the join snapshot was received */
   initialLocations?: Record<string, SharedLocation>
+  /** When the map is shown as a mode, its close control sits in the map's own header */
+  onClose?: () => void
+  closeLabel?: string
 }
 
 const STALE_AFTER_MS = 2 * 60 * 1000
@@ -37,7 +40,7 @@ function FitBounds({ points }: { points: Array<[number, number]> }) {
   return null
 }
 
-export default function LiveLocationMap({ groupId, socket, currentUid, destination, initialLocations }: Props) {
+export default function LiveLocationMap({ groupId, socket, currentUid, destination, initialLocations, onClose, closeLabel }: Props) {
   const { t } = useTranslation()
   const [locations, setLocations] = useState<Record<string, SharedLocation>>(initialLocations ?? {})
   const [sharing, setSharing] = useState(false)
@@ -126,9 +129,16 @@ export default function LiveLocationMap({ groupId, socket, currentUid, destinati
     <div className="qa-section">
       <div className="section-header">
         <h2>{t('location.title')}</h2>
-        <button type="button" onClick={sharing ? stopSharing : startSharing} disabled={!socket}>
-          {sharing ? t('location.stop') : t('location.share')}
-        </button>
+        <div className="section-actions">
+          <button type="button" onClick={sharing ? stopSharing : startSharing} disabled={!socket}>
+            {sharing ? t('location.stop') : t('location.share')}
+          </button>
+          {onClose && (
+            <button type="button" className="btn-secondary map-close" onClick={onClose}>
+              {closeLabel}
+            </button>
+          )}
+        </div>
       </div>
 
       <p className="hint">
