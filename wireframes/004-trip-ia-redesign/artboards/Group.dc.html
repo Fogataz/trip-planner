@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Group</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; color: #1a1a1a; }
+    a { color: #1d4ed8; } a:hover { color: #1e40af; }
+    button { font: inherit; cursor: pointer; }
+  </style>
+</helmet>
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="height: 48px; flex: none; border-bottom: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: space-between; padding: 0 14px">
+    <button type="button" style="background: none; border: none; padding: 0; font-size: 13px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+      Trips
+    </button>
+    <span style="width: 24px; height: 24px; border-radius: 99px; background: #ececec; border: 1px solid #cfcfcf; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #6b6b6b">A</span>
+  </div>
+
+  <div style="height: 86px; flex: none; background: #ececec; display: flex; align-items: flex-end; padding: 8px 12px">
+    <span style="font-size: 8px; font-weight: 700; letter-spacing: 1px; color: #8a8a8a">COVER</span>
+  </div>
+
+  <div style="flex: none; padding: 9px 16px 10px; border-bottom: 1px solid #cfcfcf">
+    <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px">Madrid Gathering</h1>
+    <div style="font-size: 12px; color: #6b6b6b; margin-top: 2px">Barcelona → Madrid · 24–25 Nov</div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 13px 16px 0">
+
+    <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin-bottom: 4px">4 GOING</div>
+    <div style="border-top: 1px solid #e4e4e4">
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: #1a1a1a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600">Y</span>
+        <span style="flex: 1"><span style="display: block; font-size: 13px; font-weight: 600">You</span><span style="display: block; font-size: 11px; color: #6b6b6b">alberto</span></span>
+        <span style="font-size: 10px; font-weight: 600; border: 1px solid #1a1a1a; border-radius: 99px; padding: 2px 7px">ORGANIZER</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: #ececec; color: #6b6b6b; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600">A</span>
+        <span style="flex: 1"><span style="display: block; font-size: 13px; font-weight: 600">Ana López</span><span style="display: block; font-size: 11px; color: #6b6b6b">Viewing now</span></span>
+        <span style="width: 8px; height: 8px; border-radius: 99px; background: #1a1a1a"></span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: #e0e0e0; color: #6b6b6b; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600">L</span>
+        <span style="flex: 1"><span style="display: block; font-size: 13px; font-weight: 600">Luis Martín</span><span style="display: block; font-size: 11px; color: #6b6b6b">Last seen 2h ago</span></span>
+        <button type="button" style="background: none; border: 1px solid #cfcfcf; border-radius: 6px; padding: 4px 9px; font-size: 11px; color: #6b6b6b">Remove</button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #e4e4e4">
+        <span style="width: 30px; height: 30px; flex: none; border-radius: 99px; background: #fff; border: 1.5px dashed #b0b0b0; color: #8a8a8a; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600">M</span>
+        <span style="flex: 1"><span style="display: block; font-size: 13px; font-weight: 600; color: #6b6b6b">marta@example.com</span><span style="display: block; font-size: 11px; color: #6b6b6b">Invited 3 days ago</span></span>
+        <button type="button" style="background: none; border: 1px solid #cfcfcf; border-radius: 6px; padding: 4px 9px; font-size: 11px; color: #6b6b6b">Resend</button>
+      </div>
+
+    </div>
+
+    <div style="display: flex; gap: 8px; margin-top: 12px">
+      <button type="button" style="flex: 1; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 600">Invite by email</button>
+      <button type="button" style="flex: 1; background: #fff; color: #1a1a1a; border: 1px solid #cfcfcf; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 600">Copy invite link</button>
+    </div>
+
+    <!-- notifications -->
+    <div style="font-size: 9px; font-weight: 700; letter-spacing: 1px; color: #6b6b6b; margin: 16px 0 6px">NOTIFICATIONS</div>
+    <div style="border: 1px solid #cfcfcf; border-radius: 9px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 12px">Push on this device</span>
+      <button type="button" aria-pressed="true" aria-label="Push on this device" style="width: 38px; height: 22px; border-radius: 99px; background: #1a1a1a; border: none; padding: 0; display: flex; align-items: center; justify-content: flex-end">
+        <span style="width: 17px; height: 17px; border-radius: 99px; background: #fff; margin-right: 2px"></span>
+      </button>
+    </div>
+    <div style="margin-top: 8px; border: 1.5px dashed #b0b0b0; border-radius: 9px; padding: 10px 12px">
+      <span style="font-size: 11px; color: #6b6b6b">Per-event preferences — reserved slot, fills with R4</span>
+    </div>
+
+    <!-- chat -->
+    <div style="margin-top: 12px; border: 1.5px dashed #b0b0b0; border-radius: 9px; padding: 10px 12px">
+      <span style="font-size: 11px; color: #6b6b6b"><strong style="font-weight: 600">Group chat</strong> — reserved slot, not in v1</span>
+    </div>
+
+  </div>
+
+  <div style="height: 66px; flex: none; border-top: 1px solid #cfcfcf; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))">
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Overview</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Plan</span>
+    </button>
+    <button type="button" style="background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6b6b">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7V6a2 2 0 0 1 2-2h11"/><circle cx="17" cy="13" r="1.3"/></svg>
+      <span style="font-size: 10px; font-weight: 500">Money</span>
+    </button>
+    <button type="button" style="background: none; border: none; border-top: 2px solid #1a1a1a; margin-top: -1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #1a1a1a">
+      <span style="position: relative; display: flex">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5"/><path d="M18 14.2c1.8.9 3 2.7 3 4.8"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; min-width: 15px; height: 15px; border-radius: 99px; background: #1a1a1a; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px">1</span>
+      </span>
+      <span style="font-size: 10px; font-weight: 600">Group</span>
+    </button>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
