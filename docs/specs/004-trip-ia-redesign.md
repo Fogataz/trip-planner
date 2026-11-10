@@ -531,6 +531,67 @@ For slice 2, change the slice paragraph and the rules that reference parity; the
 | # | Item | Owner |
 |---|---|---|
 | 1 | ~~Approval gate~~ — approved 2026-11-10, without the tree test, deliberately | Done |
-| 2 | Tree test in §10 — instrument is built, needs 5–8 participants. **Run it before slice 2**, which builds on these labels | **TBD** |
+| 2 | Tree test in §10 — instrument is built, needs 5–8 participants. Slices 2 and 3 were built before it at the product owner's direction (D11, §18.3). Still run it before the labels ship: a failing label is a cheap rename now and an expensive one after release | **TBD** |
 | 3 | First-click test on the five Overview phases (§10.3) — not built | **TBD** |
 | 4 | Whether spec 002 (hosted event pilot) needs its own surface inside a trip (§4.2) | Blocked on 002 |
+| 5 | Follow-up work that spec 004 reserved or surfaced: see §18.5 and the [spec backlog](../product/spec-backlog.md) | — |
+
+## 18. Amendment: build record (2026-11-10)
+
+Added after the build. The sections above are the decision as approved; this section records what changed during the build and why, so the next spec starts from facts.
+
+### 18.1 Pull requests
+
+Four stacked pull requests, merged in this order with merge commits (not squash):
+
+| Order | PR | Contents |
+|---|---|---|
+| 1 | [#11](https://github.com/Fogataz/trip-planner/pull/11) | Slice 1: route shell, trip chrome, the four destinations, parity move, map mode, assistant sheet, 2 s poll removed. Also F6, F12, F14 and AC25 (see 18.2) |
+| 2 | [#12](https://github.com/Fogataz/trip-planner/pull/12) | `tripPhase(trip, now)` and the client's first test runner (Vitest) |
+| 3 | [#13](https://github.com/Fogataz/trip-planner/pull/13) | Slice 2: phase-adaptive Overview, needs-me badges, "since you were away", day-grouped Plan, grouped trips list, approximate trip length |
+| 4 | [#14](https://github.com/Fogataz/trip-planner/pull/14) | Slice 3: one Trip assistant (ask, draft a plan, ideas); AI stops arrive as drafts |
+
+Status stays `building` until all four merge. Then it becomes `shipped`, with the date and #14 as the PR.
+
+### 18.2 Scope moved between slices
+
+- **F6, F12, F14 and AC25 were not assigned to any slice in §13.** The product owner asked for them in slice 1, so slice 1 also collapses the poll and expense forms, leads Money with your own balance, and adds one empty state per destination and a single next step on a new trip.
+- **R2, R3 and R4 were not built in slice 3.** §13 says "filled as those features ship", and each needs its own spec. See §18.5.
+
+### 18.3 Decisions taken during the build
+
+| # | Decision | Outcome |
+|---|---|---|
+| D9 | Phase precedence: Setup's trigger overlaps the date phases | **Calendar wins** (product owner, 2026-11-10). Countdown, Live and Wrap follow the dates alone, so a solo or plan-less trip still reaches Live and Wrap. Setup and Planning only compete more than 7 days out |
+| D10 | Trips with no end date | **Approximate length** (product owner, 2026-11-10). The new-trip form offers an end date or an approximate length in days, for example 8 to 10 (`durationDays: {min, max}` on the Trip). Phases use the **longer** estimate, so nobody's trip is "over" while they are still on it. With neither, the trip is one day. This is new scope with no spec of its own; follow-ups in the [spec backlog](../product/spec-backlog.md) |
+| D11 | Build slices 2 and 3 before the tree test | **Yes**, at the product owner's direction. Risk accepted: the labels may still change (§17 item 2) |
+
+### 18.4 Where the build differs from the spec or wireframes
+
+| Item | What was built | Why |
+|---|---|---|
+| Cover height | 110 px desktop, 86 px phone on the trip page (spec 001 had 280/200) | The chrome persists on every destination (F3). At spec 001 sizes the itinerary started below the first screen on a phone, against the §14 guardrail |
+| Plan order | Itinerary above Decisions | The wireframe puts Decisions first; the itinerary first keeps the core object on the first screen |
+| Desktop tabs | Pinned under the app header; switching keeps the new destination under the tabs | Not in the spec; avoids the chrome jumping back into view |
+| Assistant entry on phones | Floating button above the tab bar | As §7.2 says; the first build had a button in the chrome |
+| Conflict warning | Banner at the top of Plan, local to Plan | Parity map says inline on the item plus a toast. The old page replaced itself with an error on a 409; now the other destinations keep working (AC24) |
+| Badges and "since you were away" | "Last visit" is kept per device in browser storage | Keeps §7.6's "no new endpoints for badges". Does not sync across devices: [spec 008](008-activity-and-read-state.md) |
+| Activity feed coverage | Stop changes, members and cover updates | The server never logged polls or expenses: [spec 008](008-activity-and-read-state.md) |
+| New endpoint | `GET /api/trips/:groupId/activity` (members only) | §7.6 allowed "reading the existing activity log" |
+| Suggestions poll | Server now emits `trip:suggestionsUpdated`; client keeps a backed-off fallback (6 tries, 3 s to 30 s) | The server emitted no event for suggestions, so "the socket events the server already emits" could not replace the poll on their own |
+| AI drafts | `itinerary/generate` with `draft: true` saves nothing; accepted stops go through the normal add-stop route. Drafts are private to the person who asked | Principle 4. Spec 002 F21–F23 wants host-only shared drafts with publish; that builds on this |
+| Ideas | The suggestions essay split into titled cards in the assistant | §7.7 "chunked into cards" |
+| Identity | Members still show email addresses | No display-name data exists: [spec 007](007-profiles-and-display-names.md) |
+| Trip dates | Read as calendar days (UTC midnight) everywhere | Fixes a pre-existing bug: dates showed a day early west of UTC |
+
+### 18.5 What this spec leaves for later
+
+| Item | Where it goes | Spec |
+|---|---|---|
+| R2: mark a payment as settled | Money balance card, Wrap Overview, Past trip cards | [005 Settle up](005-settle-up.md) (seed draft) |
+| R3: transport updates | Countdown and Live Overview alert slot, badge on the affected stop | [006 Transport updates](006-transport-updates.md) (seed draft) |
+| R4: notification triggers and preferences | Group → Notifications (slot is reserved) | [Spec 002](002-hosted-event-pilot.md) F27–F29 already defines the five categories. Recommendation: build there, not in a new spec |
+| A9: display names and avatars | Chrome presence, Group, Money, activity feed | [007 Profiles and display names](007-profiles-and-display-names.md) (seed draft) |
+| Activity coverage and cross-device read state | Overview, badges | [008 Activity and read state](008-activity-and-read-state.md) (seed draft) |
+| Chat, packing, bookings, photos and recap; Q&A answers as proposals; editing trip dates; desktop map panel | Reserved slots and smaller items | [Spec backlog](../product/spec-backlog.md) |
+

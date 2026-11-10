@@ -2,7 +2,7 @@
 
 This folder holds product documentation for the Trip Planner. Engineering setup lives in the root [README](../README.md).
 
-> **Status: draft.** The product documents are a first version for review. Items marked **TBD** need input from the product owner.
+> Items marked **TBD** need input from the product owner.
 
 ## Two kinds of document
 
@@ -24,6 +24,11 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | [product/revenue-models-analysis.md](product/revenue-models-analysis.md) | Revenue models compared, shared features, phased plan (point-in-time, 2026-11-09) |
 | [brand/brand-foundations.md](brand/brand-foundations.md) | Brand platform, voice and tone, architecture, naming, visual directions, UX principles (v0) |
 | [product/pilot-event-feature-list.md](product/pilot-event-feature-list.md) | Planning list for the first pilot event (spec 002): why each feature matters now and later, effort, risks and fallbacks |
+| [process/tracker.md](process/tracker.md) | How delivery is tracked in GitHub Issues and the Trip-Planner project: the three levels, fields, views, and how the board relates to specs |
+| [product/spec-backlog.md](product/spec-backlog.md) | Candidates for future specs: where each goes in the product, a recommendation and where to start in the code |
+| [product/premium-buyer-lens.md](product/premium-buyer-lens.md) | Analysis (2026-11-10): who should pay and at what price, using Alex Hormozi's market and pricing advice |
+| [product/destination-weddings.md](product/destination-weddings.md) | Analysis (2026-11-10): destination weddings as a niche, use cases, gaps, who pays, test plan |
+| [product/early-testers.md](product/early-testers.md) | Living register of early testers and design partners (no contact details) |
 | [features.md](features.md) | What the product does today, based on the current code |
 | [specs/](specs/) | One spec per feature, numbered |
 
@@ -31,10 +36,14 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 
 | # | Spec | Status | Shipped | PR |
 |---|---|---|---|---|
-| 001 | [Trip covers](specs/001-trip-covers.md) | shipped | 2026-11-06 | [#3](https://github.com/barry-dempsey/trip-planner/pull/3) |
+| 001 | [Trip covers](specs/001-trip-covers.md) | shipped | 2026-11-06 | [#3](https://github.com/Fogataz/trip-planner/pull/3) |
 | 002 | [Hosted event pilot](specs/002-hosted-event-pilot.md) | draft | — | — |
-| 003 | [Localization (EN/PT/ES)](specs/003-localization.md) | shipped | 2026-11-09 | [#5](https://github.com/barry-dempsey/trip-planner/pull/5) |
+| 003 | [Localization (EN/PT/ES)](specs/003-localization.md) | shipped | 2026-11-09 | [#5](https://github.com/Fogataz/trip-planner/pull/5) |
 | 004 | [Trip information architecture](specs/004-trip-ia-redesign.md) | building | — | — |
+| 005 | [Settle up](specs/005-settle-up.md) | draft | — | — |
+| 006 | [Transport updates](specs/006-transport-updates.md) | draft | — | — |
+| 007 | [Profiles and display names](specs/007-profiles-and-display-names.md) | draft | — | — |
+| 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
 
 ## How a feature goes from idea to shipped
 
