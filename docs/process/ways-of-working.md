@@ -100,15 +100,18 @@ Two sessions share one repository and no other state. Every extra trip between t
 
 The script stages `docs/` and nothing else, and refuses if anything outside `docs/` reaches the index. That is the whole safety model: a product session cannot commit code, because the script will not let it.
 
-**Prerequisites.** The git identity is set on one computer; the other two were outstanding on 2026-11-11. Tried from a product session that day and refused:
+**Prerequisites.** Rechecked 2026-11-11 against Alberto's own laptop clone through the device bridge — the path the script actually runs on, never a separate cloud-sandbox clone:
 
-| What | How it failed | Fix, and whose |
+| What | How it stood | Fix, and whose |
 |---|---|---|
-| A git identity | The Cowork shell has no `user.email` or `user.name`, and no session may set git config | **Done 2026-11-11** on Alberto's computer: `Calvur-Labs` with the GitHub noreply address, in that clone's `.git/config`. It is not committed and applies to that clone only. Each person sets their own identity in their own clone; Barry's clone is untouched |
-| Network to GitHub | `git push` is refused by the proxy, HTTP 403 after CONNECT: github.com is not on this account's egress allowlist for the Cowork shell | Product owner allows github.com for the Cowork workspace in the account's network settings |
-| `gh` | Not installed in the Cowork shell, so the script cannot open the pull request | Install it there, or open the pull request from the compare URL that `git push` prints |
+| A git identity | No clone had `user.email` or `user.name` set | **Done 2026-11-11** on Alberto's computer: `Calvur-Labs` with the GitHub noreply address, in that clone's `.git/config`. Applies to that clone only. Each person sets their own identity in their own clone; Barry's clone is still untouched |
+| Network to GitHub | Genuinely blocked on the bridge path: HTTP 403 `blocked-by-allowlist` from the device-bridge shell on 2026-11-11 | **Fixed 2026-11-11 by the product owner:** turned on "Use the internet while making files" in Settings → Capabilities. Confirmed the same day from the laptop clone — the same shell went from 403 to 200, and `git ls-remote origin HEAD` reached `Fogataz/trip-planner` cleanly |
 
-**Until then:** the product session writes the files and stages them on a `docs/…` branch, and Claude Code runs the script. The handoff shrinks from explaining what changed to one command, which is most of the saving.
+`gh` as a way to *open the pull request* is not a prerequisite: §7.5 already covers its absence, pushing and leaving the pull request to the compare link `git push` prints.
+
+**First real run, 2026-11-11 (this change):** identity and commit worked — the script branched, staged and committed cleanly through the device bridge. **Push failed**, on something the table above missed: this clone's `credential.https://github.com.helper` is set to `!gh auth git-credential`, so without `gh` installed, git has no way to authenticate the push itself (separate from `gh` only being needed to open the PR). **Resolved the same day:** `gh` was installed on the laptop and the push succeeded from macOS. Push now works from macOS — Claude Code, or by hand. It still fails from a product session, because `gh` is not installed in the device-bridge VM and the helper points at it.
+
+**Where that leaves it:** a product session branches and commits through the device bridge; the push is run from macOS by Claude Code or the product owner. Making push work from a product session needs a credential the bridge VM can read, which is a separate decision and not taken. A third route avoids the question for docs: edit the file on the branch through GitHub in the browser, which commits server-side and needs no push — at the cost of leaving local clones a `git pull` behind.
 
 ### 7.2 Claude Code reports into the repo, never only into its chat
 
@@ -149,5 +152,5 @@ Without `gh` it pushes and leaves the pull request to the link `git push` prints
 | ww-D3 | Rollback steps, and where errors are visible during the event | Engineering | **Written 2026-11-11** in §4. The redeploy step and log location are **TBD** until hosting is chosen. Tried once in the dry run |
 | ww-D4 | Retro day and length | Product owner | **Decided 2026-11-11:** Friday, 15 minutes. Clock time **TBD** |
 | ww-D5 | May product sessions edit `docs/process/`? | Product owner | **Decided 2026-11-11: yes.** Engineering updates the "Who does what" list in CLAUDE.md |
-| ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Blocked** on the three prerequisites in §7.1; until they are met the product session stages and Claude Code runs the script. Engineering creates the script, sets the git identity and updates CLAUDE.md |
+| ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Unblocked 2026-11-11:** identity, commit and push all work from Alberto's own clone; the push itself is run from macOS, not from the product session (§7.1). Engineering created the script, set the git identity and updated CLAUDE.md |
 | ww-D7 | Claude Code reports its outcome into the repo or the board, not only into its chat | Product owner | **Decided 2026-11-11** (§7.2) |
