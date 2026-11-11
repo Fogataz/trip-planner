@@ -4,7 +4,11 @@
 #   scripts/docs-only-check.sh [base-ref]        # default: origin/main
 #
 # Compares HEAD with its merge base against <base-ref> and fails if anything
-# outside docs/ changed. Two callers, one rule:
+# outside docs/ or wireframes/ changed. wireframes/ counts as documentation:
+# docs/README.md rule 7 tells a product session to save frames there as files,
+# and stage 3 of the feature process produces them, so a guard that excluded
+# them would have made wireframes the one output a product session could not
+# commit. Two callers, one rule:
 #   - step 3 of scripts/docs-commit.sh, before a product session pushes;
 #   - CI, on every pull request whose head branch starts with "docs/".
 # CI is the backstop, because the "ci" check is required on main and a hook
@@ -24,14 +28,15 @@ if ! git rev-parse --verify --quiet "$base" >/dev/null; then
 fi
 
 merge_base="$(git merge-base HEAD "$base")" || exit 1
-outside="$(git diff --name-only "$merge_base" HEAD | grep -v '^docs/' || true)"
+outside="$(git diff --name-only "$merge_base" HEAD | grep -vE '^(docs|wireframes)/' || true)"
 
 if [ -n "$outside" ]; then
-  echo "This branch changes files outside docs/:" >&2
+  echo "This branch changes files outside docs/ and wireframes/:" >&2
   printf '  %s\n' $outside >&2
   cat >&2 <<'MSG'
 
-A docs/… branch is for documentation only (ways-of-working.md §7.1, ww-D11).
+A docs/… branch is for documentation only — docs/ and wireframes/
+(ways-of-working.md §7.1, ww-D11).
 If this is an engineering change, rename the branch — for example:
 
   git branch -m chore/<name> && git push -u origin chore/<name>
@@ -41,4 +46,4 @@ MSG
   exit 1
 fi
 
-echo "docs-only-check: ok, only docs/ changed."
+echo "docs-only-check: ok, only docs/ and wireframes/ changed."
