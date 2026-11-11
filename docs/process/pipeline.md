@@ -1,6 +1,6 @@
 # Pipeline
 
-> **Status: draft for review.** Written 2026-11-11. `/feature` and `/epic` exist. `/roadmap`, `/audit` and `/milestone` are proposals. Items marked **TBD** are the product owner's.
+> **Status: draft for review.** Written 2026-11-11. `/feature`, `/epic` and `/milestone` exist. `/roadmap` and `/audit` are proposals. Items marked **TBD** are the product owner's.
 >
 > What each command owns, and where it hands over. It does not repeat the rules: [docs/README.md](../README.md) owns the stages, [tracker.md](tracker.md) owns the board and how an epic is written, [ways-of-working.md](ways-of-working.md) owns the quality bar and the rhythm. This file owns the chain between them.
 
@@ -22,7 +22,7 @@
 | `/epic` | The GitHub epic: outcome, hypothesis, measures, stories | Built |
 | `/feature` | The spec and the build, one stage at a time | Built |
 | `/audit` | What is wrong with what is already live | Proposed |
-| `/milestone` | Whether the bets paid off, at M0, M1 and M2 | Proposed |
+| `/milestone` | Whether the bets paid off, at M0, M1 and M2 | Built |
 
 Each name is the thing the command owns. Nothing is named after a job that two commands share.
 
@@ -49,7 +49,7 @@ These are why the two existing commands have not drifted. Keep them in any new o
 
 ## 4. The handoffs
 
-Described in [epic-briefs.md](../product/epic-briefs.md) §6, but absent from both command files: neither mentions the other. Each command should end by naming the next one.
+Each command ends by naming the next one. Added to `feature.md`, `epic.md` and `milestone.md` on 2026-11-11. The table below is the contract.
 
 | After | Hand to | Line to add |
 |---|---|---|
@@ -79,7 +79,7 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 
 ### 6.1 `/roadmap` — what we do next
 
-**When:** Monday, and after any strategy change. **Input:** nothing, or an initiative.
+**When:** Monday, and after any strategy change. **Input:** nothing, or an initiative. **Built in two halves (pipe-D3):** `check`, steps 1 to 3 and read-only, in December; the writing half, steps 4 and 5, in January.
 
 1. Report state: open epics by Horizon and milestone, what is in the sprint, what is blocked, what has no spec yet.
 2. For each open epic, check it still serves its initiative's key result. Flag the ones that do not.
@@ -122,10 +122,10 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 
 | When | What | Why |
 |---|---|---|
-| Before 20 Nov | The handoff lines in §4. CI (ww-D1). Rollback (ww-D3) | The pilot is the deadline. New commands are not on the critical path |
-| By 27 Nov | `/milestone` | M0 falls on 27 Nov and nothing checks a measure today |
-| December | `/audit`, and the board automation in §5 | Before the host-layer work piles up |
-| January | `/roadmap` | It earns its keep once there are more candidate epics than weeks |
+| Before 20 Nov | The handoff lines in §4. CI (ww-D1). Rollback (ww-D3) | **Done 2026-11-11.** The pilot is the deadline; new commands are not on the critical path |
+| By 27 Nov | `/milestone` | **Built 2026-11-11.** M0 Pilot retro falls on 27 Nov and nothing checked a measure before |
+| December | `/audit`, `/roadmap check` (the read-only half), and the board automation in §5 | Before the host-layer work piles up. `/roadmap check` replaces reconstructing the state by hand |
+| January | The writing half of `/roadmap`: briefs and Horizon moves | It earns its keep once there are more candidate epics than weeks |
 
 ## 8. Open decisions
 
@@ -133,7 +133,7 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 |---|---|---|---|
 | pipe-D1 | Board automation and the extended `/epic check` (§5) | Engineering | **Decided 2026-11-11:** built-in Projects workflows only (auto-add open issues; item closed → Shipped). No Action, so no personal token to create or renew. In review is set by hand. `/epic check` compares board Status with spec headers and open PRs |
 | pipe-D2 | The names `/roadmap`, `/audit`, `/milestone` | Product owner | **Decided 2026-11-11** |
-| pipe-D3 | The build order in §7 | Product owner | **Decided 2026-11-11** |
+| pipe-D3 | The build order in §7 | Product owner | **Decided 2026-11-11.** Amended the same day: `/roadmap check` moves to December with `/audit`; its writing half stays in January |
 | pipe-D4 | Whether `/audit ux` may drive a browser, or only read code and report | Engineering | **TBD** |
 
 ## Appendix A. Proposed `.claude/commands/roadmap.md`
@@ -187,26 +187,6 @@ The rules are in docs/process/pipeline.md §6.2. Read them first; do not copy th
    create, and wait for an OK.
 ```
 
-## Appendix C. Proposed `.claude/commands/milestone.md`
+## Appendix C. `/milestone`
 
-```markdown
----
-description: Assemble the evidence for a milestone gate: did the bets pay off
-argument-hint: <M0 | M1 | M2>
----
-
-Milestone: $ARGUMENTS
-
-The rules are in docs/process/pipeline.md §6.3. Read them first; do not copy them here.
-The gate criteria are in docs/process/tracker.md, "Milestones". The checklist is in
-docs/process/ways-of-working.md §6.
-
-1. List every epic closed since the previous milestone, with its initiative.
-2. For each, read the leading and lagging measures in the issue body against its own
-   targets. Verdict: paid off, did not pay off, or could not be measured.
-3. Count "could not be measured" on its own. Say which measure was missing and why.
-4. Run the §6 checklist: measures, privacy and security, docs truth.
-5. Set the totals against the gate criteria for this milestone.
-6. Stop there. Present the evidence pack. The decision is the product owner's; do not
-   recommend passing or failing the gate unless asked.
-```
+Built on 2026-11-11. The command is [`.claude/commands/milestone.md`](../../.claude/commands/milestone.md); it is not copied here. When `/roadmap` and `/audit` are built, Appendices A and B are replaced by the same kind of pointer.

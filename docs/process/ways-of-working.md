@@ -86,7 +86,72 @@ Run this before the gate decision, not after it.
 
 "Could not be measured" is a finding about our process, not a neutral result. Count them.
 
-## 7. Open decisions
+## 7. Working between the product session and Claude Code
+
+Two sessions share one repository and no other state. Every extra trip between them is paid for by hand, so these rules exist to keep the number of trips down.
+
+### 7.1 Who commits what
+
+| Change | Committed by | How |
+|---|---|---|
+| Anything under `docs/` only | The product session | `scripts/docs-commit.sh <branch-suffix> <message>` (ww-D6) |
+| Code, config, lockfiles, `.claude/`, `.github/` | Claude Code | Branch, pull request, review, as today |
+| A mix of docs and code | Claude Code | One pull request, so the docs land with the code that made them true |
+
+The script stages `docs/` and nothing else, and refuses if anything outside `docs/` reaches the index. That is the whole safety model: a product session cannot commit code, because the script will not let it.
+
+**Prerequisites, all three outstanding on 2026-11-11.** Tried from a product session that day and refused:
+
+| What | How it failed | Fix, and whose |
+|---|---|---|
+| A git identity | The Cowork shell has no `user.email` or `user.name`, and no session may set git config | Engineering sets both once in the repo. They live in `.git/config` inside the folder, so both computers and both surfaces pick them up |
+| Network to GitHub | `git push` is refused by the proxy, HTTP 403 after CONNECT: github.com is not on this account's egress allowlist for the Cowork shell | Product owner allows github.com for the Cowork workspace in the account's network settings |
+| `gh` | Not installed in the Cowork shell, so the script cannot open the pull request | Install it there, or open the pull request from the compare URL that `git push` prints |
+
+**Until then:** the product session writes the files and stages them on a `docs/…` branch, and Claude Code runs the script. The handoff shrinks from explaining what changed to one command, which is most of the saving.
+
+### 7.2 Claude Code reports into the repo, never only into its chat
+
+An engineering session ends by writing its outcome where the other session can read it: the pull request, the document it changed, or the board. The product owner does not carry output between sessions by hand (ww-D7).
+
+### 7.3 One work order out, one report in
+
+A product session ends with one work order: what changed, what to do, and what not to do yet. An engineering session ends with one pull request plus the line in 7.2. Anything either session notices on the way becomes a row in [spec-backlog.md](../product/spec-backlog.md) or a decision code in the document that owns it, never another trip.
+
+### 7.4 What a product session still never does
+
+Edit code, config or lockfiles. Merge anything. Rewrite a shipped spec. Answer a TBD.
+
+### 7.5 `scripts/docs-commit.sh`, for engineering to create
+
+It runs in Claude Code today, and from a product session once §7.1's prerequisites are met.
+
+```bash
+#!/usr/bin/env bash
+# Commit and push documentation changes from a product session (ww-D6).
+# Stages docs/ and nothing else, and refuses if anything else reaches the index.
+set -euo pipefail
+
+suffix="${1:?usage: docs-commit.sh branch-suffix commit-message}"
+message="${2:?usage: docs-commit.sh branch-suffix commit-message}"
+branch="docs/${suffix}"
+
+git rev-parse --abbrev-ref HEAD | grep -qx "$branch" || git checkout -b "$branch"
+git add -- docs/
+
+outside="$(git diff --cached --name-only | grep -v '^docs/' || true)"
+if [ -n "$outside" ]; then
+  printf 'Refusing: these staged files are outside docs/:\n%s\n' "$outside" >&2
+  exit 1
+fi
+
+git diff --cached --quiet && { echo "Nothing to commit under docs/."; exit 0; }
+git commit -m "$message"
+git push -u origin "$branch"
+gh pr create --base main --fill
+```
+
+## 8. Open decisions
 
 | # | Decision | Owner | Status |
 |---|---|---|---|
@@ -95,3 +160,5 @@ Run this before the gate decision, not after it.
 | ww-D3 | Rollback steps, and where errors are visible during the event | Engineering | **Written 2026-11-11** in §4. The redeploy step and log location are **TBD** until hosting is chosen. Tried once in the dry run |
 | ww-D4 | Retro day and length | Product owner | **Decided 2026-11-11:** Friday, 15 minutes. Clock time **TBD** |
 | ww-D5 | May product sessions edit `docs/process/`? | Product owner | **Decided 2026-11-11: yes.** Engineering updates the "Who does what" list in CLAUDE.md |
+| ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Blocked** on the three prerequisites in §7.1; until they are met the product session stages and Claude Code runs the script. Engineering creates the script, sets the git identity and updates CLAUDE.md |
+| ww-D7 | Claude Code reports its outcome into the repo or the board, not only into its chat | Product owner | **Decided 2026-11-11** (§7.2) |

@@ -127,7 +127,7 @@ One lookup, so a person or a Claude session can resolve any code without hunting
 | `002-S#` | spec 002's own decisions, published as S1–S8 | spec 002 §9 |
 | `004-D#` | spec 004's own decisions | spec 004 §18.3 |
 | `B#` | brand | brand-foundations §7 |
-| `ww-D#` | quality bar and rhythm | ways-of-working §7 |
+| `ww-D#` | quality bar, rhythm and the Cowork handoff | ways-of-working §8 |
 | `pipe-D#` | the command pipeline | pipeline §8 |
 | `name-D#` | naming | this file, §6 |
 

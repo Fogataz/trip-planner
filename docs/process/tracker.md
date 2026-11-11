@@ -39,8 +39,8 @@ Set on the issue (org-level issue fields), so they survive outside the board:
 | Field | Levels | Values |
 |---|---|---|
 | Layer | Epic | Core, Host, Money, Public, Content — from working-doc §2 |
-| Phase | Epic | 1–7 — from [roadmap.md](../product/roadmap.md). Historical; phases 1–4 are largely done |
-| Revenue Model | Initiative, Epic | All models, A…I — the "Models served" column in working-doc §4.1 |
+| Phase | Epic | **Retired (name-D4).** Phases 1–7 are history in [roadmap.md](../product/roadmap.md). Horizon and the milestones replace it |
+| Revenue Model | Initiative, Epic | By name (name-D2): host tool, operator app, offsites, group payments… Letters stay as aliases in [naming.md](naming.md) §4 |
 | Priority | all | |
 | Start date / Target date | Initiative, Epic | drives the Roadmap view |
 | Effort | — | deliberately unused. Two people, and it does not roll up |
@@ -53,7 +53,7 @@ Set on the board (project fields):
 | Status | Backlog, Spec draft, Spec approved, In build, In review, Shipped |
 | Sprint | 1-week iterations, from Mon 10 Nov |
 
-Layer, Phase and Revenue Model live on the **epic only**. A story inherits context from its parent.
+Layer and Revenue Model live on the **epic only**. A story inherits context from its parent.
 
 ## Milestones
 
@@ -85,8 +85,8 @@ Epics are written by the `/epic` command (`.claude/commands/epic.md`), which fol
 
 ```markdown
 **Outcome:** <one sentence: what changes for whom>
-**Initiative:** #<n> · **Horizon:** Now | Next | Later · **Milestone:** M0 | M1 | M2
-**Models:** <A…I> · **Layer:** Core | Host | Money | Public | Content
+**Initiative:** I<n> <name> (#<issue>) · **Horizon:** Now | Next | Later · **Milestone:** M0 | M1 | M2
+**Models:** <by name, e.g. host tool> · **Layer:** Core | Host | Money | Public | Content
 **Spec:** none yet (next step: /feature benchmark) | [NNN](link)
 
 ### Problem
@@ -139,14 +139,14 @@ Put the spec number in the epic title: `[002] Invite link, requests and approval
 
 ## Seeding
 
-Initiatives 1–5 and their epics below were created in `Fogataz/trip-planner` on 2026-11-10 by a one-off
+I1–I5 and their epics below were created in `Fogataz/trip-planner` on 2026-11-10 by a one-off
 script, since removed (it is in git history). Shipped specs 001 and 003 are **not** seeded — they are already recorded
 in the specs table, and back-filling closed issues adds noise.
 
-### Initiative 1 — Run the hosted event pilot (24–25 Nov)
+### I1 Run the hosted event pilot (24–25 Nov)
 
 Outcome: the Madrid gathering runs on Trip Planner and we get the signals in spec 002 §11.
-12–25 Nov. Revenue Model: D.
+12–25 Nov. Revenue Model: offsites (D).
 
 Epics are the eleven parts of [spec 002](../specs/002-hosted-event-pilot.md) §12, in build order.
 Parts 1–7 are **Must** and carry stories. Parts 8–11 are **Should** and may be cut on 17 Nov, so
@@ -169,18 +169,18 @@ they are seeded as epics only.
 Plus two tasks on the initiative itself: the 13 lo-fi wireframe frames (§6) and the dry run on
 Fri 20 Nov (§12.4).
 
-### Initiative 2 — Learn from the pilot and keep offsites as a benchmark
+### I2 Learn from the pilot and keep offsites as a benchmark
 
-> Renamed and refocused 2026-11-10 (D33). Was "Prove the offsites model". RSVP and Organization home moved to initiative 6, the public share page to initiative 8. Closes after M0.
+> Renamed and refocused 2026-11-10 (D33). Was "Prove the offsites model". RSVP and Organization home moved to I6 premium hosts run a repeat departure, the public share page to I8 hosts collect guest money. Closes after M0.
 
 Outcome: the pilot is written up and its metrics are the benchmark premium hosts must meet.
-Horizon: Now. Milestone: M0. Revenue Model: D.
+Horizon: Now. Milestone: M0. Revenue Model: offsites (D).
 
 | Epic | Layer | Source |
 |---|---|---|
 | Spike: what the pilot teaches us about hosts (brief 2) | — | spec 002 §11 |
 
-### Initiative 3 — What we have built works as documented
+### I3 What we have built works as documented
 
 > Renamed from "Close the gaps in what is already built". Add a CI task. Horizon: Now.
 
@@ -194,7 +194,7 @@ Outcome: `features.md` matches the code, and the known defects are gone. Target 
 | Remove duplicate Mongoose index definitions | Task | roadmap, next priority 5 |
 | Fix the Redis URL configuration | Task | roadmap, next priority 5 |
 
-### Initiative 4 — Travellers hear about delays before they matter
+### I4 Travellers hear about delays before they matter
 
 > Renamed from "Transport awareness". Horizon: Later.
 
@@ -209,7 +209,7 @@ status first, then one flight API.
 | Spike: choose a transport data provider (coverage, budget) | Spike |
 | Transport delay alerts | Epic |
 
-### Initiative 5 — Give the product a structure (closed)
+### I5 Give the product a structure (closed)
 
 > Closed 2026-11-10: spec 004 shipped.
 
@@ -221,7 +221,7 @@ Added after the first seed, when spec 004 was approved (2026-11-10). It is the f
 |---|---|
 | [004] Trip information architecture | [spec 004](../specs/004-trip-ia-redesign.md) §1. Built in three slices, PRs #11–#14 |
 
-Spec 007 (profiles and display names) is a separate epic under initiative 1, because it ships with
+Spec 007 (profiles and display names) is a separate epic under I1 run the hosted event pilot, because it ships with
 Google sign-in.
 
 ## Initiatives added by venture-analysis.md §12.2
@@ -230,19 +230,19 @@ Added 2026-11-10 after D33 (premium hosts lead). Outcome titles; epics come from
 
 | # | Initiative | Horizon | Key result | Epics |
 |---|---|---|---|---|
-| 6 | Premium hosts run a repeat departure without our help | Now | 2 hosts run a second departure with under 2 hours of setup | Briefs 3–7 |
-| 7 | We know which premium hosts will pay, and for what | Now | Phase 2 scope chosen on evidence at M1 | Discovery spikes (epic-briefs §3) |
-| 8 | Hosts collect guest money inside the trip | Next | First host collects deposits in the app by M2 | Brief 8 now; briefs 9–12 after M1 |
+| I6 | Premium hosts run a repeat departure without our help | Now | 2 hosts run a second departure with under 2 hours of setup | Briefs 3–7 |
+| I7 | We know which premium hosts will pay, and for what | Now | Phase 2 scope chosen on evidence at M1 | Discovery spikes (epic-briefs §3) |
+| I8 | Hosts collect guest money inside the trip | Next | First host collects deposits in the app by M2 | Brief 8 now; briefs 9–12 after M1 |
 
 ### Summary of initiatives
 
 | # | Initiative | Horizon | Milestone |
 |---|---|---|---|
-| 1 | Run the hosted event pilot | Now | M0 |
-| 2 | Learn from the pilot and keep offsites as a benchmark | Now | M0 |
-| 3 | What we have built works as documented | Now | — |
-| 4 | Travellers hear about delays before they matter | Later | — |
-| 5 | Give the product a structure | — | Closed |
-| 6 | Premium hosts run a repeat departure without our help | Now | M1 |
-| 7 | We know which premium hosts will pay, and for what | Now | M1 |
-| 8 | Hosts collect guest money inside the trip | Next | M2 |
+| I1 | Run the hosted event pilot | Now | M0 |
+| I2 | Learn from the pilot and keep offsites as a benchmark | Now | M0 |
+| I3 | What we have built works as documented | Now | — |
+| I4 | Travellers hear about delays before they matter | Later | — |
+| I5 | Give the product a structure | — | Closed |
+| I6 | Premium hosts run a repeat departure without our help | Now | M1 |
+| I7 | We know which premium hosts will pay, and for what | Now | M1 |
+| I8 | Hosts collect guest money inside the trip | Next | M2 |
