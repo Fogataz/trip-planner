@@ -18,7 +18,7 @@ Rules:
 3. **The lint checks that you answered, not that you answered well.** `scripts/spec-lint.sh` refuses a spec at `approved`, `building` or `shipped` with no lens section. Judgment stays with the reviewer (`/pr`).
 4. **The lenses are not the UX tests.** The seven tests in [brand-foundations.md](../brand/brand-foundations.md) §5 ask whether the thing is *good*. The lenses ask whether it is *complete*. Both apply; neither replaces the other. The four product principles in [CLAUDE.md](../../CLAUDE.md) sit above both.
 
-They apply to every spec from 005 on. Shipped specs are never retrofitted — a gap in a shipped feature is a row in [spec-backlog.md](../product/spec-backlog.md) or a finding for `/audit`.
+They apply to every spec written from 2026-11-11 on. **A spec written before the lenses existed is never retrofitted** — a shipped spec is not rewritten at all (docs/README.md), and a gap in a shipped feature is a row in [spec-backlog.md](../product/spec-backlog.md) or a finding for `/audit`. `scripts/spec-lint.sh` exempts specs 001–004 and anything with a `Shipped:` date before 2026-11-11, which is how spec 009 trip cover layout is treated: it shipped on 2026-11-10 from a branch opened before the lenses landed.
 
 ## 2. The fourteen lenses
 

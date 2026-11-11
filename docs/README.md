@@ -77,7 +77,7 @@ Small fixes with no new screen can skip stages 1 and 3.
   ```
 
 - Add it to the specs table above in the same PR.
-- A spec at `approved`, `building` or `shipped` must also carry four sections, checked by [`scripts/spec-lint.sh`](../scripts/spec-lint.sh) in CI (ww-D10): **acceptance criteria**, **open decisions**, **build order**, and **design lenses** — one line per lens from [process/design-lenses.md](process/design-lenses.md), `n/a` where a lens does not apply. A `draft` needs only the header and its row in the table, so a seed draft is never blocked.
+- A spec at `approved`, `building` or `shipped` must also carry four sections, checked by [`scripts/spec-lint.sh`](../scripts/spec-lint.sh) in CI (ww-D10). Specs written before the lenses landed on 2026-11-11 are exempt, since a shipped spec is never rewritten: **acceptance criteria**, **open decisions**, **build order**, and **design lenses** — one line per lens from [process/design-lenses.md](process/design-lenses.md), `n/a` where a lens does not apply. A `draft` needs only the header and its row in the table, so a seed draft is never blocked.
 
 ## When a spec ships
 

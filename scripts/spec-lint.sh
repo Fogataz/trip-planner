@@ -23,10 +23,15 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 
 LENS_COUNT=14
 
-# Specs 001-004 were written before the lenses existed, and a shipped spec is
-# never rewritten (docs/README.md). Their sections are not checked. The lenses
-# start at 005.
+# A spec written before the lenses existed is checked for its header only: a
+# shipped spec is never rewritten (docs/README.md), so there is nothing to fix.
+# Two ways to qualify, because spec 009 shipped from a branch opened before the
+# lenses landed and is not covered by a number alone:
+#   - number 001-004, which includes spec 002, still a draft from before; or
+#   - a Shipped date earlier than the day the lenses landed.
+# Everything else carries the lenses from Status: approved onwards.
 GRANDFATHERED_THROUGH=4
+LENSES_LANDED=2026-11-11
 
 failed=0
 checked=0
@@ -75,6 +80,11 @@ for file in "${files[@]}"; do
     approved|building|shipped) enforce=1 ;;
   esac
   if [ -n "$number" ] && [ "$((10#$number))" -le "$GRANDFATHERED_THROUGH" ]; then
+    enforce=0
+  fi
+  shipped="$(grep -m1 -oE '^Owner:.*Shipped: *[0-9]{4}-[0-9]{2}-[0-9]{2}' "$file" \
+    | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}$' || true)"
+  if [ -n "$shipped" ] && [ "$shipped" \< "$LENSES_LANDED" ]; then
     enforce=0
   fi
 
