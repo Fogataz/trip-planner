@@ -105,9 +105,15 @@ The draft keeps the source language. We do not translate content.
 - Push titles and bodies use the recipient's language. Content inside them (the announcement text) stays as written.
 - AI answers to questions use the asker's language (built). **AI agenda drafts keep the source language** (new: the import must override spec 003's "write in the UI language" instruction).
 
-## 6. Lo-fi wireframe frames (proposed)
+## 6. Lo-fi wireframe frames
 
-For the wireframe stage. Mobile first; desktop is the same layout, wider.
+**Drawn 2026-11-11:** [`wireframes/002-hosted-event-pilot/`](../../wireframes/002-hosted-event-pilot/) — open [`index.html`](../../wireframes/002-hosted-event-pilot/index.html) for all 13 frames on one page, each annotated with the requirements it satisfies. Reading conventions and the gaps below are in that folder's [README](../../wireframes/002-hosted-event-pilot/README.md).
+
+The frames assume the §9 recommendations as the working default (D27). Overriding S1, S2, S6, S7 or S8 changes the frame it is drawn against.
+
+**Three screens this spec requires that the table below does not list, and which are therefore not drawn:** create an Organization (F1), the Organization member list (F2 — §10 keeps it in scope), and trip people and roles where a host moves someone between host, co-host and guest (F4). All three belong to build-order part 1. They are the product owner's call, not something to invent in the wireframe pass. **TBD.**
+
+Mobile first; desktop is the same layout, wider.
 
 | # | Frame | What it must show |
 |---|---|---|
@@ -330,8 +336,8 @@ Proposed pilot thresholds (working doc, section 5; D7 to confirm).
 
 ## 12. Next step
 
-1. **Owner review of this spec** and the open decisions in §9.
-2. **Lo-fi wireframes** for the 13 frames in §6, saved in `wireframes/002-hosted-event-pilot/` so both computers can see them.
+1. **Owner review of this spec** and the open decisions in §9. **This is the gate: no code until `Status: approved`.**
+2. ~~**Lo-fi wireframes** for the 13 frames in §6~~ — **done 2026-11-11**, in [`wireframes/002-hosted-event-pilot/`](../../wireframes/002-hosted-event-pilot/). Three screens listed in §6 as missing are still **TBD**.
 3. **Build** (Thu 12 – Thu 19 Nov), in this order, with a cut-line check on Tue 17 Nov. Effort, risks and fallbacks per feature are in [the planning list](../product/pilot-event-feature-list.md).
 
 | Order | Part | Cut line |
@@ -352,4 +358,4 @@ Proposed pilot thresholds (working doc, section 5; D7 to confirm).
 
 ## 13. Build status
 
-Not started. The localization base was delivered separately by [spec 003](003-localization.md).
+Not started — the spec is `draft`, and the gate in [docs/README.md](../README.md) allows no code before `approved`. The localization base was delivered separately by [spec 003](003-localization.md). Lo-fi wireframes for the 13 frames in §6 were drawn on 2026-11-11.
