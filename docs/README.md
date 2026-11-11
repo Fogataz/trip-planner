@@ -24,6 +24,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | [product/revenue-models-analysis.md](product/revenue-models-analysis.md) | Revenue models compared, shared features, phased plan (point-in-time, 2026-11-09) |
 | [brand/brand-foundations.md](brand/brand-foundations.md) | Brand platform, voice and tone, architecture, naming, visual directions, UX principles (v0) |
 | [product/pilot-event-feature-list.md](product/pilot-event-feature-list.md) | Planning list for the first pilot event (spec 002): why each feature matters now and later, effort, risks and fallbacks |
+| [process/README.md](process/README.md) | How we work: the map of the process docs (tracker, pipeline, ways of working, naming), how one piece of work travels, and why we chose it |
 | [process/tracker.md](process/tracker.md) | How delivery is tracked in GitHub Issues and the Trip-Planner project: the three levels, fields, views, and how the board relates to specs |
 | [product/spec-backlog.md](product/spec-backlog.md) | Candidates for future specs: where each goes in the product, a recommendation and where to start in the code |
 | [product/premium-buyer-lens.md](product/premium-buyer-lens.md) | Analysis (2026-11-10): who should pay and at what price, using Alex Hormozi's market and pricing advice |

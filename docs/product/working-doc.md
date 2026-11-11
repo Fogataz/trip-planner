@@ -266,9 +266,9 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 | D37 | Prices to test with the first hosts (per departure, monthly, done with you) | TBD |
 | D38 | Adopt the epic standard (outcome titles, hypothesis, measures, user stories) and an `/epic` command ([epic-briefs.md](epic-briefs.md) §1, §6) | Proposed |
 | D26 | Where shared docs live, with two Claude accounts on two computers | **Decided 2026-11-09:** every durable doc lives in the repo's `docs/` (product, brand, specs). Claude Projects keep pointers only. See "Working across accounts and computers" in [docs/README.md](../README.md). |
-| D29 | Trip phase precedence (spec 004 §18.3 D9) | **Decided 2026-11-10:** the calendar wins. Countdown, Live and Wrap follow the dates even for a solo or plan-less trip |
-| D30 | Trips without an end date (spec 004 §18.3 D10) | **Decided 2026-11-10:** offer an approximate length (e.g. 8–10 days); phases use the longer estimate |
-| D31 | Build spec 004 slices 2 and 3 before the tree test (spec 004 §18.3 D11) | **Decided 2026-11-10:** yes. Run the tree test before the labels ship |
+| 004-D9 | Trip phase precedence (spec 004 §18.3 D9) | **Decided 2026-11-10:** the calendar wins. Countdown, Live and Wrap follow the dates even for a solo or plan-less trip |
+| 004-D10 | Trips without an end date (spec 004 §18.3 D10) | **Decided 2026-11-10:** offer an approximate length (e.g. 8–10 days); phases use the longer estimate |
+| 004-D11 | Build spec 004 slices 2 and 3 before the tree test (spec 004 §18.3 D11) | **Decided 2026-11-10:** yes. Run the tree test before the labels ship |
 
 ## 8. Related
 
@@ -381,4 +381,4 @@ Updated 2026-11-10 for D33: premium hosts lead. The earlier offsite version is i
 | 2026-11-09 | D27: open product and strategy questions are not blockers. Recommendations act as working defaults; the next two weeks focus on the spec 002 build. |
 | 2026-11-09 | D26: with two Claude accounts on two computers, every durable doc lives in the repo. The working doc, revenue analysis and brand foundations moved to `docs/`. Claude Projects keep pointers only. |
 | 2026-11-10 | D33 (also D3): premium hosts lead (premium retreats, workshops, expeditions; C1/H with payments E next). Offsites stay as a reference and benchmark; we won't become an offsite booking platform. D15 and D31 superseded. See [venture-analysis.md](venture-analysis.md). |
-| 2026-11-10 | Spec 004 (trip information architecture) built in three slices, in review as PRs #11–#14. D29: trip phases follow the calendar. D30: trips without an end date take an approximate length. D31: slices 2–3 built before the tree test. Follow-ups seeded as specs 005–008 and the [spec backlog](spec-backlog.md). |
+| 2026-11-10 | Spec 004 (trip information architecture) built in three slices, in review as PRs #11–#14. 004-D9: trip phases follow the calendar. 004-D10: trips without an end date take an approximate length. 004-D11: slices 2–3 built before the tree test. Follow-ups seeded as specs 005–008 and the [spec backlog](spec-backlog.md). |

@@ -44,6 +44,6 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 
 ## Who does what
 
-- **Product (Cowork project):** edits only `docs/product/`, `docs/brand/`, `docs/README.md` and draft specs in `docs/specs/`. Reads code to check facts but never edits code and never runs git. It doesn't make up answers to TBDs.
+- **Product (Cowork project):** edits only `docs/product/`, `docs/brand/`, `docs/process/`, `docs/README.md` and draft specs in `docs/specs/`. Reads code to check facts but never edits code and never runs git. It doesn't make up answers to TBDs.
 - **Engineering (Claude Code):** builds features from specs, owns all code and `docs/features.md`, and handles branches, commits and PRs.
 - Work on a branch, never directly on `main`. PRs go to `main` on GitHub (`Fogataz/trip-planner`).
