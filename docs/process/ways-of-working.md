@@ -107,9 +107,11 @@ The script stages `docs/` and nothing else, and refuses if anything outside `doc
 | A git identity | No clone had `user.email` or `user.name` set | **Done 2026-11-11** on Alberto's computer: `Calvur-Labs` with the GitHub noreply address, in that clone's `.git/config`. Applies to that clone only. Each person sets their own identity in their own clone; Barry's clone is still untouched |
 | Network to GitHub | An earlier check from a cloud-sandbox shell was refused by its proxy — but that shell is not where the script runs, so it was never a real blocker for this path | **Confirmed working 2026-11-11** from Alberto's laptop clone via the device bridge: `git ls-remote origin HEAD` reached `Fogataz/trip-planner` cleanly |
 
-`gh` is not a prerequisite: §7.5 already covers its absence, pushing and leaving the pull request to the compare link `git push` prints.
+`gh` as a way to *open the pull request* is not a prerequisite: §7.5 already covers its absence, pushing and leaving the pull request to the compare link `git push` prints.
 
-**Resolved, for Alberto's own clone:** the product session now runs the script directly through the device bridge, against that same clone, rather than staging for Claude Code to run it. Barry's clone still needs its own git identity before he can do the same from his side.
+**First real run, 2026-11-11 (this change):** identity and commit worked — the script branched, staged and committed cleanly through the device bridge. **Push failed**, on something the table above missed: this clone's `credential.https://github.com.helper` is set to `!gh auth git-credential`, so without `gh` installed, git has no way to authenticate the push itself (separate from `gh` only being needed to open the PR). Fix, product owner's: install `gh` on this laptop, or point the helper at another working credential (SSH key, OS credential manager, a stored PAT).
+
+**Until then:** the product session can branch and commit through the device bridge, but still hands off to Claude Code (or the product owner, by hand) to push and open the PR.
 
 ### 7.2 Claude Code reports into the repo, never only into its chat
 
@@ -150,5 +152,5 @@ Without `gh` it pushes and leaves the pull request to the link `git push` prints
 | ww-D3 | Rollback steps, and where errors are visible during the event | Engineering | **Written 2026-11-11** in §4. The redeploy step and log location are **TBD** until hosting is chosen. Tried once in the dry run |
 | ww-D4 | Retro day and length | Product owner | **Decided 2026-11-11:** Friday, 15 minutes. Clock time **TBD** |
 | ww-D5 | May product sessions edit `docs/process/`? | Product owner | **Decided 2026-11-11: yes.** Engineering updates the "Who does what" list in CLAUDE.md |
-| ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Unblocked for Alberto's own clone, 2026-11-11** (§7.1); Barry's clone still needs its own git identity before he can run it from his side. Engineering created the script, set the git identity and updated CLAUDE.md |
+| ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Partly unblocked 2026-11-11:** identity and commit now work from Alberto's own clone; push is still blocked on a working GitHub credential for that clone (§7.1). Engineering created the script, set the git identity and updated CLAUDE.md |
 | ww-D7 | Claude Code reports its outcome into the repo or the board, not only into its chat | Product owner | **Decided 2026-11-11** (§7.2) |
