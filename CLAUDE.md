@@ -35,6 +35,7 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 - Each spec starts with a `Status:` header (draft, approved, building, shipped or superseded) and is listed in the specs table in `docs/README.md`.
 - When a spec ships, update the spec, `features.md`, `roadmap.md` and the specs table in the same PR as the feature.
 - Write plainly: short sentences, tables where they help, no marketing tone. Items waiting on the product owner are marked **TBD**.
+- Every decision or finding code carries a short name after a `·` (`D27 · Recommendations are working defaults`, `R1 · Org owner reach`). Never write a bare code.
 
 ## Working across computers
 
