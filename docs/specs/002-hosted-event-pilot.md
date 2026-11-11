@@ -59,7 +59,7 @@ Five products that solve parts of this today.
 ### 5.1 Organizer: set up the event
 
 1. Sign in with Google or an email link.
-2. **Create an Organization** (name only), or pick one you belong to. The pilot Organization is created by the product owner, who adds the organizers as admins. — **⚠ Challenged 2026-11-11 ([spec 010](010-joining-naming-and-the-first-trip.md) Q2, O1):** this makes an administrative decision step 2 of 6, before the trip exists or anyone has seen anything. Spec 010 recommends an Organization is **never required**, and offered only when continuity or billing makes it useful. It costs the pilot nothing either way, since the pilot Organization is created by hand.
+2. ~~**Create an Organization** (name only), or pick one you belong to.~~ **✅ Removed 2026-11-12 by O1 · Organization never required** ([spec 010](010-joining-naming-and-the-first-trip.md) §5.2, §5.8A). **No Organization is required to host a trip.** It is offered when continuity or billing makes it useful, never as a step before the trip exists. `Trip.orgId` is nullable; a trip without one is personally owned. The pilot Organization is still created by the product owner, who adds the organizers as admins — so the pilot is unaffected. **For product:** D18 · Account model now reads "Organizations **may** own hosted trips".
 3. **Create a hosted event** in the Organization: name, place, dates, time zone (defaults to the destination's), accommodation.
 4. **Import the agenda** (5.3). Review and publish.
 5. **Share the invite link** in the team's chat. Optionally add co-hosts.
@@ -319,7 +319,7 @@ None of these block the build. The recommendation is the working default until t
 - Email delivery of announcements (S6).
 - Machine translation of content.
 - Free-tier limits and the Trip Pass (D20 · Free personal limits).
-- What happens to trips when someone leaves an Organization (D21 · Leaving an Organization). Until decided, removing an org member does not change their trip roles. **⚠ Contradiction, found 2026-11-11:** the [working doc §4.2](../product/working-doc.md) proposes the opposite — that leaving an Organization drops host and co-host roles on its trips. The two documents must stop disagreeing; resolved by open decision **R2** in [spec 009](009-roles-and-permissions.md) §13.
+- ~~What happens to trips when someone leaves an Organization (D21 · Leaving an Organization). Until decided, removing an org member does not change their trip roles.~~ **✅ Resolved 2026-11-12 by R2 · Leaving an Organization** ([spec 009](009-roles-and-permissions.md) §13). The contradiction with the [working doc §4.2](../product/working-doc.md) is settled in the working doc's favour: **leaving an Organization drops host and co-host roles on that Organization's trips; the trips stay; if that empties the hosts, an org owner is asked to take over** (**G1 · Last host**). No longer out of scope — it is behaviour the removal path must implement. **For product:** D21 · Leaving an Organization can move from *proposed* to *decided* in the working doc.
 
 ## 11. How we will know it worked
 

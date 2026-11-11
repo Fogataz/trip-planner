@@ -5,6 +5,8 @@ Owner: Alberto (product)   Shipped: —   PR: —
 Wireframes: [`wireframes/010-joining-and-naming/`](../../wireframes/010-joining-and-naming/) — 13 frames, including the three [spec 002](002-hosted-event-pilot.md) §6 left undrawn.
 Related: [002 hosted event pilot](002-hosted-event-pilot.md), [003 localization](003-localization.md), [007 profiles](007-profiles-and-display-names.md), [009 roles and permissions](009-roles-and-permissions.md).
 
+> **✅ Decided 2026-11-12 by the product owner: O1 · Organization never required = (b) never required.** `Trip.orgId` is nullable, spec 002 §5.1 step 2 is removed, D18 · Account model now reads "Organizations **may** own hosted trips", and §5.7's move path is required rather than reserved. O2–O14 run on their recommendations per D27 · Recommendations are working defaults, except **O2 · The word for Organization** and **O8 · Ungendered role labels**, which are not mine or yours alone — see §10.
+>
 > Written 2026-11-11 from a QA pass over spec 002 and its wireframes after [spec 009](009-roles-and-permissions.md); extended the same day with the invited path (§5.8), localization (§6) and the consolidated direction (§14).
 >
 > **Three of the findings are regressions spec 002 would ship as written.** Q1 renames existing friend trips, Q4 breaks the host's approval decision, and **Q13 puts an approval step in front of people a host already invited — in front of a mechanism the code already has.**
@@ -137,7 +139,7 @@ Only door B (§5.8) has a wait. That hour is free — the person is blocked on s
 
 ### 5.7 Moving a trip into an Organization
 
-Figma's lesson is not "do not defer", it is "do not bolt the move on afterwards". If O1 lands on deferral this is load-bearing from day one:
+Figma's lesson is not "do not defer", it is "do not bolt the move on afterwards". **O1 · Organization never required landed on "never" (2026-11-12), so this is load-bearing from day one** — a personally owned trip is now the normal case, and this is the only way one ever reaches an Organization:
 
 - `Trip.orgId` nullable and settable after creation — spec 009 §10.2 reserves the field; **this spec requires the path exists**.
 - Host only, into an Organization they belong to. One way in v1.
@@ -349,7 +351,7 @@ Spec 002 part 10 adds a script that fails when a key is missing in any locale. A
 
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
-| **O1 · Organization never required** | Is an Organization ever required to host a trip? (D18 · Account model says "Organizations own hosted trips") | (a) Required — 002 §5.1 as written / (b) **Never required; offered when continuity or billing makes it useful** / (c) Required before inviting the first guest | **(b).** The product functions without one, and (c) gates exactly the aha moment. Costs the pilot nothing. If taken, D18 re-reads as "Organizations *may* own hosted trips" and Q7's move path becomes required. |
+| **O1 · Organization never required** ✅ | **Decided 2026-11-12: (b) never required.** Is an Organization ever required to host a trip? (D18 · Account model says "Organizations own hosted trips") | (a) Required — 002 §5.1 as written / (b) **Never required; offered when continuity or billing makes it useful** / (c) Required before inviting the first guest | **(b).** The product functions without one, and (c) gates exactly the aha moment. Costs the pilot nothing. If taken, D18 re-reads as "Organizations *may* own hosted trips" and Q7's move path becomes required. |
 | **O2 · The word for Organization** | The user-facing word for an Organization | (a) **Organization** / (b) Team / (c) Workspace / (d) Brand-specific, as Luma chose "Calendar" | **(a) for the pilot**, where the user is a company. Revisit with the wedding and retreat segments — "organization" is wrong for a wedding. Belongs with [brand foundations](../brand/brand-foundations.md) §3. |
 | **O3 · Role labels per trip kind** | Role labels per trip kind | (a) **Yes** / (b) host/co-host/guest everywhere / (c) organizer/member everywhere | **(a)**, with §6.2's caveat that it is weaker in ES and pt-BR. |
 | **O4 · Join-page attribution** | Join-page attribution order | (a) **Organization above, person below with a face** / (b) person only / (c) Organization only | **(a).** Legitimacy and trust are different questions; a cold link needs both. |
