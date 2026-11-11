@@ -53,7 +53,7 @@ Neither is legal advice. Both are written here so a lens test can be concrete.
 
 L1 says "ICU" nowhere on purpose. `i18next` uses its own JSON v4 suffix keys — `_one`, `_other` — resolved through `Intl.PluralRules`. ICU MessageFormat needs the separate `i18next-icu` module, and English, Spanish and Portuguese need only `one` and `other`, so it would buy a dependency and nothing else. `client/src/locales/en.json` already does this correctly. Source: [i18next plurals](https://www.i18next.com/translation-function/plurals).
 
-The code ships `pt`, not `pt-BR` (`SUPPORTED_LANGUAGES = ['en', 'pt', 'es']`, `load: 'languageOnly'`). L1 is written against `pt`, which is what shipped. Whether we ever split `pt-BR` from `pt-PT` is **lens-D3**.
+The code ships the locale **code** `pt` (`SUPPORTED_LANGUAGES = ['en', 'pt', 'es']`, `load: 'languageOnly'`), while the **content** is Brazilian Portuguese — already decided in D28 and B5 and shipped in spec 003. One code, pt-BR wording. L1 is written against `pt`, which is what the code uses. The only thing still open is whether we ever add a separate pt-PT alongside it: **lens-D3**.
 
 ## 5. What the lenses deliberately leave out
 
@@ -73,4 +73,4 @@ The code ships `pt`, not `pt-BR` (`SUPPORTED_LANGUAGES = ['en', 'pt', 'es']`, `l
 |---|---|---|---|
 | lens-D1 | The fourteen lenses and their tests, applied at stages 2 and 4 | Product owner | **Decided 2026-11-11.** Options were: the twelve from the brief; the twelve plus scale; or all fourteen. Recommended and taken: all fourteen |
 | lens-D2 | Whether **L14 lifecycle** stays, or is folded into stage 2 as a prompt | Product owner | **Decided 2026-11-11: it stays.** It is the first row to drop if the list proves too long in practice. Review after the first two specs that use it |
-| lens-D3 | Do we split `pt-BR` from `pt-PT`, or keep one `pt`? | Product owner | **TBD.** Options: keep one `pt` (today's behaviour, one file to maintain, reads slightly European to a Brazilian); add `pt-BR` as a separate resource (correct for the larger market, two files to keep in step); decide when a Brazilian host actually asks. Recommendation: keep one `pt` until a real user asks, and spend the effort on EN/ES/PT coverage instead |
+| lens-D3 | Do we ever add a separate pt-PT, or keep one `pt` carrying pt-BR wording? | Product owner | **Decided 2026-11-11: keep one `pt`.** D28 and B5 already chose pt-BR as the content; this was only about splitting it. Options rejected: add `pt-PT` as a second resource (correct for Portugal, but two files drift apart and no user has asked); decide later with no default (D27 says a default beats a pending question). **Revisit when a host in Portugal asks** — until then the effort goes on EN/ES/PT coverage. Corrected the same day: the first version of this row implied pt-BR itself was undecided |

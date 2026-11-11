@@ -33,6 +33,13 @@ Group trips break down in predictable ways:
 
 ## Strategic pillars
 
+> **Retired 2026-11-11 (trk-D3).** These six pillars describe the product's capability areas as they
+> were before **D33 premium hosts lead**, and they are kept here as history — nothing below is
+> deleted. The live taxonomy is the layers in [working-doc.md](working-doc.md) §2 (Core, Host, Money,
+> Public, Content) plus the revenue models in §3 by name. An initiative cites a Layer and the
+> revenue-model claim it validates, not a pillar ([tracker.md](../process/tracker.md), "Writing an
+> initiative"). Retired the same way name-D4 retired the roadmap phases.
+
 | Pillar | Goal | Current state |
 |---|---|---|
 | Collaborative planning | Members build and edit the itinerary together | Itinerary, comments and presence are in place |

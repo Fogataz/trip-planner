@@ -132,6 +132,8 @@ One lookup, so a person or a Claude session can resolve any code without hunting
 | `ww-D#` | quality bar, rhythm and the Cowork handoff | ways-of-working §8 |
 | `pipe-D#` | the command pipeline | pipeline §8 |
 | `lens-D#` | the design lenses | design-lenses §6 |
+| `trk-D#` | the board, and how an initiative or epic is written | tracker §"Open decisions" |
+| `sys-D#` | the system as a whole: the single map, the fronts, the automation ladder | system §7 |
 | `name-D#` | naming | this file, §6 |
 
 ## 6. Open decisions

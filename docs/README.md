@@ -24,6 +24,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | [product/revenue-models-analysis.md](product/revenue-models-analysis.md) | Revenue models compared, shared features, phased plan (point-in-time, 2026-11-09) |
 | [brand/brand-foundations.md](brand/brand-foundations.md) | Brand platform, voice and tone, architecture, naming, visual directions, UX principles (v0) |
 | [product/pilot-event-feature-list.md](product/pilot-event-feature-list.md) | Planning list for the first pilot event (spec 002): why each feature matters now and later, effort, risks and fallbacks |
+| [process/system.md](process/system.md) | The whole setup on one page: objects, documents, tooling with its status, and the fronts beyond product and engineering |
 | [process/README.md](process/README.md) | How we work: the map of the process docs (tracker, pipeline, ways of working, naming), how one piece of work travels, and why we chose it |
 | [process/tracker.md](process/tracker.md) | How delivery is tracked in GitHub Issues and the Trip-Planner project: the three levels, fields, views, and how the board relates to specs |
 | [product/spec-backlog.md](product/spec-backlog.md) | Candidates for future specs: where each goes in the product, a recommendation and where to start in the code |
@@ -51,7 +52,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 009 | [Trip cover layout](specs/009-trip-cover-layout.md) | shipped | 2026-11-10 | [#78](https://github.com/Fogataz/trip-planner/pull/78) |
 ## How a feature goes from idea to shipped
 
-Adopted 2026-11-09. Any Claude account working in this repo follows the same stages. In Claude Code, run `/feature <name or spec number>`. To create or check the GitHub epic for a feature, run `/epic <brief, spec or issue number>` (rules in [process/tracker.md](process/tracker.md), "Writing an epic"). At a milestone gate (M0, M1, M2), run `/milestone <M0|M1|M2>` to assemble the evidence (rules in [process/pipeline.md](process/pipeline.md) §6.3).
+Adopted 2026-11-09. Any Claude account working in this repo follows the same stages. In Claude Code, run `/feature <name or spec number>`. To create or check the GitHub epic for a feature, run `/epic <brief, spec or issue number>` (rules in [process/tracker.md](process/tracker.md), "Writing an epic"). At a milestone gate (M0, M1, M2), run `/milestone <M0|M1|M2>` to assemble the evidence (rules in [process/pipeline.md](process/pipeline.md) §6.3). The full set of commands, skills, hooks and scripts, with what each one is for and whether it is built, is the tooling table in [process/system.md](process/system.md) §4.
 
 | Stage | What | Output |
 |---|---|---|
