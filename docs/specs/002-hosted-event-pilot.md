@@ -59,7 +59,7 @@ Five products that solve parts of this today.
 ### 5.1 Organizer: set up the event
 
 1. Sign in with Google or an email link.
-2. **Create an Organization** (name only), or pick one you belong to. The pilot Organization is created by the product owner, who adds the organizers as admins.
+2. **Create an Organization** (name only), or pick one you belong to. The pilot Organization is created by the product owner, who adds the organizers as admins. — **⚠ Challenged 2026-11-11 ([spec 012](012-joining-naming-and-the-first-trip.md) Q2, O1):** this makes an administrative decision step 2 of 6, before the trip exists or anyone has seen anything. Spec 012 recommends an Organization is **never required**, and offered only when continuity or billing makes it useful. It costs the pilot nothing either way, since the pilot Organization is created by hand.
 3. **Create a hosted event** in the Organization: name, place, dates, time zone (defaults to the destination's), accommodation.
 4. **Import the agenda** (5.3). Review and publish.
 5. **Share the invite link** in the team's chat. Optionally add co-hosts.
@@ -73,7 +73,7 @@ Five products that solve parts of this today.
 4. Screen: "Request sent. You'll get a notification when a host approves you." If push is not possible (for example iPhone without the app on the home screen), we show the "Add to Home Screen" steps.
 5. On approval: push (where available), and the event opens on the next visit.
 
-People already invited by email skip approval (as in Luma).
+People already invited by email skip approval (as in Luma). **⚠ Not enough — corrected 2026-11-11 ([spec 012](012-joining-naming-and-the-first-trip.md) §5.8, Q13).** The five steps above are **door B**: someone arriving on a link posted in a group chat, about whom nobody has decided anything. An invited person is **door A** and does not pass through them at all — open → sign in → privacy note (once per person, ever) → **in**, on a button that says Join. For the pilot's 38 attendees door A is the dominant path, and the mechanism already exists in the code (`POST /:groupId/invitations/:token/accept`).
 
 ### 5.3 Organizer: agenda import as a draft
 
@@ -105,9 +105,19 @@ The draft keeps the source language. We do not translate content.
 - Push titles and bodies use the recipient's language. Content inside them (the announcement text) stays as written.
 - AI answers to questions use the asker's language (built). **AI agenda drafts keep the source language** (new: the import must override spec 003's "write in the UI language" instruction).
 
-## 6. Lo-fi wireframe frames (proposed)
+## 6. Lo-fi wireframe frames
 
-For the wireframe stage. Mobile first; desktop is the same layout, wider.
+**Drawn 2026-11-11:** [`wireframes/002-hosted-event-pilot/`](../../wireframes/002-hosted-event-pilot/) — open [`index.html`](../../wireframes/002-hosted-event-pilot/index.html) for all 13 frames on one page, each annotated with the requirements it satisfies. Reading conventions and the gaps below are in that folder's [README](../../wireframes/002-hosted-event-pilot/README.md).
+
+The frames assume the §9 recommendations as the working default (D27). Overriding S1, S2, S6, S7 or S8 changes the frame it is drawn against.
+
+**Three screens this spec requires that the table below does not list:** create an Organization (F1), the Organization member list (F2 — §10 keeps it in scope), and trip people and roles where a host moves someone between host, co-host and guest (F4). All three belong to build-order part 1.
+
+**Drawn 2026-11-11 in [`wireframes/012-joining-and-naming/`](../../wireframes/012-joining-and-naming/)** (frames 6, 8 and 9), because what they show is decided by [spec 012](012-joining-naming-and-the-first-trip.md) rather than by this spec — in particular O1 (is an Organization ever required?) and O3 (role labels per trip kind), and by [spec 011](011-roles-and-permissions.md) R1 and R2.
+
+**A QA pass over the 13 frames below is [spec 012](012-joining-naming-and-the-first-trip.md) §4 (Q1–Q12).** Two findings are regressions this spec would ship as written: **Q1**, the F7 migration renames existing friend trips into "a host and four guests"; and **Q4**, the approval queue in frame 5 can show a bare email address on the email-link path, so a host cannot tell who is asking. Frames 1, 2, 3 and 4 of the 012 set are the corrected versions of frames 1 and 4 here.
+
+Mobile first; desktop is the same layout, wider.
 
 | # | Frame | What it must show |
 |---|---|---|
@@ -134,12 +144,12 @@ For the wireframe stage. Mobile first; desktop is the same layout, wider.
 | # | Requirement |
 |---|---|
 | F1 | A signed-in user can create an Organization. The creator is its owner. |
-| F2 | An owner or admin can add people to the Organization by email as admin or member, and remove them. |
+| F2 | An owner or admin can add people to the Organization by email as admin or member, and remove them. **Added 2026-11-11 ([spec 012](012-joining-naming-and-the-first-trip.md) Q15, §5.9.2):** adding people — to an Organization and to a trip — takes a **paste of many addresses**, reporting valid, malformed and already-invited counts before sending. There is no way to invite 38 people one at a time on 20 Nov. |
 | F3 | Organization owners, admins and members can create hosted trips in that Organization. The creator becomes the trip's host. |
 | F4 | Trip roles are host, co-host and guest. Hosts and co-hosts can edit the event, publish drafts, approve requests, post announcements and manage roles. |
 | F5 | Organization membership alone gives no access to a trip (D19). Only an active trip role does. |
-| F6 | Each trip has guest permissions. Personal trips: guests can add schedule items, polls and expenses (today's behavior). Hosted trips: guests can vote, ask questions and share location, but not edit the schedule. |
-| F7 | Existing trips become personal trips. The creator becomes host, other organizers co-hosts, members guests. No user loses access they have today. |
+| F6 | Each trip has guest permissions. Personal trips: guests can add schedule items, polls and expenses (today's behavior). Hosted trips: guests can vote, ask questions and share location, but not edit the schedule. These two are **presets over `Trip.guestPermissions`**, not a branch on `trip.kind` — see [spec 011](011-roles-and-permissions.md) §5.2. |
+| F7 | Existing trips become personal trips. The creator becomes host, other organizers co-hosts, members guests. No user loses access they have today. **The stored roles are these; the words shown are per trip kind** — organizer/member on a personal trip — so the migration is invisible to existing users ([spec 012](012-joining-naming-and-the-first-trip.md) §5.3, Q1, O3). |
 
 **Sign-in**
 
@@ -154,12 +164,12 @@ For the wireframe stage. Mobile first; desktop is the same layout, wider.
 | # | Requirement |
 |---|---|
 | F11 | A host or co-host can create one active invite link per trip, copy it, and revoke it. Revoking creates a new link on request; the old one stops working at once. |
-| F12 | Opening a link shows only the event name, dates, host name and cover. |
+| F12 | Opening a link shows only the event name, dates, **who is hosting** and cover. The attribution rule — Organization above the event name for legitimacy, the host's name and face below for trust, personal-trip wording on a personal trip — is [spec 012](012-joining-naming-and-the-first-trip.md) §5.4 (Q3, Q8, O4). |
 | F13 | A signed-in user who opens a valid link can send a join request. Duplicate requests from the same user are ignored. |
-| F14 | Hosts and co-hosts see pending requests and can approve or decline each, or approve all. |
+| F14 | Hosts and co-hosts see pending requests and can approve or decline each, or approve all. **The queue always shows a human-readable name, never a bare email** — on the email-link path there is no name unless we ask for one ([spec 012](012-joining-naming-and-the-first-trip.md) Q4, §5.5, O5). |
 | F15 | A requester cannot see members, schedule, polls, expenses, questions, announcements or locations, and cannot join the trip's real-time room, until approved. |
 | F16 | Approval sends the requester a push (if registered) and makes the event available. Decline sends nothing. |
-| F17 | People invited by email skip approval when they accept with any signed-in account (the exact-email match is removed). |
+| F17 | People invited by email skip approval when they accept with any signed-in account (the exact-email match is removed). **⚠ Corrected 2026-11-11 ([spec 012](012-joining-naming-and-the-first-trip.md) Q13, §5.8):** they must skip the **request** too, not only the approval — §5.2 below routes every arrival through "Request to join", including people a host added by name. The credential is the **per-invitation token** (`models/TripInvitation.js`, already built), not the email address; a mismatch is recorded and shown to the host instead of blocking, which closes the forwarded-invitation hole that removing the email match would otherwise open. |
 
 **AI drafts and agenda import**
 
@@ -187,7 +197,7 @@ For the wireframe stage. Mobile first; desktop is the same layout, wider.
 
 | # | Requirement |
 |---|---|
-| F30 | The product records these events: invite_link_opened, join_requested, join_approved, join_declined, signed_in (method), trip_viewed, schedule_viewed, poll_voted, question_asked, announcement_posted, announcement_opened, notifications_changed (category, on/off), location_sharing_started, draft_created (source, item count), draft_published (items edited, deleted), language_changed. |
+| F30 | The product records these events: invite_link_opened, join_requested, join_approved, join_declined, signed_in (method), trip_viewed, schedule_viewed, poll_voted, question_asked, announcement_posted, announcement_opened, notifications_changed (category, on/off), location_sharing_started, draft_created (source, item count), draft_published (items edited, deleted), language_changed. **⚠ Incomplete — added 2026-11-11 ([spec 012](012-joining-naming-and-the-first-trip.md) Q14, §5.9.1):** `invitation_sent`, `invitation_opened`, `invitation_accepted` (`emailMatched`) and `invitation_revoked`. Without them §11's headline metric — join rate = joined ÷ invited — **cannot be computed for invited people**, who are most of the pilot. The invited and shared-link funnels are reported separately, because they leak for different reasons. |
 | F31 | Each event stores: name, trip id, role, time, a pseudonymous user id, and small properties listed above. Never content, names, emails or coordinates. |
 | F32 | A product owner can export the events for a trip as CSV for the retro. |
 
@@ -195,10 +205,10 @@ For the wireframe stage. Mobile first; desktop is the same layout, wider.
 
 | # | Requirement |
 |---|---|
-| F33 | Every new string in this spec is added to `en.json`, `es.json` and `pt.json` (spec 003 set up the files; Portuguese is pt-BR, S5). |
+| F33 | Every new string in this spec is added to `en.json`, `es.json` and `pt.json` (spec 003 set up the files; Portuguese is pt-BR, S5). **Added 2026-11-11 ([spec 012](012-joining-naming-and-the-first-trip.md) §6):** strings carrying a name or a count are **single keys** with interpolation and plurals, never concatenated; role labels are 18 flat keys using **forms that do not inflect for gender** (Q18, O8 — needs the spec 003 §6 native reviewers); the missing-key check runs in **CI**, not as a script somebody remembers. |
 | F34 | Language detection stays as in spec 003. In addition, a signed-in user's choice is saved to their account (`User.locale`) and applied on sign-in on any device. |
 | F35 | Dates and times are formatted for the user's language and shown in the event's time zone (`trip.timeZone`), with the zone named. |
-| F36 | Push notifications and the sign-in email use the recipient's saved language (closes spec 003's "push text is English" gap for the categories in this spec). |
+| F36 | Push notifications and the sign-in email use the recipient's saved language (closes spec 003's "push text is English" gap for the categories in this spec). **Gap ([spec 012](012-joining-naming-and-the-first-trip.md) Q19, O9):** the **first invitation** goes to someone with no account and therefore no saved language. Recommended: the event's language, set once by the host. |
 | F37 | AI answers use the asker's language (built in spec 003). AI agenda drafts keep the source language. Content is never machine-translated in this version. |
 
 ### 7.2 Technical
@@ -206,8 +216,9 @@ For the wireframe stage. Mobile first; desktop is the same layout, wider.
 Proposed; engineering confirms or adjusts in the PR.
 
 - **New models** (see the working doc, section 4.2): `Organization`, `OrgMember`, `TripMember`, `InviteLink`, `JoinRequest` (or a `requested` status on TripMember), `Draft`, `Announcement`, `AnalyticsEvent`. Trip gains `ownerType`, `orgId`, `kind`, `status`, `timeZone`, `guestPermissions`. User gains `displayName`, `locale`, `authProviders`; `password` becomes optional.
-- **Membership:** move from the embedded `Trip.members` array to `TripMember`. Replace every `role === 'organizer'` check with one capability helper (for example `can(trip, uid, 'publishDrafts')`). The socket `join-trip` check reads `TripMember` and rejects `requested` and `removed`.
-- **Migration:** a one-off, idempotent script with a backup first. Map creator → host, other organizers → co-host, members → guest. Copy invitations as they are.
+- **Membership:** move from the embedded `Trip.members` array to `TripMember`. Replace every `role === 'organizer'` check with one capability helper (for example `can(trip, uid, 'publishDrafts')`). The socket `join-trip` check reads `TripMember` and rejects `requested` and `removed`. **The capability vocabulary, the role × capability matrix and the helper's signature are [spec 011](011-roles-and-permissions.md) §5; part 1 of the build order below is block 1 of that spec.**
+- **Revocation (added 2026-11-11, spec 011 G4):** `join-trip` authorizes once and nothing removes a socket from the room afterwards (`server/index.js:127`), so a removed member keeps receiving trip events and keeps broadcasting live location until they disconnect. This spec makes removal a real workflow, so the fix belongs in part 1, not after the pilot. See [spec 011](011-roles-and-permissions.md) §2 and §10.2.
+- **Migration:** a one-off, idempotent script with a backup first. Map creator → host, other organizers → co-host, members → guest. Copy invitations as they are. **Add a `--dry-run` that prints the mapping, and write the reverse script before the forward one runs** (spec 011 risk 3).
 - **Sign-in:** the client uses Firebase Auth (Google provider and email link; the `firebase` package is already a client dependency). A new `POST /api/auth/firebase` takes the Firebase ID token, verifies it with `verifyIdToken` (already in `server/config/firebase.js`), finds or creates the user by verified email, and returns our existing JWT. Existing auth middleware stays. Set the Firebase `languageCode` so the sign-in email uses the user's language.
 - **Invite links:** token of 128 random bits. Public `GET /api/invite-links/:token` returns only name, dates, host name and cover. `POST /api/invite-links/:token/requests` creates a request (rate limited per user and per IP). Host endpoints to list, approve, decline and approve all.
 - **Drafts:** `POST /api/trips/:groupId/drafts` (source text or file), `GET`, `PATCH` items, `POST …/publish`, `DELETE`. The AI prompt gets the event dates, time zone and accommodation, and returns JSON with a confidence flag per item. Limit: 50 sessions per import, 3 imports per trip per hour. Schedule items gain `endTime`, `location`, `description` and `source`.
@@ -308,7 +319,7 @@ None of these block the build. The recommendation is the working default until t
 - Email delivery of announcements (S6).
 - Machine translation of content.
 - Free-tier limits and the Trip Pass (D20).
-- What happens to trips when someone leaves an Organization (D21). Until decided, removing an org member does not change their trip roles.
+- What happens to trips when someone leaves an Organization (D21). Until decided, removing an org member does not change their trip roles. **⚠ Contradiction, found 2026-11-11:** the [working doc §4.2](../product/working-doc.md) proposes the opposite — that leaving an Organization drops host and co-host roles on its trips. The two documents must stop disagreeing; resolved by open decision **R2** in [spec 011](011-roles-and-permissions.md) §13.
 
 ## 11. How we will know it worked
 
@@ -316,9 +327,9 @@ Proposed pilot thresholds (working doc, section 5; D7 to confirm).
 
 | Signal | Target |
 |---|---|
-| Join rate (joined ÷ invited) | ≥ 60% |
+| Join rate (joined ÷ invited) | ≥ 60% — **reported as two funnels**, invited (sent → opened → accepted) and shared link (opened → requested → approved). See F30. |
 | Link opened → request sent, median | < 2 minutes |
-| Request → approval, median | < 1 hour |
+| Request → approval, median | < 1 hour — **nothing in this spec makes it happen** ([spec 012](012-joining-naming-and-the-first-trip.md) Q16): hosts are notified on the first request and again at 30 minutes pending (§5.9.3). Door A arrivals are not in this metric at all; they never wait. |
 | Day 1 / day 2 active (of joined) | ≥ 60% / ≥ 40% |
 | Actions per active attendee per day | ≥ 3 |
 | Poll participation (of joined) | ≥ 50% |
@@ -330,8 +341,8 @@ Proposed pilot thresholds (working doc, section 5; D7 to confirm).
 
 ## 12. Next step
 
-1. **Owner review of this spec** and the open decisions in §9.
-2. **Lo-fi wireframes** for the 13 frames in §6, saved in `wireframes/002-hosted-event-pilot/` so both computers can see them.
+1. **Owner review of this spec** and the open decisions in §9. **This is the gate: no code until `Status: approved`.**
+2. ~~**Lo-fi wireframes** for the 13 frames in §6~~ — **done 2026-11-11**, in [`wireframes/002-hosted-event-pilot/`](../../wireframes/002-hosted-event-pilot/). Three screens listed in §6 as missing are still **TBD**.
 3. **Build** (Thu 12 – Thu 19 Nov), in this order, with a cut-line check on Tue 17 Nov. Effort, risks and fallbacks per feature are in [the planning list](../product/pilot-event-feature-list.md).
 
 | Order | Part | Cut line |
@@ -352,4 +363,4 @@ Proposed pilot thresholds (working doc, section 5; D7 to confirm).
 
 ## 13. Build status
 
-Not started. The localization base was delivered separately by [spec 003](003-localization.md).
+Not started — the spec is `draft`, and the gate in [docs/README.md](../README.md) allows no code before `approved`. The localization base was delivered separately by [spec 003](003-localization.md). Lo-fi wireframes for the 13 frames in §6 were drawn on 2026-11-11.

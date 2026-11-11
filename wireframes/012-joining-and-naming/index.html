@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joining and naming — lo-fi wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ink:#15181d; --ink-2:#5b6472; --ink-3:#8b94a3;
+    --line:#c9ced8; --line-soft:#e3e7ee; --page:#fbfcfe; --card:#fff;
+    --note:#b4530a; --note-bg:#fdf3e7; --note-line:#e8b482;
+    --fix:#1d4ed8; --fix-bg:#eef2ff; --fix-line:#a5b4fc;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--page); color:var(--ink);
+    font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+  h1{font-size:26px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);margin:0 0 4px;font-size:14px}
+  .sub a{color:#1d4ed8}
+  .cards{display:flex;flex-wrap:wrap;gap:16px;margin:28px 0 44px}
+  .card{flex:1 1 320px;border:1px solid var(--line-soft);background:var(--card);border-radius:10px;padding:16px 18px}
+  .card h3{margin:0 0 8px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+  .card p{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+  .card p:last-child{margin-bottom:0}
+
+  .row{margin:0 0 56px}
+  .row h2{font-size:17px;margin:0 0 6px;padding-bottom:10px;border-bottom:1px solid var(--line-soft);letter-spacing:-.01em}
+  .row .lede{color:var(--ink-2);font-size:13.5px;margin:0 0 20px;max-width:780px}
+  .strip{display:flex;flex-wrap:wrap;gap:34px 28px;align-items:flex-start}
+
+  .board{margin:0;width:390px}
+  .label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 8px}
+  .label .name{font-size:13px;font-weight:600}
+  .label .dims{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .stage{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff}
+
+  .note{margin-top:12px;border-left:3px solid var(--note-line);background:var(--note-bg);border-radius:0 8px 8px 0;padding:11px 13px}
+  .note h3{margin:0 0 6px;font-size:10.5px;letter-spacing:.07em;color:var(--note);font-weight:700}
+  .note p{margin:0 0 7px;font-size:12.5px;line-height:1.5;color:#5a4330}
+  .note p:last-child{margin-bottom:0}
+  .note.fix{border-left-color:var(--fix-line);background:var(--fix-bg)}
+  .note.fix h3{color:var(--fix)}
+  .note.fix p{color:#36407a}
+
+  /* ---- inside the phone frames: greyscale lo-fi kit ---- */
+  .f{width:390px;height:844px;background:#fff;color:#1a1a1a;display:flex;flex-direction:column;overflow:hidden;
+     font:14px/1.45 Inter,ui-sans-serif,system-ui,sans-serif}
+  .f .hd{height:52px;flex:none;border-bottom:1px solid #cfcfcf;display:flex;align-items:center;
+         justify-content:space-between;padding:0 16px;font-size:14px;font-weight:600;gap:10px}
+  .f .bd{flex:1;overflow:hidden;padding:16px;display:flex;flex-direction:column;gap:14px}
+  .f .bd.tight{gap:10px}
+  .f .ft{flex:none;border-top:1px solid #cfcfcf;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+  .f .cover{height:148px;flex:none;background:#eaeaea;border-bottom:1px solid #cfcfcf;
+            display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-size:11px;letter-spacing:.08em}
+  .f h4{margin:0;font-size:19px;line-height:1.25;font-weight:700;letter-spacing:-.2px}
+  .f h5{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a8a8a;font-weight:700}
+  .f p{margin:0;font-size:13.5px;color:#4a4a4a}
+  .f .m{color:#7a7a7a;font-size:12.5px}
+  .f .xs{font-size:11.5px;color:#8a8a8a;line-height:1.4}
+  .f .btn{border:1px solid #1a1a1a;border-radius:8px;padding:12px;text-align:center;font-size:14px;font-weight:600;background:#fff}
+  .f .btn.pri{background:#1a1a1a;color:#fff}
+  .f .btn.sm{padding:7px 12px;font-size:12.5px;border-radius:6px;font-weight:500}
+  .f .btn.ghost{border-color:#cfcfcf;color:#4a4a4a;font-weight:500}
+  .f .btn.dis{border-color:#e6e6e6;color:#bdbdbd;font-weight:500;background:#fafafa}
+  .f .box{border:1px solid #cfcfcf;border-radius:8px;padding:12px}
+  .f .box.dash{border-style:dashed;color:#8a8a8a}
+  .f .fld{border:1px solid #cfcfcf;border-radius:8px;padding:11px 12px;color:#8a8a8a;font-size:13.5px}
+  .f .fld.filled{color:#1a1a1a}
+  .f .li{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #e6e6e6}
+  .f .li:last-child{border-bottom:0}
+  .f .av{width:30px;height:30px;border-radius:50%;background:#e6e6e6;flex:none}
+  .f .av.lg{width:44px;height:44px}
+  .f .av.sq{border-radius:7px}
+  .f .grow{flex:1;min-width:0}
+  .f .pill{display:inline-block;border:1px solid #cfcfcf;border-radius:999px;padding:2px 9px;font-size:11px;color:#5c5c5c}
+  .f .pill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .f .badge{background:#1a1a1a;color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:1px 7px}
+  .f .sw{width:40px;height:23px;border-radius:999px;border:1px solid #1a1a1a;flex:none;position:relative;background:#1a1a1a}
+  .f .sw::after{content:"";position:absolute;top:2px;right:2px;width:17px;height:17px;border-radius:50%;background:#fff}
+  .f .sw.off{background:#fff;border-color:#cfcfcf}
+  .f .sw.off::after{right:auto;left:2px;background:#cfcfcf}
+  .f .rule{height:1px;background:#e6e6e6;flex:none}
+  .f .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px 16px}
+  .f .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #1a1a1a;
+            border-radius:14px 14px 0 0;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 -8px 24px rgba(0,0,0,.08)}
+  .f .scrim{position:absolute;inset:0;background:rgba(0,0,0,.28)}
+  .f .radio{width:18px;height:18px;border-radius:50%;border:1px solid #cfcfcf;flex:none}
+  .f .radio.on{border:5px solid #1a1a1a}
+
+  @media (max-width:820px){ .board{width:100%} .stage{max-width:100%} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Joining and naming — lo-fi wireframes</h1>
+  <p class="sub">Spec 012: <a href="../../docs/specs/012-joining-naming-and-the-first-trip.md">docs/specs/012-joining-naming-and-the-first-trip.md</a> (<strong>Status: draft</strong>). Thirteen frames.</p>
+  <p class="sub">Includes the three screens <a href="../002-hosted-event-pilot/index.html">spec 002's set</a> left undrawn — create an Organization (F1), the Organization member list (F2), and trip people and roles (F4) — because what they show is decided here.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>How to read these</h3>
+      <p>Same conventions as the <a href="../002-hosted-event-pilot/README.md">002 set</a>: greyscale, phone first at 390×844, grey block = image, dashed box = explanatory copy or a drop target.</p>
+      <p>Two kinds of annotation. <strong>Orange</strong> is the frame's requirements, as before. <strong>Blue</strong> marks a frame that <em>fixes a QA finding</em> (Q1–Q12 in spec 012 §4) and names what the current spec or frame does instead.</p>
+    </div>
+    <div class="card">
+      <h3>The rule these frames encode</h3>
+      <p><strong>Nothing administrative before the second person.</strong> The aha moment is the second person appearing in the trip, not the trip existing — so every question between first sign-in and that moment has to be one the product cannot work without.</p>
+      <p>And on attribution: <strong>an Organization is never the author of anything. People write, post and host; Organizations own and vouch.</strong></p>
+    </div>
+    <div class="card">
+      <h3>Open decisions drawn as defaults</h3>
+      <p>O1 Organization never required — frames 5, 8, 10.<br>O3 role labels per trip kind — frames 6, 7, 13.<br>O4 attribution order — frames 1, 2.<br>O5 first name on the email-link path — frame 3.<br>O6 profile offer while waiting — frame 4.<br>O7 move path, data now and screen later — frame 10.<br>O8 ungendered role labels — frame 13.<br>O9 the event's language for first invitations — frame 12.<br>O11 a count, never names — frame 11.<br>O12 privacy note once per person — frame 11.</p>
+      <p><strong>O1 and the door-A design are the ones that matter.</strong> If O1 lands on "Organization required", frames 5, 8 and 10 change shape. If door A is not taken, frame 11 disappears and the pilot's 38 attendees all go through request-and-wait.</p>
+    </div>
+  </div>
+
+  <!-- ===================== ROW 1 ===================== -->
+  <section class="row">
+    <h2>1 · Attribution — who is this from?</h2>
+    <p class="lede">Two questions, asked by two different readers. <strong>"Is this real?"</strong> is answered by the Organization. <strong>"Do I know who is asking me?"</strong> is answered by a person with a face. A link arriving cold in a WhatsApp group needs both; a personal trip needs neither.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">1 · Join page — hosted, in an Organization</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Trip Planner</span><span class="pill">EN ▾</span></div>
+            <div class="cover">COVER</div>
+            <div class="bd">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <div class="av sq" style="width:20px;height:20px"></div>
+                  <h5 style="color:#1a1a1a">eDreams ODIGEO</h5>
+                </div>
+                <h4>Annual Gathering</h4>
+                <p style="margin-top:6px">Mon 24 – Tue 25 Nov 2026</p>
+                <p class="m" style="margin-top:3px">Madrid time (CET)</p>
+              </div>
+              <div class="rule"></div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="display:flex">
+                  <div class="av lg"></div>
+                  <div class="av lg" style="margin-left:-12px;box-shadow:0 0 0 2px #fff"></div>
+                  <div class="av lg" style="margin-left:-12px;box-shadow:0 0 0 2px #fff"></div>
+                </div>
+                <div class="grow">
+                  <p style="font-weight:600">Alberto C. and 2 others</p>
+                  <p class="xs">are hosting</p>
+                </div>
+              </div>
+              <div class="box dash">
+                <p class="xs">Everything else about this event — who is coming, the schedule, polls, expenses — stays hidden until a host approves you.</p>
+              </div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Continue with Google</div>
+              <div class="btn">Email me a link</div>
+              <p class="xs" style="text-align:center;margin-top:2px">No password. Next you will send a request to join.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q3 and Q8 — 002 F12, S1, frame 1</h3>
+          <p><strong>Today frame 1 shows no Organization at all.</strong> F12 and S1 give "event name, dates, host name and cover". For a stranger deciding whether a WhatsApp link is real, the company name <em>is</em> the signal, and it was missing.</p>
+          <p>Order is deliberate: <strong>Organization small and above</strong> (legitimacy, answered first), <strong>people with faces below</strong> (trust — the Airbnb finding is that it transfers from a human even when a business is behind it).</p>
+          <p>Note the event is renamed "Annual Gathering", not "eDreams ODIGEO Gathering". §5.4's edge case: when the event name already starts with the Organization name, the Organization line is dropped rather than printing the same words twice.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">2 · Join page — personal trip</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Trip Planner</span><span class="pill">EN ▾</span></div>
+            <div class="cover">COVER</div>
+            <div class="bd">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div class="av lg"></div>
+                <div class="grow"><h4 style="font-size:17px">Marta invited you</h4></div>
+              </div>
+              <div>
+                <h4>Lisbon weekend</h4>
+                <p style="margin-top:6px">Fri 6 – Sun 8 Feb 2027</p>
+                <p class="m" style="margin-top:3px">Lisbon time (WET)</p>
+              </div>
+              <div class="rule"></div>
+              <div class="li" style="padding-top:0">
+                <div style="display:flex">
+                  <div class="av"></div>
+                  <div class="av" style="margin-left:-10px;box-shadow:0 0 0 2px #fff"></div>
+                  <div class="av" style="margin-left:-10px;box-shadow:0 0 0 2px #fff"></div>
+                </div>
+                <div class="grow"><p class="m">4 people so far</p></div>
+              </div>
+              <div class="box dash">
+                <p class="xs">You will be able to add plans, vote and split costs once you are in.</p>
+              </div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Continue with Google</div>
+              <div class="btn">Email me a link</div>
+              <p class="xs" style="text-align:center;margin-top:2px">No password.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q1 and Q8 — 012 §5.4, O3, O4</h3>
+          <p><strong>The words "host" and "guest" do not appear</strong>, because nobody hosts a weekend with friends. "Marta invited you" is Partiful's register and it is what the brand's <em>Fair</em> personality asks for — "everyone has a voice", not "bossy, organizer-only".</p>
+          <p>No Organization line, because there is no Organization and under O1 there never needs to be one.</p>
+          <p>The dashed line is the other half of the fix: this reader is being told they can <em>add</em> things, which is true on a personal trip (spec 011 §5.1, personal-guest column) and false on a hosted one. Same screen, different promise, resolved from <code>trip.kind</code>.</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROW 2 ===================== -->
+  <section class="row">
+    <h2>2 · The guest's first five minutes</h2>
+    <p class="lede">Ask for exactly what the next screen cannot work without, and nothing else. For the approval queue that is a name a host can recognise — and only when the provider did not give us one.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">3 · Request to join — email-link path</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Annual Gathering</span><span class="pill">EN ▾</span></div>
+            <div class="bd">
+              <div>
+                <h4>Almost there</h4>
+                <p class="m" style="margin-top:6px">Signed in as marta@example.com</p>
+              </div>
+              <div class="rule"></div>
+              <div>
+                <h5 style="margin-bottom:8px">What should we call you?</h5>
+                <div class="fld filled">Marta</div>
+                <p class="xs" style="margin-top:7px">So Alberto knows who is asking. You can change it later.</p>
+              </div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs"><strong>That is everything.</strong> No photo, no profile, no questions about you. If you had signed in with Google we would not have asked this either.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Request to join</div>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q4 and Q10 — 002 F14, frame 5 · O5</h3>
+          <p><strong>Today the host's approval queue can show a bare email address.</strong> Frame 5 of the 002 set draws "Marta R. · marta@example.com", but on the email-link path there is no name to draw — so the host is asked to approve <code>j.p.2847@example.com</code> and cannot.</p>
+          <p><strong>This screen does not exist on the Google path.</strong> Google gives name, email and picture, so that user goes straight from sign-in to Request to join. One field, one path, and the reason is given in line rather than assumed.</p>
+          <p>Q10: the privacy note keeps its own screen (002 frame 3). One screen, one ask.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">4 · Waiting — with the profile offer</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Annual Gathering</span><span class="pill">EN ▾</span></div>
+            <div class="bd">
+              <div class="box" style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;padding:20px 14px">
+                <div style="width:46px;height:46px;border-radius:50%;background:#eaeaea"></div>
+                <h4>Request sent</h4>
+                <p class="m">Alberto usually approves within the hour. You will get a notification.</p>
+              </div>
+              <div class="rule"></div>
+              <div>
+                <h5 style="margin-bottom:9px">While you wait</h5>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div class="av lg" style="display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#8a8a8a">M</div>
+                  <div class="grow">
+                    <p style="font-weight:600">Add a photo</p>
+                    <p class="xs">So people recognise you when you are in</p>
+                  </div>
+                  <div class="btn sm ghost">Add</div>
+                </div>
+                <p class="xs" style="margin-top:12px">Optional. Skip it and you will show up as <strong>M</strong>, which is fine.</p>
+              </div>
+              <div class="box" style="border-style:dashed">
+                <h5 style="margin-bottom:8px">On iPhone — turn on notifications</h5>
+                <p class="xs" style="margin-bottom:6px">Safari can only notify you once this page is on your Home Screen.</p>
+                <p class="xs">1 · Tap Share in the Safari toolbar<br>2 · Tap Add to Home Screen<br>3 · Open Trip Planner from there</p>
+              </div>
+              <div class="grow"></div>
+              <p class="xs" style="text-align:center">Nothing else is visible until a host approves you.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q5 — 002 frame 4 · O6, spec 007</h3>
+          <p><strong>Today this screen is a dead end</strong> for up to the one-hour approval target in 002 §11. That hour is free: the requester is blocked on somebody else, so anything offered here costs the critical path nothing.</p>
+          <p>So the profile step we took <em>off</em> the critical path (frame 3) is offered <em>here</em>, where it is not friction. It collects exactly what <a href="../../docs/specs/007-profiles-and-display-names.md">spec 007</a> wants and matches its own rule — prompted once, "never blocking".</p>
+          <p>"Alberto usually approves within the hour" sets the expectation that 002 §11 measures. Skipping is drawn as the normal outcome, not a failure: initials on a colour from the uid, which 007 §4 already specifies.</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROW 3 ===================== -->
+  <section class="row">
+    <h2>3 · The host's first trip — no Organization anywhere</h2>
+    <p class="lede">Under O1 a person can sign up, create a hosted event, publish an agenda, share the link and approve guests without ever meeting the word Organization. This is the frame that proves it.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">5 · New trip</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Trips</span><span class="m" style="font-weight:500">New</span></div>
+            <div class="bd">
+              <h4>What are you planning?</h4>
+              <div class="box" style="border-color:#1a1a1a;display:flex;gap:11px;align-items:flex-start">
+                <div class="radio on" style="margin-top:2px"></div>
+                <div class="grow">
+                  <p style="font-weight:600">A trip with people I know</p>
+                  <p class="xs" style="margin-top:3px">Everyone can add plans, vote and split costs. Friends, family, a weekend away.</p>
+                </div>
+              </div>
+              <div class="box" style="display:flex;gap:11px;align-items:flex-start">
+                <div class="radio" style="margin-top:2px"></div>
+                <div class="grow">
+                  <p style="font-weight:600">An event I am hosting</p>
+                  <p class="xs" style="margin-top:3px">You set the schedule and post announcements. Guests vote, ask and follow along. Offsites, retreats, weddings.</p>
+                </div>
+              </div>
+              <div class="rule"></div>
+              <div>
+                <h5 style="margin-bottom:8px">Name</h5>
+                <div class="fld">Lisbon weekend</div>
+              </div>
+              <div>
+                <h5 style="margin-bottom:8px">Where and when</h5>
+                <div class="fld" style="margin-bottom:8px">Add a place</div>
+                <div class="fld">Add dates</div>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Create</div>
+              <p class="xs" style="text-align:center">You can invite people straight after.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q2 — 002 §5.1 step 2 · O1, O-F11</h3>
+          <p><strong>Today spec 002 §5.1 makes "Create an Organization, or pick one you belong to" step 2 of 6</strong> — before the trip exists, before anyone has seen anything. This frame has no Organization on it at all.</p>
+          <p>The choice it <em>does</em> ask for is one the product cannot work without: it sets <code>trip.kind</code>, which decides the guest column in spec 011 §5.1 and the role labels in 012 §5.3. It is asked in outcomes, not jargon — no "personal vs hosted", no "permissions".</p>
+          <p>"You can invite people straight after" points at the aha moment. Under O1 option (a) this frame would gain an Organization step and that sentence would become false.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">6 · Trip people and roles</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">People · 41</span></div>
+            <div class="bd tight">
+              <div style="display:flex;gap:8px">
+                <div class="btn sm grow" style="text-align:center">Invite link</div>
+                <div class="btn sm grow ghost" style="text-align:center">Requests · 4</div>
+              </div>
+              <div class="rule"></div>
+              <h5>Hosts · 3</h5>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Alberto C. <span class="xs">(you)</span></p><p class="xs">alberto@example.com</p></div>
+                <span class="pill on">Host</span>
+              </div>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Nuria V.</p><p class="xs">nuria@example.com</p></div>
+                <span class="pill">Co-host</span>
+                <span class="xs" style="font-weight:700">⋯</span>
+              </div>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Diego S.</p><p class="xs">diego@example.com</p></div>
+                <span class="pill">Co-host</span>
+                <span class="xs" style="font-weight:700">⋯</span>
+              </div>
+              <div style="height:4px"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <h5>Guests · 38</h5>
+                <span class="xs" style="text-decoration:underline">Sort</span>
+              </div>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p>Marta R.</p><p class="xs">Joined 2 days ago</p></div>
+                <span class="xs" style="font-weight:700">⋯</span>
+              </div>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p>João P.</p><p class="xs">Joined 2 days ago</p></div>
+                <span class="xs" style="font-weight:700">⋯</span>
+              </div>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p>Chloé D.</p><p class="xs">Joined yesterday</p></div>
+                <span class="xs" style="font-weight:700">⋯</span>
+              </div>
+              <div class="grow"></div>
+              <p class="xs">Emails are visible to hosts only.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 6 — 002 F4 (undrawn until now) · 011 §6.3 · 012 §5.3</h3>
+          <p><strong>This is the first of the three screens spec 002 §6 never listed.</strong> It is where "manage roles" (F4) actually happens, and it is in build-order part 1.</p>
+          <p>The words <strong>Host, Co-host, Guest are the hosted-event labels</strong>. On a personal trip the identical screen says <strong>Organizer, Organizer, Member</strong> and the stored <code>TripMember.role</code> is the same in both (012 §5.3, O3). That is what stops the F7 migration renaming five friends into a host and four guests.</p>
+          <p>Counts are <code>status: 'active'</code> only — pending requests are the separate button at the top, never mixed into 41 (011 §6.1, case 15). Emails show to hosts only, per spec 007 P3.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">7 · Change role — with the last-host guard</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f" style="position:relative">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">People · 41</span></div>
+            <div class="bd tight">
+              <div class="rule"></div>
+              <h5>Hosts · 3</h5>
+              <div class="li"><div class="av"></div><div class="grow"><p style="font-weight:600">Alberto C. <span class="xs">(you)</span></p></div><span class="pill on">Host</span></div>
+              <div class="li"><div class="av"></div><div class="grow"><p style="font-weight:600">Nuria V.</p></div><span class="pill">Co-host</span></div>
+            </div>
+            <div class="scrim"></div>
+            <div class="sheet">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="av lg"></div>
+                <div class="grow"><p style="font-weight:700;font-size:15px">Nuria V.</p><p class="xs">nuria@example.com · joined 4 Nov</p></div>
+              </div>
+              <div class="rule"></div>
+              <div style="display:flex;gap:11px;align-items:flex-start">
+                <div class="radio" style="margin-top:2px"></div>
+                <div class="grow"><p style="font-weight:600">Host</p><p class="xs">Everything, including deleting the event and changing roles</p></div>
+              </div>
+              <div style="display:flex;gap:11px;align-items:flex-start">
+                <div class="radio on" style="margin-top:2px"></div>
+                <div class="grow"><p style="font-weight:600">Co-host</p><p class="xs">Runs the event. Cannot delete it or hand it over</p></div>
+              </div>
+              <div style="display:flex;gap:11px;align-items:flex-start">
+                <div class="radio" style="margin-top:2px"></div>
+                <div class="grow"><p style="font-weight:600">Guest</p><p class="xs">Votes, asks questions, shares location. Does not edit the schedule</p></div>
+              </div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs">Nuria published 6 schedule items. Changing her role leaves those as they are, with her name on them.</p>
+              </div>
+              <div class="rule"></div>
+              <div class="btn ghost sm" style="text-align:center">Remove from this event</div>
+              <div class="box" style="border-color:#e6e6e6">
+                <p class="xs"><strong>You cannot remove yourself.</strong> You are the only host — make someone else a host first.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 7 — 011 G1, G3, §6.3 · 002 F4</h3>
+          <p>Each role is described by <strong>what it lets you do</strong>, not by its name. That description is the §5.1 capability matrix in one line each, so the sheet and the server cannot drift apart.</p>
+          <p>The grey block is spec 011 §6.3's rule made visible: <strong>authorship is permanent, capability is current.</strong> A demotion never un-publishes what someone wrote, and a host about to demote a co-host should know that before they tap.</p>
+          <p>The bottom block is <strong>G1 and G3 together</strong> — the last host cannot be removed, and nobody changes their own role. It states the way out (make someone else a host) rather than just refusing, which is GitHub's add-then-remove and Slack's transfer-first.</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROW 4 ===================== -->
+  <section class="row">
+    <h2>4 · The Organization, when it finally earns its keep</h2>
+    <p class="lede">Offered at the first moment it does something the user wants — continuity — and never before. These three frames are Phase 1; the pilot's Organization is created by hand.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">8 · Create an Organization</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Back</span><span class="m" style="font-weight:500">Keep this safe</span></div>
+            <div class="bd">
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs">You just made <strong>Nuria</strong> a co-host.</p>
+              </div>
+              <div>
+                <h4>If you leave, who keeps this event?</h4>
+                <p class="m" style="margin-top:7px">Right now this event belongs to you personally. If you lose access to your account, nobody else can take it over — not even Nuria.</p>
+              </div>
+              <div class="rule"></div>
+              <div>
+                <h5 style="margin-bottom:8px">Give it a home</h5>
+                <div class="fld">Your company or group's name</div>
+                <p class="xs" style="margin-top:7px">You are its owner. Nothing else changes today.</p>
+              </div>
+              <div>
+                <h5 style="margin-bottom:9px">What this does</h5>
+                <div class="li" style="align-items:flex-start"><div class="grow"><p class="xs"><strong>Keeps your events</strong> if you hand over or lose your account</p></div></div>
+                <div class="li" style="align-items:flex-start"><div class="grow"><p class="xs"><strong>One place for your team</strong> across every event you run</p></div></div>
+                <div class="li" style="align-items:flex-start"><div class="grow"><p class="xs"><strong>Does not open your events</strong> to anyone. People still need a role on each one</p></div></div>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Create and keep it here</div>
+              <div class="btn ghost">Not now</div>
+              <p class="xs" style="text-align:center">We will not ask again for this event.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q6 and Q9 — 002 F1, frame 13 · O1</h3>
+          <p><strong>This is the second undrawn screen (F1), and it is deliberately not a menu item.</strong> Frame 13 of the 002 set puts "Create an Organization" permanently in the switcher — which both promotes it, against S7, and offers it at the one moment nobody needs it.</p>
+          <p>Here it appears at the first moment it is <em>true</em>: a second person now depends on this event, so continuity has a cost. That is the only thing an Organization does that the user can feel before billing exists.</p>
+          <p>Q9: there is a typed name and a real decision. Never an auto-created container — Eventbrite's "unnamed organizer" is what that produces. <strong>"Not now" is a full-width button, not a link</strong>, and the footer promises we will not nag.</p>
+          <p>The third bullet is spec 011 F5 / D19 said in the user's words, at the moment they would otherwise assume the opposite.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">9 · Organization members</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; eDreams ODIGEO</span><span class="m" style="font-weight:500">People · 6</span></div>
+            <div class="bd tight">
+              <div class="box" style="padding:0;overflow:hidden">
+                <div style="padding:11px 12px"><p class="xs" style="color:#8a8a8a">Add by email</p></div>
+                <div class="rule"></div>
+                <div style="padding:11px 12px;display:flex;gap:8px;align-items:center">
+                  <div class="grow"><p class="m">name@company.com</p></div>
+                  <span class="pill">Member ▾</span>
+                  <div class="btn sm">Add</div>
+                </div>
+              </div>
+              <div class="rule"></div>
+              <h5>Owner · 1</h5>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Alberto C. <span class="xs">(you)</span></p><p class="xs">alberto@example.com</p></div>
+                <span class="pill on">Owner</span>
+              </div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs"><strong>You are the only owner.</strong> If you lose this account nobody can take over. Make someone else an owner too.</p>
+              </div>
+              <h5 style="margin-top:4px">Admins · 2</h5>
+              <div class="li"><div class="av"></div><div class="grow"><p>Nuria V.</p><p class="xs">nuria@example.com</p></div><span class="pill">Admin</span><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="li"><div class="av"></div><div class="grow"><p>Diego S.</p><p class="xs">diego@example.com</p></div><span class="pill">Admin</span><span class="xs" style="font-weight:700">⋯</span></div>
+              <h5 style="margin-top:4px">Members · 3</h5>
+              <div class="li"><div class="av"></div><div class="grow"><p>Irene M.</p></div><span class="pill">Member</span><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="li"><div class="av"></div><div class="grow"><p>Sam O.</p><p class="xs">Invited · not yet joined</p></div><span class="pill">Member</span><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="grow"></div>
+              <div class="box dash">
+                <p class="xs">Being here does not open any event. People still need a role on each one.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 9 — 002 F2 (undrawn until now) · 011 G2, F5</h3>
+          <p><strong>The third undrawn screen.</strong> Spec 002 §10 puts "an Organization home page <em>beyond the switcher and member list</em>" out of scope — so the member list was in scope all along and had no frame.</p>
+          <p>The grey block is <strong>G2 as a nudge before it is a refusal</strong>: GitHub warns that a single-owner organization can lose access to its projects and recommends at least two. We say it while it is still cheap, and the hard block only appears when the last owner tries to leave.</p>
+          <p>"Invited · not yet joined" keeps 011 §6.1's statuses visible — the count of 6 is active plus invited here, and the frame has to say which, unlike the trip count in frame 6 where it is active only.</p>
+          <p>The dashed footer is D19 again. It appears on this screen and frame 8 and the switcher, because it is the thing every admin will assume wrongly.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">10 · Move a trip into an Organization</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Annual Gathering</span><span class="m" style="font-weight:500">Move</span></div>
+            <div class="bd">
+              <div>
+                <h4>Move this event</h4>
+                <p class="m" style="margin-top:7px">It belongs to you personally right now.</p>
+              </div>
+              <div class="rule"></div>
+              <h5>Move it to</h5>
+              <div class="box" style="border-color:#1a1a1a;display:flex;gap:11px;align-items:center">
+                <div class="radio on"></div>
+                <div class="av sq"></div>
+                <div class="grow"><p style="font-weight:600">eDreams ODIGEO</p><p class="xs">You are the owner</p></div>
+              </div>
+              <div class="box" style="display:flex;gap:11px;align-items:center">
+                <div class="radio"></div>
+                <div class="av sq" style="background:#f4f4f4"></div>
+                <div class="grow"><p class="m">Create a new Organization</p></div>
+              </div>
+              <div class="rule"></div>
+              <div>
+                <h5 style="margin-bottom:9px">What changes</h5>
+                <div class="li" style="align-items:flex-start"><div class="grow"><p class="xs"><strong>Nothing for the 41 people in it.</strong> Same roles, same access, no notification</p></div></div>
+                <div class="li" style="align-items:flex-start"><div class="grow"><p class="xs"><strong>The event survives you.</strong> An owner of eDreams ODIGEO could take it over if you were unreachable</p></div></div>
+                <div class="li" style="align-items:flex-start"><div class="grow"><p class="xs"><strong>The join page</strong> will show eDreams ODIGEO above the event name</p></div></div>
+              </div>
+              <div class="box dash">
+                <p class="xs">You cannot move it back out later.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Move to eDreams ODIGEO</div>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q7 — 011 case 10, §10.2 · O7, O-F4</h3>
+          <p><strong>This is Figma's lesson drawn.</strong> Figma deferred the container for years — correctly — and then had to move every draft into a team, one file at a time, with no bulk move and support tickets for cross-account cases. The deferral was not the mistake; bolting the move on afterwards was.</p>
+          <p>So <code>Trip.orgId</code> becomes nullable and settable <strong>in block 1</strong>, even though this screen is Phase 1 (O7). The field costs nothing now and is the whole of the lesson.</p>
+          <p>The three "what changes" lines are written from the member's side first, because the host's real fear is that moving it will spam 41 people or lock someone out. The second line is spec 011 <strong>R1</strong> — if R1 lands on (a) Never, that line is false and this frame loses its best reason to exist.</p>
+          <p>One way in v1, said plainly rather than discovered later.</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROW 5 ===================== -->
+  <section class="row">
+    <h2>5 · Three doors — and the one the pilot actually uses</h2>
+    <p class="lede">There is not one way in. There are three, and they differ by <strong>who has already decided about you</strong>. Door A is someone a host added by name: the decision is made, so the product acts on it instead of asking again. For the pilot's 38 attendees this is the dominant path, and <a href="../../docs/specs/002-hosted-event-pilot.md">spec 002</a> routes all of them through request-and-wait.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">11 · Invited — one tap in</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Trip Planner</span><span class="pill">EN ▾</span></div>
+            <div class="cover">COVER</div>
+            <div class="bd">
+              <div style="display:flex;align-items:center;gap:11px">
+                <div class="av lg"></div>
+                <div class="grow"><p style="font-weight:600">Alberto invited you</p><p class="xs">to this event</p></div>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+                  <div class="av sq" style="width:18px;height:18px"></div>
+                  <h5 style="color:#1a1a1a">eDreams ODIGEO</h5>
+                </div>
+                <h4>Annual Gathering</h4>
+                <p style="margin-top:6px">Mon 24 – Tue 25 Nov 2026</p>
+                <p class="m" style="margin-top:3px">Madrid time (CET)</p>
+              </div>
+              <div class="rule"></div>
+              <div class="li" style="padding-top:0">
+                <div style="display:flex">
+                  <div class="av"></div>
+                  <div class="av" style="margin-left:-10px;box-shadow:0 0 0 2px #fff"></div>
+                  <div class="av" style="margin-left:-10px;box-shadow:0 0 0 2px #fff"></div>
+                </div>
+                <div class="grow"><p class="m">14 people are going</p></div>
+              </div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs"><strong>No request, no waiting.</strong> Alberto already added you — tap Join and you are in.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Join Annual Gathering</div>
+              <p class="xs" style="text-align:center;margin-top:2px">Signed in as marta@example.com · <span style="text-decoration:underline">not you?</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q13 — 002 §5.2, F17, frames 1–5 · O-F12, O11, O12</h3>
+          <p><strong>Spec 002 routes one journey:</strong> open → sign in → privacy → <em>Request to join</em> → wait up to an hour → approved → open again → in. F17 says invited people skip <em>approval</em>, but nothing skips the <em>request</em>. This frame is the whole of door A: open → sign in → privacy (first time ever) → <strong>in</strong>.</p>
+          <p><strong>The mechanism already exists.</strong> <code>TripInvitation</code> carries a unique token per invitation and <code>POST /:groupId/invitations/:token/accept</code> already activates the member with no approval (<code>server/routes/groups.js:371</code>). The spec would layer a queue on top of a working one-tap path.</p>
+          <p>The button says <strong>Join</strong>, not Request to join — the word has to match what happens. "14 people are going" is O11: a count, never names, and only shown from 3 up so a new event does not look abandoned.</p>
+          <p>"Signed in as … not you?" is the escape hatch for the shared-device case, and the point where an email mismatch gets recorded rather than blocked (§5.8.1).</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">12 · Host: invite people</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">Invite</span></div>
+            <div class="bd">
+              <div>
+                <h4>Invite people</h4>
+                <p class="m" style="margin-top:6px">They go straight in — no approval needed.</p>
+              </div>
+              <div>
+                <h5 style="margin-bottom:8px">Paste email addresses</h5>
+                <div class="fld filled" style="height:132px;font-size:12.5px;line-height:1.6">marta@example.com, joao@example.com,
+chloe@example.com, sam@example.com,
+irene@example.com, diego@exmaple,
+nuria@example.com …</div>
+                <p class="xs" style="margin-top:7px">Commas, spaces or one per line.</p>
+              </div>
+              <div class="box" style="border-color:#1a1a1a">
+                <div class="li" style="padding-top:0"><div class="grow"><p style="font-weight:600">35 ready to invite</p></div><span class="pill on">Guest ▾</span></div>
+                <div class="li"><div class="grow"><p class="xs">2 do not look like addresses</p><p class="xs" style="margin-top:2px">diego@exmaple, sam@</p></div><span class="xs" style="text-decoration:underline">Fix</span></div>
+                <div class="li"><div class="grow"><p class="xs">1 is already invited</p><p class="xs" style="margin-top:2px">nuria@example.com</p></div><span class="xs">Skipped</span></div>
+              </div>
+              <div class="box dash">
+                <p class="xs">Each person gets their own link. Revoking one does not affect anybody else.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Send 35 invitations</div>
+              <p class="xs" style="text-align:center">In the event's language: English</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q15 — 002 F2 · O-F14, O-F17, O9</h3>
+          <p><strong>Today there is no way to invite 38 people.</strong> F2 adds Organization members by email one at a time, and <code>routes/groups.js:10</code> does the same for a trip. The host does this on 20 Nov, for 38 people, by hand.</p>
+          <p>The three counts are shown <strong>before</strong> sending, because the failure a host fears is half a list going out. <code>diego@exmaple</code> is a real typo drawn deliberately — a missing TLD is the common one and it is silently undeliverable.</p>
+          <p>The dashed note is §5.8.1 in the host's words: <strong>each invitation is its own revocable credential</strong>, unlike the shared link where revoking resets everyone (F11).</p>
+          <p>The footer line is <strong>O9</strong>: an invitee has no account yet, so there is no saved language to send in. The recommendation is the event's language, set once by the host, covering the whole guest list.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">13 · The same screen in Español</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f" lang="es">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">Personas · 41</span></div>
+            <div class="bd tight">
+              <div style="display:flex;gap:8px">
+                <div class="btn sm grow" style="text-align:center">Enlace de invitación</div>
+                <div class="btn sm grow ghost" style="text-align:center">Solicitudes · 4</div>
+              </div>
+              <div class="rule"></div>
+              <h5>Organiza · 3</h5>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Alberto C. <span class="xs">(tú)</span></p><p class="xs">alberto@example.com</p></div>
+                <span class="pill on">Organiza</span>
+              </div>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Nuria V.</p><p class="xs">nuria@example.com</p></div>
+                <span class="pill">Coorganiza</span>
+                <span class="xs" style="font-weight:700">⋯</span>
+              </div>
+              <div style="height:4px"></div>
+              <h5>Asistentes · 38</h5>
+              <div class="li"><div class="av"></div><div class="grow"><p>Marta R.</p><p class="xs">Se unió hace 2 días</p></div><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="li"><div class="av"></div><div class="grow"><p>João P.</p><p class="xs">Se unió hace 2 días</p></div><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="li"><div class="av"></div><div class="grow"><p>Chloé D.</p><p class="xs">Se unió ayer</p></div><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="rule" style="margin-top:6px"></div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs"><strong>Horario:</strong> lun 24 – mar 25 nov 2026, hora de Madrid (CET)</p>
+              </div>
+              <div class="grow"></div>
+              <p class="xs">Solo quien organiza ve los correos electrónicos.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q18 — 012 §6.2, O8 · 003 §6</h3>
+          <p>Frame 6 in Spanish, and the reason it is drawn at all: <strong>English role nouns are ungendered and Spanish ones are not.</strong> <em>Anfitrión/anfitriona</em>, <em>invitado/invitada</em> all inflect. We do not collect gender and should not, so the labels must use forms that do not inflect — hence <strong>Organiza, Coorganiza, Asistentes</strong> rather than <em>Anfitrión</em> and <em>Invitados</em>.</p>
+          <p><strong>Two honest costs, drawn rather than hidden.</strong> The verb forms are a workaround, not natural label copy. And the personal/hosted tonal split that fixes Q1 in English partly collapses here — which is why <strong>O8 needs the spec 003 §6 native reviewers</strong> before a single word goes into a locale file.</p>
+          <p>Note the width: "Coorganiza" is half as long again as "Co-host". N6 budgets ~30% expansion and the role pills are the tightest element in the whole set — they wrap or truncate, never clip (§6.4).</p>
+          <p>"hora de Madrid (CET)" comes from <code>Intl.DateTimeFormat</code> with <code>timeZoneName</code>, not from an English word glued to an abbreviation (§6.3, AC 25).</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <section class="row" style="margin-bottom:0">
+    <h2>What these thirteen frames do not cover</h2>
+    <p class="lede">
+      The Organization switcher and the trip list stay as drawn in <a href="../002-hosted-event-pilot/index.html">002 frame 13</a>, minus the permanent "Create an Organization" row (Q6). Join requests, the invite link panel, agenda import, draft review, the event home, announcements, notification settings and the language switcher are all in the 002 set and unchanged by this spec.
+    </p>
+    <p class="lede">
+      Out of scope here and not drawn: the Organization home page beyond this member list, billing and payouts, interests onboarding, avatars beyond what Google gives and what frame 4 offers (<a href="../../docs/specs/007-profiles-and-display-names.md">spec 007</a> owns profiles), moving a trip back out of an Organization, and the naming decision behind <strong>O2</strong> — whether "Organization" is even the right word, which belongs with <a href="../../docs/brand/brand-foundations.md">brand foundations</a> §3.
+    </p>
+  </section>
+
+</div>
+</body>
+</html>

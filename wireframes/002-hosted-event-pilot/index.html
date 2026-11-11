@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hosted event pilot — lo-fi wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ink:#15181d; --ink-2:#5b6472; --ink-3:#8b94a3;
+    --line:#c9ced8; --line-soft:#e3e7ee; --page:#fbfcfe; --card:#fff;
+    --note:#b4530a; --note-bg:#fdf3e7; --note-line:#e8b482;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--page); color:var(--ink);
+    font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+  h1{font-size:26px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);margin:0 0 4px;font-size:14px}
+  .sub a{color:#1d4ed8}
+  .cards{display:flex;flex-wrap:wrap;gap:16px;margin:28px 0 44px}
+  .card{flex:1 1 320px;border:1px solid var(--line-soft);background:var(--card);border-radius:10px;padding:16px 18px}
+  .card h3{margin:0 0 8px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+  .card p{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+  .card p:last-child{margin-bottom:0}
+
+  .row{margin:0 0 56px}
+  .row h2{font-size:17px;margin:0 0 6px;padding-bottom:10px;border-bottom:1px solid var(--line-soft);letter-spacing:-.01em}
+  .row .lede{color:var(--ink-2);font-size:13.5px;margin:0 0 20px;max-width:760px}
+  .strip{display:flex;flex-wrap:wrap;gap:34px 28px;align-items:flex-start}
+
+  .board{margin:0;width:390px}
+  .label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 8px}
+  .label .name{font-size:13px;font-weight:600}
+  .label .dims{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .stage{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff}
+
+  .note{margin-top:12px;border-left:3px solid var(--note-line);background:var(--note-bg);border-radius:0 8px 8px 0;padding:11px 13px}
+  .note h3{margin:0 0 6px;font-size:10.5px;letter-spacing:.07em;color:var(--note);font-weight:700}
+  .note p{margin:0 0 7px;font-size:12.5px;line-height:1.5;color:#5a4330}
+  .note p:last-child{margin-bottom:0}
+
+  /* ---- inside the phone frames: greyscale lo-fi kit ---- */
+  .f{width:390px;height:844px;background:#fff;color:#1a1a1a;display:flex;flex-direction:column;overflow:hidden;
+     font:14px/1.45 Inter,ui-sans-serif,system-ui,sans-serif}
+  .f .hd{height:52px;flex:none;border-bottom:1px solid #cfcfcf;display:flex;align-items:center;
+         justify-content:space-between;padding:0 16px;font-size:14px;font-weight:600;gap:10px}
+  .f .bd{flex:1;overflow:hidden;padding:16px;display:flex;flex-direction:column;gap:14px}
+  .f .bd.tight{gap:10px}
+  .f .ft{flex:none;border-top:1px solid #cfcfcf;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+  .f .cover{height:148px;flex:none;background:#eaeaea;border-bottom:1px solid #cfcfcf;
+            display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-size:11px;letter-spacing:.08em}
+  .f h4{margin:0;font-size:19px;line-height:1.25;font-weight:700;letter-spacing:-.2px}
+  .f h5{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a8a8a;font-weight:700}
+  .f p{margin:0;font-size:13.5px;color:#4a4a4a}
+  .f .m{color:#7a7a7a;font-size:12.5px}
+  .f .xs{font-size:11.5px;color:#8a8a8a;line-height:1.4}
+  .f .btn{border:1px solid #1a1a1a;border-radius:8px;padding:12px;text-align:center;font-size:14px;font-weight:600;background:#fff}
+  .f .btn.pri{background:#1a1a1a;color:#fff}
+  .f .btn.sm{padding:7px 12px;font-size:12.5px;border-radius:6px;font-weight:500}
+  .f .btn.ghost{border-color:#cfcfcf;color:#4a4a4a;font-weight:500}
+  .f .btn.dis{border-color:#e6e6e6;color:#bdbdbd;font-weight:500}
+  .f .box{border:1px solid #cfcfcf;border-radius:8px;padding:12px}
+  .f .box.dash{border-style:dashed;color:#8a8a8a;text-align:center}
+  .f .fld{border:1px solid #cfcfcf;border-radius:8px;padding:11px 12px;color:#8a8a8a;font-size:13.5px}
+  .f .li{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #e6e6e6}
+  .f .li:last-child{border-bottom:0}
+  .f .av{width:30px;height:30px;border-radius:50%;background:#e6e6e6;flex:none}
+  .f .grow{flex:1;min-width:0}
+  .f .pill{display:inline-block;border:1px solid #cfcfcf;border-radius:999px;padding:2px 9px;font-size:11px;color:#5c5c5c}
+  .f .pill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .f .badge{background:#1a1a1a;color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:1px 7px}
+  .f .sw{width:40px;height:23px;border-radius:999px;border:1px solid #1a1a1a;flex:none;position:relative;background:#1a1a1a}
+  .f .sw::after{content:"";position:absolute;top:2px;right:2px;width:17px;height:17px;border-radius:50%;background:#fff}
+  .f .sw.off{background:#fff;border-color:#cfcfcf}
+  .f .sw.off::after{right:auto;left:2px;background:#cfcfcf}
+  .f .tabs{display:flex;gap:18px;border-bottom:1px solid #cfcfcf;padding:0 16px;flex:none}
+  .f .tabs span{padding:11px 0;font-size:13px;color:#8a8a8a}
+  .f .tabs span.sel{color:#1a1a1a;font-weight:600;box-shadow:inset 0 -2px 0 #1a1a1a}
+  .f .flag{border-left:3px solid #1a1a1a;padding-left:9px}
+  .f .rule{height:1px;background:#e6e6e6;flex:none}
+  .f .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px 16px}
+
+  @media (max-width:820px){ .board{width:100%} .stage{max-width:100%} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Hosted event pilot — lo-fi wireframes</h1>
+  <p class="sub">Spec 002: <a href="../../docs/specs/002-hosted-event-pilot.md">docs/specs/002-hosted-event-pilot.md</a> (<strong>Status: draft</strong>). The 13 frames proposed in §6 of that spec.</p>
+  <p class="sub">Everything on this page is static markup. Nothing is interactive, and none of it is production code.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>How to read these</h3>
+      <p>Lo-fi on purpose: greyscale, no brand colour, no type or icon decisions. Judge structure only — what sits where, what is loudest, and what is deliberately absent.</p>
+      <p>Grey block = image. Dashed box = a drop target or an empty state, not a reserved feature.</p>
+      <p>F / N / AC / S numbers refer to spec 002. Every frame carries the requirements it has to satisfy.</p>
+    </div>
+    <div class="card">
+      <h3>Standing content</h3>
+      <p>The sample event throughout is the pilot: <strong>eDreams ODIGEO Gathering</strong>, 24–25 Nov 2026, Madrid, hosted by Alberto C., 38 attendees.</p>
+      <p>Times show in <strong>Madrid time</strong> and are labelled, whatever the viewer's device zone (F35, AC 28). Phone first at 390×844; desktop is the same layout, wider. The one layout that genuinely differs on desktop is frame 8, called out in its annotation.</p>
+    </div>
+    <div class="card">
+      <h3>Open decisions drawn as defaults</h3>
+      <p>S1 join page shows name, dates, host, cover — frame 1.<br>S2 paste plus .md / .txt / .csv — frame 7.<br>S6 manifest and in-app only on iPhone — frames 4 and 10.<br>S7 anyone may create an Organization, not promoted — frame 13.<br>S8 announcements are one-way — frames 9 and 10.</p>
+      <p>These are the §9 recommendations drawn as the working default (D27), not owner decisions. Overriding one changes the frame it is listed against.</p>
+    </div>
+  </div>
+
+  <!-- ===================== ROW 1 ===================== -->
+  <section class="row">
+    <h2>1 · The door — link to "request sent", under 60 seconds</h2>
+    <p class="lede">Four frames, one flow. Nothing about the event beyond name, dates, host and cover is reachable before a host approves you (principle 3, F12, F15). The whole row is reachable logged out and in the visitor's detected language (F33, AC 26).</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">1 · Join page (logged out)</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Trip Planner</span><span class="pill">EN ▾</span></div>
+            <div class="cover">COVER</div>
+            <div class="bd">
+              <div>
+                <h5>You have been invited to</h5>
+                <h4 style="margin-top:7px">eDreams ODIGEO Gathering</h4>
+                <p style="margin-top:6px">Mon 24 – Tue 25 Nov 2026</p>
+                <p class="m" style="margin-top:3px">Madrid time (CET)</p>
+              </div>
+              <div class="rule"></div>
+              <div class="li" style="padding-top:0">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Hosted by Alberto C.</p></div>
+              </div>
+              <div class="box dash" style="text-align:left">
+                <p class="xs">Everything else about this event — who is coming, the schedule, polls, expenses — stays hidden until a host approves you.</p>
+              </div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Continue with Google</div>
+              <div class="btn">Email me a link</div>
+              <p class="xs" style="text-align:center;margin-top:2px">No password. Next you will send a request to join.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 1 — F8, F12, S1</h3>
+          <p><strong>Shows exactly four things</strong> about the event: name, dates, host name, cover (S1). The dashed box is copy, not a feature — it tells the visitor why the page is thin, so the thinness reads as deliberate rather than broken.</p>
+          <p>Language switcher is top right and works logged out (F33, AC 26). The event's time zone is named here already, because it frames every date below it (F35).</p>
+          <p>AC 9: opened in a private window this page must render with no session at all.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">2 · Email link sent</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Trip Planner</span><span class="pill">EN ▾</span></div>
+            <div class="center">
+              <div style="width:64px;height:64px;border-radius:50%;background:#eaeaea"></div>
+              <h4>Check your inbox</h4>
+              <p>We sent a sign-in link to</p>
+              <p style="font-weight:700;font-size:15px">alberto@example.com</p>
+              <p class="m" style="max-width:280px">Open it on this device and you will come straight back here. The link lasts 15 minutes.</p>
+              <div style="height:8px"></div>
+              <div class="btn ghost" style="width:230px">Resend link (0:42)</div>
+              <p class="xs" style="text-decoration:underline">Use a different email</p>
+            </div>
+            <div class="ft">
+              <p class="xs" style="text-align:center">Not seeing it? Check spam, or go back and continue with Google.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 2 — F8, AC 6</h3>
+          <p>The email is sent in the recipient's language (F36) — this screen is the handoff, so it repeats the address rather than assuming it was typed correctly.</p>
+          <p><strong>Resend is disabled with a visible countdown</strong>, not hidden. "Use a different email" is the escape hatch for a typo, and the footer points back to Google so a stuck user is never trapped in the email branch.</p>
+          <p>N1: this screen is inside the 60-second budget, but email delivery is explicitly excluded from it.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">3 · Privacy note</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Before you join</span><span class="pill">EN ▾</span></div>
+            <div class="bd">
+              <h4>What we store</h4>
+              <div class="rule"></div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div><p><strong>Your name and email</strong>, so hosts know who is asking to join.</p></div>
+                <div><p><strong>Live location is opt-in</strong> and never stored. It exists only while you share it.</p></div>
+                <div><p><strong>We count actions</strong>, not content. Never your messages, names, emails or coordinates.</p></div>
+                <div><p><strong>An AI provider</strong> processes agendas and the questions you ask it.</p></div>
+              </div>
+              <p class="xs" style="text-decoration:underline">Read the full privacy note</p>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Request to join</div>
+              <p class="xs" style="text-align:center">You can reopen this from the event menu at any time.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 3 — N4, N3, principle 3</h3>
+          <p>Four lines, one primary button, no checkbox. Tapping <strong>Request to join</strong> is the consent, which keeps the 60-second budget intact (N1).</p>
+          <p>Each line is a promise the build has to keep: live location in memory only, analytics without content or coordinates (N3, F31).</p>
+          <p>N4 needs this reachable later too — hence the footer line, which points at the event menu rather than being a dead reassurance.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">4 · Request sent / waiting</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>eDreams ODIGEO Gathering</span><span class="pill">EN ▾</span></div>
+            <div class="bd">
+              <div class="box" style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;padding:22px 14px">
+                <div style="width:52px;height:52px;border-radius:50%;background:#eaeaea"></div>
+                <h4>Request sent</h4>
+                <p class="m">You will get a notification when a host approves you. The event opens on your next visit.</p>
+              </div>
+              <div>
+                <h5>While you wait</h5>
+                <div class="li"><div class="grow"><p>Mon 24 – Tue 25 Nov 2026</p><p class="xs">Madrid time (CET)</p></div></div>
+                <div class="li"><div class="av"></div><div class="grow"><p>Hosted by Alberto C.</p></div></div>
+              </div>
+              <div class="box" style="border-style:dashed">
+                <h5 style="margin-bottom:8px">On iPhone — turn on notifications</h5>
+                <p class="xs" style="margin-bottom:6px">Safari can only notify you once this page is on your Home Screen.</p>
+                <p class="xs">1 · Tap Share in the Safari toolbar<br>2 · Tap Add to Home Screen<br>3 · Open Trip Planner from there</p>
+              </div>
+              <div class="grow"></div>
+              <p class="xs" style="text-align:center">Nothing else is visible until a host approves you.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 4 — F13, F15, F16, S6</h3>
+          <p>Still shows only the four public facts. A pending requester reaching any trip endpoint or the socket room gets 403 (AC 11) — this screen is the whole of their experience.</p>
+          <p><strong>The Add to Home Screen block is conditional</strong>: iOS Safari only. It is the pilot's one route to push on iPhone (S6), so it is instructions, not a dismissible tip.</p>
+          <p>F16: approval sends a push. A decline sends nothing, so this screen is also the terminal state for a declined request — by design it does not change.</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROW 2 ===================== -->
+  <section class="row">
+    <h2>2 · Host — letting people in</h2>
+    <p class="lede">One active link per trip, and an approval queue that survives 38 people arriving in the same five minutes after the link lands in a WhatsApp group.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">5 · Host: join requests</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Gathering</span><span style="display:flex;align-items:center;gap:6px"><span class="m" style="font-weight:500">Requests</span><span class="badge">4</span></span></div>
+            <div class="bd tight">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <h5>Pending · 4</h5>
+                <div class="btn sm">Approve all (4)</div>
+              </div>
+              <div class="rule"></div>
+              <div>
+                <div class="li">
+                  <div class="av"></div>
+                  <div class="grow"><p style="font-weight:600">Marta R.</p><p class="xs">marta@example.com · 2 min ago</p></div>
+                  <div style="display:flex;gap:6px"><div class="btn sm">Approve</div><div class="btn sm ghost">Decline</div></div>
+                </div>
+                <div class="li">
+                  <div class="av"></div>
+                  <div class="grow"><p style="font-weight:600">João P.</p><p class="xs">joao@example.com · 4 min ago</p></div>
+                  <div style="display:flex;gap:6px"><div class="btn sm">Approve</div><div class="btn sm ghost">Decline</div></div>
+                </div>
+                <div class="li">
+                  <div class="av"></div>
+                  <div class="grow"><p style="font-weight:600">Chloé D.</p><p class="xs">chloe@example.com · 11 min ago</p></div>
+                  <div style="display:flex;gap:6px"><div class="btn sm">Approve</div><div class="btn sm ghost">Decline</div></div>
+                </div>
+                <div class="li">
+                  <div class="av"></div>
+                  <div class="grow"><p style="font-weight:600">Sam O.</p><p class="xs">sam@example.com · 23 min ago</p></div>
+                  <div style="display:flex;gap:6px"><div class="btn sm">Approve</div><div class="btn sm ghost">Decline</div></div>
+                </div>
+              </div>
+              <div style="height:6px"></div>
+              <h5>Approved today · 12</h5>
+              <div class="li"><div class="av"></div><div class="grow"><p>Irene M.</p><p class="xs">Guest · approved 09:40</p></div></div>
+              <div class="li"><div class="av"></div><div class="grow"><p>Diego S.</p><p class="xs">Guest · approved 09:38</p></div></div>
+              <div class="grow"></div>
+              <p class="xs">Each approval sends a push to that person if they registered for notifications.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 5 — F14, F16, AC 10, AC 12</h3>
+          <p><strong>Approve all carries its count</strong> so a host knows what they are committing to. Luma's pattern; the count makes it safe when requests are still arriving.</p>
+          <p>Rows show name, email and arrival time — enough to spot someone who should not be here, which is the only reason approval exists. New requests arrive live over the socket (AC 10), so the badge and the count move without a refresh (principle 2).</p>
+          <p>"Approved today" below the queue is the undo surface: the pilot has no un-approve, so seeing the result is how a host catches a mistake. Decline is silent (F16) — the footer line says so, so a host is not waiting for a notification that never fires.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">6 · Host: invite link panel</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">Invite</span></div>
+            <div class="bd">
+              <div>
+                <h4>Invite link</h4>
+                <p class="m" style="margin-top:5px">Anyone with this link can ask to join. They see nothing until you approve them.</p>
+              </div>
+              <div class="box" style="padding:0;overflow:hidden">
+                <div style="padding:12px;border-bottom:1px solid #e6e6e6"><p class="xs" style="word-break:break-all">tripplanner.app/j/8f3kQ2vR7nLpXw</p></div>
+                <div style="display:flex">
+                  <div style="flex:1;padding:11px;text-align:center;font-size:13px;font-weight:600;border-right:1px solid #e6e6e6">Copy</div>
+                  <div style="flex:1;padding:11px;text-align:center;font-size:13px;font-weight:600">Share</div>
+                </div>
+              </div>
+              <div class="li"><div class="grow"><p>Status</p></div><span class="pill on">Active</span></div>
+              <div class="li"><div class="grow"><p>Expires</p></div><p class="m">26 Nov 2026</p></div>
+              <div class="li"><div class="grow"><p>Opened</p></div><p class="m">31 times</p></div>
+              <div class="li"><div class="grow"><p>Requests</p></div><p class="m">16 · 4 pending</p></div>
+              <div class="rule"></div>
+              <div>
+                <h5>Co-hosts</h5>
+                <div class="li"><div class="av"></div><div class="grow"><p>Nuria V.</p><p class="xs">Co-host</p></div></div>
+                <div class="li"><div class="av"></div><div class="grow m">Add a co-host</div></div>
+              </div>
+              <div class="grow"></div>
+              <div class="box" style="border-color:#e6e6e6">
+                <p class="xs" style="margin-bottom:8px">Revoking stops the old link at once. Anyone already approved keeps their access.</p>
+                <div class="btn ghost sm" style="text-align:center">Revoke and create a new link</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 6 — F11, F30, AC 13</h3>
+          <p>One active link, never a list (F11). Revoke is at the bottom, outlined not filled, with the consequence stated above it — the destructive action a host should not hit while reaching for Copy.</p>
+          <p><strong>Opened / Requests are the analytics made visible</strong> (invite_link_opened, join_requested in F30). They give the host a reason to look at this screen after sharing, and give us the pilot's funnel for free.</p>
+          <p>Co-hosts live here because sharing the link and sharing the job are the same moment (§5.1 step 5). AC 13: a revoked link must show "This link no longer works. Ask the host for a new one." — a state of frame 1, not a frame of its own.</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROW 3 ===================== -->
+  <section class="row">
+    <h2>3 · Host — the agenda as a draft</h2>
+    <p class="lede">Principle 4 in two frames: AI output is a draft a human publishes. Nothing in these screens touches the schedule until the host taps Publish (F21, F22, AC 15).</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">7 · Host: import agenda</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">Import agenda</span></div>
+            <div class="bd">
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs">Everything will be placed inside<br><strong>Mon 24 – Tue 25 Nov 2026 · Madrid time (CET)</strong><br>Hotel Riu Plaza España</p>
+              </div>
+              <div>
+                <h5>Paste your agenda</h5>
+                <div class="fld" style="height:188px;margin-top:8px">09:00 Welcome coffee — lobby<br>09:30 Opening keynote — Sala A<br>11:00 Break<br>11:30 Workshops …</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px"><div class="rule grow"></div><span class="xs">or</span><div class="rule grow"></div></div>
+              <div class="box dash" style="padding:22px 12px">
+                <p class="xs" style="margin-bottom:4px"><strong>Drop a file, or browse</strong></p>
+                <p class="xs">.md, .txt or .csv · up to 200 KB</p>
+              </div>
+              <div class="grow"></div>
+              <div class="box" style="border-color:#e6e6e6">
+                <p class="xs" style="margin-bottom:7px">Reading your agenda… this takes 5–20 seconds.</p>
+                <div style="height:5px;background:#e6e6e6;border-radius:999px;overflow:hidden"><div style="width:58%;height:5px;background:#1a1a1a"></div></div>
+              </div>
+              <div class="btn pri">Import</div>
+              <p class="xs" style="text-align:center">Nothing is added to the schedule yet. You review it first.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 7 — F18, F19, N2, S2, AC 20</h3>
+          <p><strong>Paste is first and file second.</strong> Organizers have the agenda in Google Docs or an email, not as a file (benchmark: Whova's template-first import is what we are avoiding).</p>
+          <p>The grey context block at the top is load-bearing: it is the dates, zone and accommodation the AI is given (F19), shown so a host can catch a wrong time zone <em>before</em> spending 20 seconds on an import.</p>
+          <p>N2 needs a visible progress state for up to 30 s — drawn here in place rather than as a modal. AC 20: a 300 KB file or a .pdf is rejected before upload, naming the limit and the allowed formats, so the format line sits on the drop target itself.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">8 · Host: review draft</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Draft</span><span class="pill">Not published</span></div>
+            <div class="tabs"><span class="sel">Draft · 14</span><span>Source</span></div>
+            <div class="bd tight">
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa"><p class="xs"><strong>2 items need your attention.</strong> Everything else was placed with confidence.</p></div>
+              <h5>Mon 24 Nov · Madrid time</h5>
+              <div class="li" style="align-items:flex-start">
+                <div class="grow"><p style="font-weight:600">Welcome coffee</p><p class="xs">09:00 – 09:30 · Lobby</p></div>
+                <span class="xs" style="text-decoration:underline">Edit</span>
+              </div>
+              <div class="li" style="align-items:flex-start">
+                <div class="grow"><p style="font-weight:600">Opening keynote</p><p class="xs">09:30 – 11:00 · Sala A</p></div>
+                <span class="xs" style="text-decoration:underline">Edit</span>
+              </div>
+              <div class="li" style="align-items:flex-start">
+                <div class="grow flag">
+                  <p style="font-weight:600">Workshops</p>
+                  <p class="xs">No end time in the source — ends 13:00?</p>
+                  <div style="display:flex;gap:6px;margin-top:7px"><div class="btn sm">Set time</div><div class="btn sm ghost">Delete</div></div>
+                </div>
+              </div>
+              <div class="li" style="align-items:flex-start">
+                <div class="grow flag">
+                  <p style="font-weight:600">Dinner</p>
+                  <p class="xs">Day is ambiguous — Mon 24 or Tue 25?</p>
+                  <div style="display:flex;gap:6px;margin-top:7px"><div class="btn sm">Mon 24</div><div class="btn sm ghost">Tue 25</div></div>
+                </div>
+              </div>
+              <h5 style="margin-top:4px">Tue 25 Nov · Madrid time</h5>
+              <div class="li" style="align-items:flex-start">
+                <div class="grow"><p style="font-weight:600">Breakfast</p><p class="xs">08:30 – 09:30 · Lobby</p></div>
+                <span class="xs" style="text-decoration:underline">Edit</span>
+              </div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Publish 14 items</div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <p class="xs">Everyone sees the schedule update live.</p>
+                <p class="xs" style="text-decoration:underline">Discard</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 8 — F20, F21, F22, AC 17, AC 18</h3>
+          <p><strong>Flagged items are inline, not a separate queue</strong>, and each one offers the fix it needs (a time, a day) rather than a generic edit. That is what makes AC 17's "flagged with a reason" actionable instead of decorative.</p>
+          <p>Source is a tab on the phone and the <strong>left column on desktop</strong> (§6 frame 8) — same markup, two-up above 820px. The draft is the side a host works in either way.</p>
+          <p>"Not published" in the header and "Publish 14 items" on the button keep principle 4 visible at every moment. F21: guests calling these endpoints get 403 (AC 16). F22 records edits and deletions for draft_published (AC 18).</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROW 4 ===================== -->
+  <section class="row">
+    <h2>4 · Announcements — one channel, not noise</h2>
+    <p class="lede">One-way (S8), pinned at the top of the event, with a home in the app and not only in push (benchmark: Whova, Luma). Questions go to the existing Q&amp;A.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">9 · Event home with announcements</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>eDreams ODIGEO Gathering</span><span class="badge">2</span></div>
+            <div class="bd tight">
+              <div class="box" style="border-color:#1a1a1a">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+                  <h5 style="color:#1a1a1a">📌 Pinned · Alberto C.</h5>
+                  <span class="xs">08:12</span>
+                </div>
+                <p>Breakfast moved to the lobby — Sala A is being set up for the keynote.</p>
+                <p class="xs" style="margin-top:8px;text-decoration:underline">All announcements · 2 unread</p>
+              </div>
+              <div class="rule"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <h5>Mon 24 Nov · Madrid time</h5>
+                <span class="pill">Today</span>
+              </div>
+              <div class="li"><div class="grow"><p style="font-weight:600">Welcome coffee</p><p class="xs">09:00 – 09:30 · Lobby</p></div></div>
+              <div class="li"><div class="grow"><p style="font-weight:600">Opening keynote</p><p class="xs">09:30 – 11:00 · Sala A</p></div></div>
+              <div class="li"><div class="grow"><p style="font-weight:600">Workshops</p><p class="xs">11:30 – 13:00 · Salas B, C</p></div></div>
+              <div class="li"><div class="grow"><p style="font-weight:600">Dinner</p><p class="xs">20:30 · Casa Lucio</p></div></div>
+              <div class="rule"></div>
+              <div style="display:flex;gap:8px">
+                <div class="box grow" style="text-align:center;padding:14px 8px"><p class="xs"><strong>Polls</strong><br>1 open</p></div>
+                <div class="box grow" style="text-align:center;padding:14px 8px"><p class="xs"><strong>Map</strong><br>3 sharing</p></div>
+                <div class="box grow" style="text-align:center;padding:14px 8px"><p class="xs"><strong>Ask AI</strong><br>&nbsp;</p></div>
+              </div>
+              <div class="grow"></div>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 9 — F25, F26, F35, S8</h3>
+          <p>The pinned announcement sits <strong>above the schedule</strong> and is the only black-bordered element on the screen — hosts get one loud channel, and exactly one (F25: one pin at a time, AC 23).</p>
+          <p>No reply affordance anywhere on the card (S8). Unread count is per member (F26) and appears both on the card and in the header badge.</p>
+          <p>Every time on this screen is Madrid time and the day header says so (F35, AC 28). Polls and Map keep their existing entry points — this frame shows announcements landing in the IA from spec 004, not replacing it.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">10 · Host: post announcement</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Announcements</span><span class="m" style="font-weight:500">New</span></div>
+            <div class="bd">
+              <div class="fld" style="height:170px;color:#1a1a1a">Breakfast moved to the lobby — Sala A is being set up for the keynote.</div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <p class="xs">Plain text. Links are tapped as written.</p>
+                <p class="xs">84 / 1000</p>
+              </div>
+              <div class="rule"></div>
+              <div class="li">
+                <div class="grow"><p>Pin to the top of the event</p><p class="xs">Replaces the one pinned now</p></div>
+                <div class="sw"></div>
+              </div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs" style="margin-bottom:6px"><strong>Goes to 38 people.</strong></p>
+                <p class="xs">31 will get a push. 7 muted announcements or have no notifications set up — they will see it in the app.</p>
+              </div>
+              <div class="box dash">
+                <p class="xs">Attendees cannot reply here. Point them at Ask AI or a poll if you need an answer.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Send announcement</div>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 10 — F25, F28, S6, S8</h3>
+          <p><strong>The reach block is the honest bit.</strong> "31 will get a push, 7 will not" stops a host believing push is delivery, which is the thing that goes wrong on iPhone without Add to Home Screen (S6). It is computed from each member's category setting (F28).</p>
+          <p>The pin switch states its own consequence — turning it on unpins the current one (AC 23).</p>
+          <p>The dashed note sets the host's expectation that this is one-way (S8) at the moment they would otherwise ask a question in it. Announcement text is never translated (F37); only the push title is localised (F36, AC 29).</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROW 5 ===================== -->
+  <section class="row">
+    <h2>5 · Settings — notifications, language, organization</h2>
+    <p class="lede">Three small screens that carry three of the spec's load-bearing promises: attendees own their notifications, each person gets their own language, and Organizations exist without taking over the product.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">11 · Member: notification settings</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">Notifications</span></div>
+            <div class="bd">
+              <div>
+                <h4>Notifications</h4>
+                <p class="m" style="margin-top:5px">For this event only. Your other trips keep their own settings.</p>
+              </div>
+              <div class="rule"></div>
+              <div class="li">
+                <div class="grow"><p style="font-weight:600">Announcements</p><p class="xs">Messages from Alberto C. and the co-hosts</p></div>
+                <div class="sw"></div>
+              </div>
+              <div class="li">
+                <div class="grow"><p style="font-weight:600">Schedule changes</p><p class="xs">A session moves, is added or is cancelled</p></div>
+                <div class="sw"></div>
+              </div>
+              <div class="li">
+                <div class="grow"><p style="font-weight:600">Polls</p><p class="xs">A new poll opens, or one you voted in closes</p></div>
+                <div class="sw"></div>
+              </div>
+              <div class="li">
+                <div class="grow"><p style="font-weight:600">Expenses</p><p class="xs">Someone adds an expense that involves you</p></div>
+                <div class="sw off"></div>
+              </div>
+              <div class="li">
+                <div class="grow"><p style="font-weight:600">Questions</p><p class="xs">Someone asks the AI assistant a question</p></div>
+                <div class="sw off"></div>
+              </div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs">Turning something off never hides it. You will still see it in the app — we just will not send a notification.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 11 — F27, F28, F29, AC 22, AC 24</h3>
+          <p>Drawn in the <strong>hosted-trip guest default</strong>: announcements, schedule and polls on; expenses and questions off (F29, AC 24). A personal trip opens with all five on.</p>
+          <p>Each row says what it actually sends, in one line. Luma's rule holds: the member owns these and a host cannot override them (F28 checks the setting before every push).</p>
+          <p>The grey block answers the question this screen always raises — AC 22: muted polls still appear in the app, you just are not pushed about them. It is also our hedge against the Whova overload complaint in the benchmark.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">12 · Language switcher</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Settings</span><span class="m" style="font-weight:500">Language</span></div>
+            <div class="bd">
+              <div>
+                <h4>Language</h4>
+                <p class="m" style="margin-top:5px">Changes the interface only. The schedule and announcements stay in the language the host wrote them in.</p>
+              </div>
+              <div class="rule"></div>
+              <div class="li" lang="en">
+                <div class="grow"><p style="font-weight:600">English</p><p class="xs">English</p></div>
+                <span class="pill on">Selected</span>
+              </div>
+              <div class="li" lang="es">
+                <div class="grow"><p style="font-weight:600">Español</p><p class="xs">Spanish</p></div>
+              </div>
+              <div class="li" lang="pt">
+                <div class="grow"><p style="font-weight:600">Português</p><p class="xs">Portuguese (Brazil)</p></div>
+              </div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs">Saved to your account. It follows you to another device, and we send notifications in it.</p>
+              </div>
+              <div class="grow"></div>
+              <p class="xs">Signed out, we follow your browser instead.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 12 — F33, F34, F36, F37, S5, N5</h3>
+          <p>Each option is <strong>named in its own language and carries its own <code>lang</code> attribute</strong> (N5), so a screen reader pronounces "Español" in Spanish. The English gloss underneath is for someone lost in a language they cannot read.</p>
+          <p>The grey block is F34 and F36 in plain words: the choice is saved to the account, travels to another device (AC 27), and decides the language of push (AC 29).</p>
+          <p>The top line is F37 and the AI rule — the interface translates, the host's content never does. pt-BR per S5, labelled honestly as Brazil.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">13 · Organization switcher</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Trips</span><span class="pill">EN ▾</span></div>
+            <div class="bd tight">
+              <div class="box" style="padding:0;overflow:hidden;border-color:#1a1a1a">
+                <div style="padding:11px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e6e6e6">
+                  <div class="av"></div>
+                  <div class="grow"><p style="font-weight:600">Personal</p><p class="xs">Your own trips</p></div>
+                  <span class="pill on">Selected</span>
+                </div>
+                <div style="padding:11px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e6e6e6">
+                  <div class="av" style="border-radius:7px"></div>
+                  <div class="grow"><p style="font-weight:600">eDreams ODIGEO</p><p class="xs">Admin · 3 hosted events</p></div>
+                </div>
+                <div style="padding:11px 12px;display:flex;align-items:center;gap:10px">
+                  <div class="av" style="border-radius:7px;background:#f4f4f4"></div>
+                  <div class="grow m">Create an Organization</div>
+                </div>
+              </div>
+              <div class="box dash">
+                <p class="xs">Belonging to an Organization does not open its events. You still need a role on each one.</p>
+              </div>
+              <div class="rule"></div>
+              <h5>Personal · 3 trips</h5>
+              <div class="li"><div class="av" style="border-radius:7px"></div><div class="grow"><p style="font-weight:600">Lisbon weekend</p><p class="xs">Host · 6 Feb 2027</p></div></div>
+              <div class="li"><div class="av" style="border-radius:7px"></div><div class="grow"><p style="font-weight:600">Ski trip</p><p class="xs">Guest · 14 Mar 2027</p></div></div>
+              <div class="li"><div class="av" style="border-radius:7px"></div><div class="grow"><p style="font-weight:600">Porto, someday</p><p class="xs">Host · dates TBD</p></div></div>
+              <div class="grow"></div>
+              <div class="btn ghost">New trip</div>
+            </div>
+          </div>
+        </div>
+        <div class="note">
+          <h3>Frame 13 — F1, F3, F5, S7, AC 1, AC 2</h3>
+          <p><strong>Personal is a row in the switcher, and it is selected by default.</strong> Someone with no Organization sees this control only as their trip list — §6 says the switcher is shown only to people who have one, and that is what keeps Organizations from taking over the product for everyone else.</p>
+          <p>The dashed note is <strong>F5 and D19 drawn</strong>, and it is the thing most likely to be got wrong in the build: org membership grants nothing. An org admin with no trip role gets 403 and sees nothing (AC 2). The "Admin · 3 hosted events" line counts the Organization's events, not the ones this person can open.</p>
+          <p>"Create an Organization" is present but last and unstyled (S7: anyone can, we do not promote it). F3: creating a trip while an Organization is selected makes it a hosted trip and you its host — which is why New trip sits inside the switched context rather than in a global header.</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <section class="row" style="margin-bottom:0">
+    <h2>What these frames do not cover</h2>
+    <p class="lede">
+      Spec 002 §10 is out of scope and not drawn: RSVP and check-in, an Organization home page beyond this switcher and a member list, public event pages, payments, interests onboarding, an activity feed, chat, Apple sign-in, announcements by email (S6), machine translation.
+    </p>
+    <p class="lede">
+      Three screens the spec needs but §6 did not list, so they are not drawn here either: <strong>create an Organization</strong> and <strong>the Organization member list</strong> (F1, F2 — the member list is named in §10 as in scope), and the <strong>trip people and roles</strong> screen where a host changes someone between host, co-host and guest (F4). They are small and conventional, but they are screens, and epic <a href="https://github.com/Fogataz/trip-planner/issues/20">#20</a> cannot be built without deciding what they look like. Flagged for the owner in §6 rather than invented here.
+    </p>
+  </section>
+
+</div>
+</body>
+</html>
