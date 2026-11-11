@@ -32,7 +32,7 @@ CI runs in [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) (ww-D1).
 | Server syntax | `node --check` over `server/**/*.js` | Now, costs nothing |
 | Dependency audit | `npm audit --omit=dev`, report only | Now |
 | Spec sections | [`scripts/spec-lint.sh`](../../scripts/spec-lint.sh) over the specs the pull request touches (ww-D10) | Now |
-| Docs-only branches | [`scripts/docs-only-check.sh`](../../scripts/docs-only-check.sh) on any pull request from a `docs/…` branch (ww-D11) | Now |
+| Docs-only branches | [`scripts/docs-only-check.sh`](../../scripts/docs-only-check.sh) on any pull request from a `docs/…` branch: `docs/` and `wireframes/` only (ww-D11, ww-D13) | Now |
 | Server tests | A real suite, supertest on the health and auth routes first, replacing the placeholder | After the pilot |
 
 CI runs on every pull request to `main`. A red check blocks the merge. Nothing auto-merges: the product owner's OK is still required.
@@ -101,13 +101,13 @@ Two sessions share one repository and no other state. Every extra trip between t
 
 | Change | Committed by | How |
 |---|---|---|
-| Anything under `docs/` only | The product session | `scripts/docs-commit.sh <branch-suffix> "<message>" [docs/path ...]` (§7.5, ww-D6) |
+| Anything under `docs/` or `wireframes/` only | The product session | `scripts/docs-commit.sh <branch-suffix> "<message>" [path ...]` (§7.5, ww-D6) |
 | Code, config, lockfiles, `.claude/`, `.github/` | Claude Code | Branch, pull request, review, as today |
 | A mix of docs and code | Claude Code | One pull request, so the docs land with the code that made them true |
 
-The script stages `docs/` and nothing else, and refuses if anything outside `docs/` reaches the index. That is the whole safety model: a product session cannot commit code, because the script will not let it.
+The script stages `docs/` and `wireframes/` and nothing else, and refuses if anything outside them reaches the index. That is the whole safety model: a product session cannot commit code, because the script will not let it. **Amended 2026-11-11 (ww-D13):** `wireframes/` was added after the guard blocked a product session's own stage-3 frames — [docs/README.md](../README.md) rule 7 tells it to save them in the repo, so excluding them made wireframes the one output it could not commit.
 
-**And CI says the same thing (ww-D11).** A hook cannot enforce this: hooks and committed skills are Claude Code features, and a product session does not run Claude Code's hook loop at all, so a path guard would constrain only the session that is allowed to write everywhere. So the guard lives where nobody can skip it — [`scripts/docs-only-check.sh`](../../scripts/docs-only-check.sh) runs in CI on every pull request from a `docs/…` branch and fails if the diff touches anything outside `docs/`. The trade-off, named: branch names are load-bearing. An engineering change parked on a `docs/…` branch fails CI, and the fix is to rename the branch.
+**And CI says the same thing (ww-D11).** A hook cannot enforce this: hooks and committed skills are Claude Code features, and a product session does not run Claude Code's hook loop at all, so a path guard would constrain only the session that is allowed to write everywhere. So the guard lives where nobody can skip it — [`scripts/docs-only-check.sh`](../../scripts/docs-only-check.sh) runs in CI on every pull request from a `docs/…` branch and fails if the diff touches anything outside `docs/` and `wireframes/`. The trade-off, named: branch names are load-bearing. An engineering change parked on a `docs/…` branch fails CI, and the fix is to rename the branch.
 
 **Pull, or know how stale you are (ww-D12).** A `SessionStart` hook runs `git fetch` — read-only, so it cannot lose work — and tells the session how far behind `main` and the working branch are, how many files are uncommitted, and the one command that fixes it. It never pulls: a pull inside a hook runs invisibly, can land on a dirty tree or mid-rebase, and can move the branch under a session that has already read files. The pull stays a deliberate first step, as [CLAUDE.md](../../CLAUDE.md) already requires.
 
@@ -154,13 +154,13 @@ The script is [scripts/docs-commit.sh](../../scripts/docs-commit.sh); its header
 scripts/docs-commit.sh <branch-suffix> "<commit message>" [docs/path ...]
 ```
 
-Start on `main`. The script updates it, creates `docs/<branch-suffix>`, commits, pushes and opens the pull request. Run it again from that branch to add to the same pull request. Name paths to commit only those files; with no paths it commits everything changed under `docs/`.
+Start on `main`. The script updates it, creates `docs/<branch-suffix>`, commits, pushes and opens the pull request. Run it again from that branch to add to the same pull request. Name paths to commit only those files; with no paths it commits everything changed under `docs/` and `wireframes/`.
 
 It refuses, before it changes anything, when:
 
-- a path given, or a file already staged, is outside `docs/`;
+- a path given, or a file already staged, is outside `docs/` and `wireframes/`;
 - you are on any branch other than `main` or `docs/<branch-suffix>`, so another branch's commits cannot ride along;
-- the branch already carries commits that touch files outside `docs/`.
+- the branch already carries commits that touch files outside `docs/` and `wireframes/`.
 
 `gh` is not optional here. This clone sets `credential.https://github.com.helper` to `!gh auth git-credential`, so without `gh` git cannot authenticate the push at all — separate from `gh` being the thing that opens the pull request. Once `gh` is installed and authenticated in the device-bridge VM (ww-D9), the script pushes and opens the pull request from a product session too; otherwise it stops at the push and hands over the branch.
 
@@ -179,4 +179,5 @@ It refuses, before it changes anything, when:
 | ww-D9 | Can a product session push, not just commit? | Product owner | **Decided 2026-11-11: yes, per device.** `gh` installed and logged in with a fine-grained, repo-scoped, time-limited PAT inside the device-bridge VM (§7.1). The token is plaintext, local to that VM, and expires; re-authenticate per device as needed. Repeatable steps: [device-setup.md](device-setup.md) |
 | ww-D10 | Is a spec's section list enforced, or left to the writer? | Engineering | **Decided 2026-11-11: enforced, from `approved` onwards.** Options were: leave it to `/feature`; a CI check only; or a CI check plus a `PostToolUse` hook. Taken: both, from one script ([`scripts/spec-lint.sh`](../../scripts/spec-lint.sh)), because the hook gives the feedback in seconds and CI is the part nobody can skip. Drafts are never blocked, so a seed draft still costs nothing. A spec written before the lenses — numbers 001–004, or any `Shipped:` date before 2026-11-11 — is checked for its header only |
 | ww-D11 | How is "a product session commits docs only" enforced beyond the script? | Engineering | **Decided 2026-11-11: in CI, not in a hook.** Options were: a `PreToolUse` path guard (rejected — a product session runs no Claude Code hooks, so it would guard the wrong session); a committed `core.hooksPath` pre-commit hook (rejected — needs a `git config` per clone, so it is goodwill again, and it fires after the mistake is staged); a CI check on `docs/…` branches (taken) |
+| ww-D13 | Does the docs-only guard allow `wireframes/`? | Engineering | **Decided 2026-11-11: yes.** Found when pull request #102 — a product session's own stage-3 frames for spec 002 — would have failed the guard it was supposed to be protected by. Options were: keep `docs/` only and have engineering commit every wireframe (rejected — it makes a trip to Claude Code out of the one artefact stage 3 exists to produce); move wireframes under `docs/` (rejected — it breaks every existing link and the spec header convention); allow `wireframes/` alongside `docs/` in both the script and the CI check (taken). Frames are static lo-fi HTML, never served to users |
 | ww-D12 | Does a session pull automatically at start, or report staleness? | Engineering | **Decided 2026-11-11: report.** Options were: a `SessionStart` hook that runs `git pull`; one that runs `git fetch` and reports; or nothing. Taken: fetch and report (§7.1). An automatic pull can land on a dirty tree or move the branch under a session mid-read, and loses the one thing a hook should keep — visibility |

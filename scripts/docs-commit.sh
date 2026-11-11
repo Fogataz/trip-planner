@@ -3,10 +3,12 @@
 #
 #   scripts/docs-commit.sh <branch-suffix> "<commit message>" [docs/path ...]
 #
-# Stages docs/ only (or just the docs/ paths given), and refuses if:
+# Stages docs/ and wireframes/ only (or just the paths given), and refuses if:
 #   - you are not on main or on docs/<branch-suffix>;
-#   - anything outside docs/ is staged;
-#   - the branch already carries commits that touch files outside docs/.
+#   - anything outside those two folders is staged;
+#   - the branch already carries commits that touch files outside them.
+# wireframes/ is documentation: docs/README.md rule 7 says to save frames there,
+# and stage 3 of the feature process produces them.
 # So a product session can never commit or push code with it.
 set -euo pipefail
 
@@ -21,13 +23,13 @@ cd "$(git rev-parse --show-toplevel)"
 # 0. Check the inputs before touching any branch.
 for path in "$@"; do
   case "$path" in
-    docs/*) ;;
-    *) printf 'Refusing: %s is outside docs/.\n' "$path" >&2; exit 1 ;;
+    docs/*|wireframes/*) ;;
+    *) printf 'Refusing: %s is outside docs/ and wireframes/.\n' "$path" >&2; exit 1 ;;
   esac
 done
-outside="$(git diff --cached --name-only | grep -v '^docs/' || true)"
+outside="$(git diff --cached --name-only | grep -vE '^(docs|wireframes)/' || true)"
 if [ -n "$outside" ]; then
-  printf 'Refusing: these staged files are outside docs/:\n%s\nUnstage them first (git restore --staged <file>).\n' "$outside" >&2
+  printf 'Refusing: these staged files are outside docs/ and wireframes/:\n%s\nUnstage them first (git restore --staged <file>).\n' "$outside" >&2
   exit 1
 fi
 
@@ -46,16 +48,16 @@ elif [ "$current" != "$branch" ]; then
   exit 1
 fi
 
-# 2. Stage docs/ only, or just the docs/ paths given.
+# 2. Stage docs/ and wireframes/ only, or just the paths given.
 if [ "$#" -gt 0 ]; then
   git add -- "$@"
 else
-  git add -- docs/
+  git add -- docs/ wireframes/
 fi
 
-outside="$(git diff --cached --name-only | grep -v '^docs/' || true)"
+outside="$(git diff --cached --name-only | grep -vE '^(docs|wireframes)/' || true)"
 if [ -n "$outside" ]; then
-  printf 'Refusing: these staged files are outside docs/:\n%s\n' "$outside" >&2
+  printf 'Refusing: these staged files are outside docs/ and wireframes/:\n%s\n' "$outside" >&2
   exit 1
 fi
 
@@ -65,7 +67,7 @@ else
   git commit -m "$message"
 fi
 
-# 3. Everything this branch adds on top of main must be docs/ only. One rule in
+# 3. Everything this branch adds on top of main must be documentation. One rule in
 #    one place: scripts/docs-only-check.sh, which CI runs on every docs/… pull
 #    request too (ww-D11).
 git fetch --quiet origin main || true

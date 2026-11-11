@@ -47,7 +47,7 @@ By folder, because the per-document index already exists and should not be copie
 | `docs/process/` | Living | Product may edit (ww-D5); engineering owns this file's tooling table | [README.md](README.md) |
 | `docs/specs/` | Point-in-time. **Never renamed, moved or rewritten** | Engineering writes, the owner approves | The specs table in [docs/README.md](../README.md) |
 | [docs/features.md](../features.md) | Living: what the code does today | **Engineering only** | [docs/README.md](../README.md) |
-| `wireframes/` | Artifacts, linked from a spec | Either | The spec that uses them |
+| `wireframes/` | Artifacts, linked from a spec | Either — a product session commits them with `docs-commit.sh` (ww-D13) | The spec that uses them |
 | [CLAUDE.md](../../CLAUDE.md) | Living: principles, layout, who does what | Engineering | Read automatically, every session |
 
 Who commits what, and how, is [ways-of-working.md](ways-of-working.md) §7. In one line: documentation
@@ -72,9 +72,9 @@ rule.
 | `session-staleness` | Hook (`SessionStart`) | Telling a session how stale the clone is | Every session start | **Built** | Pull. It only fetches and reports (ww-D12) |
 | `spec-lint` | Hook (`PostToolUse`) | Telling a session what its spec is missing | After an `Edit` or `Write` | **Built** | Block a draft, or judge an answer's quality |
 | `scripts/spec-lint.sh` | Script | The spec's required sections (ww-D10) | CI, the hook, and `/feature` stage 4 | **Built** | Lint a shipped spec nobody touched |
-| `scripts/docs-only-check.sh` | Script | Docs-only branches (ww-D11) | CI on every `docs/…` pull request, and `docs-commit.sh` | **Built** | Allow a code file on a docs branch |
+| `scripts/docs-only-check.sh` | Script | Docs-only branches: `docs/` and `wireframes/` (ww-D11, ww-D13) | CI on every `docs/…` pull request, and `docs-commit.sh` | **Built** | Allow a code file on a docs branch |
 | `scripts/audit-checks.sh` | Script | The mechanical half of `/audit`: orphan socket events, locale-key parity, routes with no auth | On demand, from `/audit` | **Built** 2026-11-11 | Run in CI. It reports on code that already exists, and a required check that fails on day one gets bypassed (sys-D3) |
-| `scripts/docs-commit.sh` | Script | A product session's docs-only commit, push and pull request (ww-D6) | From a product session | **Built** | Stage anything outside `docs/` |
+| `scripts/docs-commit.sh` | Script | A product session's docs-only commit, push and pull request (ww-D6) | From a product session | **Built** | Stage anything outside `docs/` and `wireframes/` |
 | `.github/workflows/ci.yml` | CI | The quality gate ([ways-of-working.md](ways-of-working.md) §2, ww-D1) | Every pull request to `main` | **Built**, required on `main` | Auto-merge anything |
 | GitHub Projects workflows | Board | Adding open issues; closed issues become Shipped (pipe-D1) | Automatically | **Built** | Move "In review" — that is done by hand |
 | Friday digest | Scheduled agent | The prep for the Friday fifteen minutes | Weekly | **Proposed**, December (sys-D4) | — |
