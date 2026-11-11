@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>010 Host trip edit: lo-fi wireframes</title>
+<style>
+:root{--bg:#f4f4f6;--ink:#1d1d22;--mut:#6b6b76;--line:#c9c9d1;--acc:#5b5bd6;--warn:#b45309}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:24px 16px 64px;max-width:1100px;margin-inline:auto}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:36px 0 4px}p.sub{color:var(--mut);margin:0 0 8px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}@media(max-width:760px){.pair{grid-template-columns:1fr}}
+.col>b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px}
+.frame{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:14px;min-height:80px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.btn{border:1.5px solid var(--ink);border-radius:8px;padding:3px 10px;font-size:13px;background:#fff;display:inline-block}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}.btn.g{border-color:var(--line);color:var(--mut)}
+.field{border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;margin:4px 0 10px;color:var(--mut)}
+label{font-size:12px;color:var(--mut);display:block}
+.seg{display:flex;gap:6px;margin:4px 0 10px}.seg span{border:1.5px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px}.seg .on{border-color:var(--acc);color:var(--acc);font-weight:600}
+.note{font-size:13px;color:var(--mut);border-left:3px solid var(--acc);padding:2px 10px;margin-top:10px}
+.warn{border:1.5px solid var(--warn);background:#fff7ed;border-radius:8px;padding:8px 10px;margin:6px 0 10px;font-size:14px}
+.tag{font-size:11px;border:1px solid var(--acc);color:var(--acc);border-radius:4px;padding:0 5px;margin-left:6px}
+.pencil{color:var(--mut);margin-left:6px}
+.toast{background:var(--ink);color:#fff;border-radius:8px;padding:8px 12px;font-size:14px;display:inline-block}
+</style></head><body>
+<h1>010 Host edits their trip: lo-fi wireframes</h1>
+<p class="sub">For <a href="../../docs/specs/010-host-trip-edit.md">spec 010</a>. Lo-fi on purpose: structure and states, not visual design. Tags (F1, AC2…) tie each frame to the spec. The current screens were provided as screenshots; frames marked "today" redraw them.</p>
+
+<h2>1. Entry point A: trip header <span class="tag">F1</span></h2>
+<div class="pair">
+<div class="col"><b>Today</b><div class="frame"><div class="row"><div><strong style="font-size:18px">Madrid Gathering</strong><br><span class="pc" style="color:var(--mut)">Barcelona → Madrid · Nov 23 – TBD</span></div><span class="btn g">Ask the assistant</span></div></div></div>
+<div class="col"><b>Proposed (organizer only)</b><div class="frame"><div class="row"><div><strong style="font-size:18px">Madrid Gathering</strong><span class="pencil">✎</span><br><span style="color:var(--mut)">Barcelona → Madrid · Nov 23 – ~8–10 days</span></div><span class="btn g">Ask the assistant</span></div></div>
+<p class="note">The pencil opens the editor (frame 3). It is next to the name because that is what people try to tap first. Members who are not organizers see no pencil (frame 6).</p></div>
+</div>
+
+<h2>2. Entry point B: Facts card, Dates row <span class="tag">F2</span></h2>
+<div class="pair">
+<div class="col"><b>Today</b><div class="frame"><b style="font-size:12px;color:var(--mut)">THE FACTS</b><div class="row" style="margin-top:6px"><div>FROM Barcelona</div><div>TO Madrid</div><div>DATES Nov 23 – TBD</div><div>MEMBERS 1</div></div><div class="row" style="margin-top:10px;border-top:1px solid var(--line);padding-top:8px"><span>🏨 Staying at: Uver Marcenado…</span><span class="btn g">Edit</span></div></div></div>
+<div class="col"><b>Proposed</b><div class="frame"><b style="font-size:12px;color:var(--mut)">THE FACTS</b><div class="row" style="margin-top:6px"><div>FROM Barcelona</div><div>TO Madrid</div><div>DATES Nov 23 – ~8–10 days <span class="btn g">Edit</span></div><div>MEMBERS 1</div></div><div class="row" style="margin-top:10px;border-top:1px solid var(--line);padding-top:8px"><span>🏨 Staying at: Uver Marcenado…</span><span class="btn g">Edit</span></div></div>
+<p class="note">Same pattern as the Stay Edit button, so it is already familiar. Both entry points open the same editor.</p></div>
+</div>
+
+<h2>3. The editor <span class="tag">F3</span><span class="tag">F4</span><span class="tag">F5</span></h2>
+<div class="pair">
+<div class="col"><b>Proposed: inline panel (desktop) or bottom sheet (phone)</b><div class="frame">
+<strong>Edit trip</strong>
+<label>Trip name</label><div class="field">Madrid Gathering</div>
+<label>Start date</label><div class="field">23 Nov 2026</div>
+<label>Length</label><div class="seg"><span class="on">End date</span><span>Approximate</span><span>Not decided</span></div>
+<div class="field">End date: pick a day (optional)</div>
+<div class="row"><span class="btn g">Cancel</span><span class="btn p">Save</span></div></div></div>
+<div class="col"><b>Notes</b>
+<p class="note">Same three fields and the same length choice as trip creation, so one shared form component serves both (F8).</p>
+<p class="note">"Not decided" is new. It replaces the bare "TBD" with an explicit choice and lets the host clear a date they entered by mistake.</p>
+<p class="note">Origin and destination are not editable in this spec (see spec §6, D2).</p>
+<p class="note">Save is disabled until something changed. Errors show under the field: empty name, end before start (F6).</p></div>
+</div>
+
+<h2>4. Dates change affects existing stops <span class="tag">F7</span></h2>
+<div class="pair">
+<div class="col"><b>Confirmation, only when needed</b><div class="frame">
+<strong>Move the trip to 30 Nov – 2 Dec?</strong>
+<div class="warn">3 stops fall outside the new dates. They stay in the plan, and Plan will mark them "Outside trip dates".</div>
+<div class="row"><span class="btn g">Back</span><span class="btn p">Change dates</span></div></div></div>
+<div class="col"><b>Notes</b>
+<p class="note">Shown only when at least one stop would fall outside the new range. Otherwise Save applies directly.</p>
+<p class="note">Recommendation: never delete or move stops automatically (spec D3). Stop times are exact instants; shifting them silently could hide a booked train.</p>
+<p class="note">If the change moves the trip to another phase (for example Planning to Countdown), nothing extra is asked; Overview just adapts.</p></div>
+</div>
+
+<h2>5. Everyone else sees it live <span class="tag">F9</span><span class="tag">F10</span></h2>
+<div class="pair">
+<div class="col"><b>Another member, any tab</b><div class="frame"><span class="toast">Alberto changed the dates to Nov 30 – Dec 2</span><div style="margin-top:10px"><strong style="font-size:18px">Madrid Gathering</strong><br><span style="color:var(--mut)">Barcelona → Madrid · Nov 30 – Dec 2</span></div></div></div>
+<div class="col"><b>Overview, "Since you were away"</b><div class="frame">• Alberto renamed the trip to “Madrid Gathering”<br>• Alberto changed the dates to Nov 30 – Dec 2</div>
+<p class="note">No refresh needed. Wording is built per language from the action type, like the other activity lines.</p></div>
+</div>
+
+<h2>6. Not an organizer <span class="tag">F11</span></h2>
+<div class="pair">
+<div class="col"><b>Member view</b><div class="frame"><div><strong style="font-size:18px">Madrid Gathering</strong><br><span style="color:var(--mut)">Barcelona → Madrid · Nov 23 – ~8–10 days</span></div><div style="margin-top:8px;color:var(--mut)">DATES Nov 23 – ~8–10 days</div></div></div>
+<div class="col"><b>Notes</b><p class="note">No pencil, no Edit button. If a member loses organizer rights while the editor is open, Save shows "Only the organizer can do this" and keeps their input.</p></div>
+</div>
+
+<h2>7. Error and loading states</h2>
+<div class="frame">Saving: the button reads "Saving…" and is disabled. Failure: the panel stays open with the message under the form and nothing is lost. Offline: same as failure. Two organizers editing at once: last save wins, and both see the result live (spec D4).</div>
+</body></html>
