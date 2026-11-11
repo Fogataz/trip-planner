@@ -1,0 +1,53 @@
+# Quality gate for every pull request to main (ways-of-working.md §2, ww-D1).
+# The job name "ci" is the required status check on main. Nothing auto-merges.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Client install
+        working-directory: client
+        run: npm ci
+
+      - name: Client types and build
+        working-directory: client
+        run: npm run build
+
+      - name: Client tests
+        working-directory: client
+        run: npm test
+
+      - name: Server syntax
+        run: find server -name '*.js' -not -path '*/node_modules/*' -print0 | xargs -0 -n1 node --check
+
+      # Report only: findings show in the log but never fail the build.
+      - name: Dependency audit (server)
+        continue-on-error: true
+        run: npm audit --omit=dev
+
+      - name: Dependency audit (client)
+        continue-on-error: true
+        working-directory: client
+        run: npm audit --omit=dev

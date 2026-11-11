@@ -18,6 +18,8 @@ The Phase 3 socket events in the README (`join-trip`, `leave-trip`, `trip:update
 
 ## Next priorities (proposal)
 
+**After the pilot (D33):** product work follows the epic order in [venture-analysis.md](venture-analysis.md) §11 and the briefs in [epic-briefs.md](epic-briefs.md): the host layer for premium hosts first, then payments. The list below is the engineering backlog that runs alongside.
+
 0. **Hosted event pilot** for the first pilot event on 24–25 Nov: Organizations and trip roles, Google and email-link sign-in, invite link with approval, AI agenda import as a draft, announcements and notification settings, analytics, and the pilot's localization on top of spec 003 (event time zone, language saved to the account, push in each person's language). See [spec 002](../specs/002-hosted-event-pilot.md) (draft) and the [planning list](pilot-event-feature-list.md). It also covers item 3 (notification triggers) and part of item 4 (activity logging).
 1. **Expense settlement.** Suggested settlements are built (`computeSettlements` in `server/routes/expenses.js`), and spec 004 made Money balance-first ("You owe Ana €42.00"). **Missing:** recording that a payment happened, so balances reach zero. Seed draft: [spec 005 Settle up](../specs/005-settle-up.md).
 2. **Transport updates (Phase 5).** The alert slots exist in the Countdown and Live Overview (spec 004). Seed draft: [spec 006](../specs/006-transport-updates.md), recommending manual status first, then one flight API. **TBD:** provider and budget.

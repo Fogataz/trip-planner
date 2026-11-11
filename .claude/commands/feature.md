@@ -55,6 +55,13 @@ State the size and the reason, and let the owner override it.
 
 Note what slowed the process or what you had to guess. If a stage or checklist line would have helped, propose the change to this file in a separate pull request, and keep it general.
 
+## Hand over
+
+If the project defines a chain of commands (here: `docs/process/pipeline.md` §4), end by naming the next one:
+- after stage 4 (spec drafted): "Next: `/epic <spec>` to link the spec and set fields";
+- after the gate: "Next: `/epic <spec>` to create one story per build-order row";
+- after it ships: "Next: `/audit <spec>` once it is live" (`/audit` is planned for December; until it exists, say so).
+
 ## Session hygiene
 
 Commit and push at the end of every session, even for docs-only work, so other computers and accounts see it. Say which files changed.
