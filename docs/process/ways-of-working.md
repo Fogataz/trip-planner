@@ -17,8 +17,9 @@ A story or epic is done when all of these are true.
 | 5 | Spec status, `features.md`, `roadmap.md` and the specs table updated in the same PR ("When a spec ships") | Engineering |
 | 6 | Every new screen has strings in English, Spanish and Portuguese (D23) | Engineering |
 | 7 | The epic's leading measure can actually be read: the event is instrumented, or there is a way to count it | Product |
+| 8 | The spec's `## Design lenses` section is answered line by line, and the reviewer checked each answer against the diff ([design-lenses.md](design-lenses.md)) | Reviewer |
 
-Check 7 is the one that gets skipped. An epic with a measure nobody can read is a bet nobody can settle.
+Check 7 is the one that gets skipped. An epic with a measure nobody can read is a bet nobody can settle. Check 8 is new on 2026-11-11: `scripts/spec-lint.sh` enforces that the lines exist, `/pr` judges whether they are true (ww-D10).
 
 ## 2. Quality gate (CI)
 
@@ -30,9 +31,13 @@ CI runs in [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) (ww-D1).
 | Client tests | `cd client && npm test` (Vitest) | Now |
 | Server syntax | `node --check` over `server/**/*.js` | Now, costs nothing |
 | Dependency audit | `npm audit --omit=dev`, report only | Now |
+| Spec sections | [`scripts/spec-lint.sh`](../../scripts/spec-lint.sh) over the specs the pull request touches (ww-D10) | Now |
+| Docs-only branches | [`scripts/docs-only-check.sh`](../../scripts/docs-only-check.sh) on any pull request from a `docs/…` branch (ww-D11) | Now |
 | Server tests | A real suite, supertest on the health and auth routes first, replacing the placeholder | After the pilot |
 
 CI runs on every pull request to `main`. A red check blocks the merge. Nothing auto-merges: the product owner's OK is still required.
+
+The two new steps are the same scripts the local tooling runs, not a second copy of the rule. `spec-lint.sh` is also a `PostToolUse` hook, so a session that writes a spec is told immediately; `docs-only-check.sh` is step 3 of `scripts/docs-commit.sh`. CI is the backstop, because the `ci` check is required on `main` and a hook is not: a hook only runs where Claude Code runs (§7.1).
 
 ## 3. Reviewing code Claude wrote
 
@@ -42,6 +47,8 @@ Most of this code is written by Claude Code, so the review has to come from outs
 - It answers one question per acceptance criterion: met, not met, or can't tell. Then it lists anything in the diff the spec did not ask for.
 - "Can't tell" counts as not met.
 - The product owner reads the verdict rather than the whole diff, and merges.
+
+Run it with `/pr <number>` ([pipeline.md](pipeline.md) §6.4, pipe-D5). The command hands the spec and the diff to a **subagent**, so the rule holds even when `/pr` is typed in the session that wrote the code. It never merges, pushes, or approves on GitHub.
 
 This is the cheapest insurance a two-person team has. The session that just built something is the worst judge of it, because it already believes it works.
 
@@ -99,6 +106,10 @@ Two sessions share one repository and no other state. Every extra trip between t
 | A mix of docs and code | Claude Code | One pull request, so the docs land with the code that made them true |
 
 The script stages `docs/` and nothing else, and refuses if anything outside `docs/` reaches the index. That is the whole safety model: a product session cannot commit code, because the script will not let it.
+
+**And CI says the same thing (ww-D11).** A hook cannot enforce this: hooks and committed skills are Claude Code features, and a product session does not run Claude Code's hook loop at all, so a path guard would constrain only the session that is allowed to write everywhere. So the guard lives where nobody can skip it — [`scripts/docs-only-check.sh`](../../scripts/docs-only-check.sh) runs in CI on every pull request from a `docs/…` branch and fails if the diff touches anything outside `docs/`. The trade-off, named: branch names are load-bearing. An engineering change parked on a `docs/…` branch fails CI, and the fix is to rename the branch.
+
+**Pull, or know how stale you are (ww-D12).** A `SessionStart` hook runs `git fetch` — read-only, so it cannot lose work — and tells the session how far behind `main` and the working branch are, how many files are uncommitted, and the one command that fixes it. It never pulls: a pull inside a hook runs invisibly, can land on a dirty tree or mid-rebase, and can move the branch under a session that has already read files. The pull stays a deliberate first step, as [CLAUDE.md](../../CLAUDE.md) already requires.
 
 **Which git a product session may run (ww-D8).**
 
@@ -166,3 +177,6 @@ It refuses, before it changes anything, when:
 | ww-D7 | Claude Code reports its outcome into the repo or the board, not only into its chat | Product owner | **Decided 2026-11-11** (§7.2) |
 | ww-D8 | Which git commands a product session may run | Product owner | **Decided 2026-11-11:** read-only and fast-forward commands, plus `scripts/docs-commit.sh` (§7.1). Engineering replaces the "its only git is the script" wording in CLAUDE.md, which as written forbids the `git pull` every session is told to run first |
 | ww-D9 | Can a product session push, not just commit? | Product owner | **Decided 2026-11-11: yes, per device.** `gh` installed and logged in with a fine-grained, repo-scoped, time-limited PAT inside the device-bridge VM (§7.1). The token is plaintext, local to that VM, and expires; re-authenticate per device as needed. Repeatable steps: [device-setup.md](device-setup.md) |
+| ww-D10 | Is a spec's section list enforced, or left to the writer? | Engineering | **Decided 2026-11-11: enforced, from `approved` onwards.** Options were: leave it to `/feature`; a CI check only; or a CI check plus a `PostToolUse` hook. Taken: both, from one script ([`scripts/spec-lint.sh`](../../scripts/spec-lint.sh)), because the hook gives the feedback in seconds and CI is the part nobody can skip. Drafts are never blocked, so a seed draft still costs nothing |
+| ww-D11 | How is "a product session commits docs only" enforced beyond the script? | Engineering | **Decided 2026-11-11: in CI, not in a hook.** Options were: a `PreToolUse` path guard (rejected — a product session runs no Claude Code hooks, so it would guard the wrong session); a committed `core.hooksPath` pre-commit hook (rejected — needs a `git config` per clone, so it is goodwill again, and it fires after the mistake is staged); a CI check on `docs/…` branches (taken) |
+| ww-D12 | Does a session pull automatically at start, or report staleness? | Engineering | **Decided 2026-11-11: report.** Options were: a `SessionStart` hook that runs `git pull`; one that runs `git fetch` and reports; or nothing. Taken: fetch and report (§7.1). An automatic pull can land on a dirty tree or move the branch under a session mid-read, and loses the one thing a hook should keep — visibility |

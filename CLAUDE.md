@@ -33,6 +33,7 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 - `docs/features.md` is living reference. It describes what the code does today.
 - `docs/specs/NNN-short-name.md` are point-in-time decisions. Never rename, move or rewrite a shipped spec. Changes go in a new spec or an amendment section.
 - Each spec starts with a `Status:` header (draft, approved, building, shipped or superseded) and is listed in the specs table in `docs/README.md`.
+- Every spec from 005 on answers the fourteen design lenses in [docs/process/design-lenses.md](docs/process/design-lenses.md), one line each, in a `## Design lenses` section. `scripts/spec-lint.sh` checks it from `approved` onwards.
 - When a spec ships, update the spec, `features.md`, `roadmap.md` and the specs table in the same PR as the feature.
 - Write plainly: short sentences, tables where they help, no marketing tone. Items waiting on the product owner are marked **TBD**.
 

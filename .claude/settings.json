@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-staleness.sh",
+            "timeout": 20,
+            "statusMessage": "Checking how stale this clone is"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/spec-lint.sh",
+            "timeout": 15,
+            "statusMessage": "Checking the spec's sections"
+          }
+        ]
+      }
+    ]
+  }
+}

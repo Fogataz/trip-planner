@@ -55,9 +55,9 @@ Adopted 2026-11-09. Any Claude account working in this repo follows the same sta
 | Stage | What | Output |
 |---|---|---|
 | 1. Benchmark | 3–5 comparable products (event apps, retreat tools, group planners): what they do, what we take, what we avoid, with source links | Benchmark section in the spec |
-| 2. Define | What works for us: options, trade-offs and a recommendation. Check the four product principles in [CLAUDE.md](../CLAUDE.md) and flag conflicts. | Experience and requirements in the spec |
+| 2. Define | What works for us: options, trade-offs and a recommendation. Check the four product principles in [CLAUDE.md](../CLAUDE.md) and flag conflicts. Apply the fourteen lenses in [process/design-lenses.md](process/design-lenses.md) as questions: each one you cannot answer is either an option for the owner or something not designed yet. | Experience and requirements in the spec |
 | 3. Wireframes | Lo-fi frames, one per screen, annotated. In Lucid if connected, otherwise HTML files in `wireframes/NNN-short-name/`. | Frames linked from the spec |
-| 4. Spec | Written from the template below, `Status: draft`, added to the specs table. Every product-owner decision is listed as an open decision with options and a recommendation, never answered for them. | `specs/NNN-short-name.md` |
+| 4. Spec | Written from the template below, `Status: draft`, added to the specs table. Every product-owner decision is listed as an open decision with options and a recommendation, never answered for them. The lenses come back as answers: one line each in a `## Design lenses` section. | `specs/NNN-short-name.md` |
 | **Gate** | **The product owner approves the spec. Status becomes `approved`. No code before this.** Open decisions do not block approval: each carries a recommendation that is the working default until the owner overrides it (D27). | Approved spec |
 | 5. Build | On a branch, in the spec's build order, checked against its acceptance criteria | Pull request |
 | 6. Docs | In the same pull request: see "When a spec ships" below | Updated docs |
@@ -75,6 +75,7 @@ Small fixes with no new screen can skip stages 1 and 3.
   ```
 
 - Add it to the specs table above in the same PR.
+- A spec at `approved`, `building` or `shipped` must also carry four sections, checked by [`scripts/spec-lint.sh`](../scripts/spec-lint.sh) in CI (ww-D10): **acceptance criteria**, **open decisions**, **build order**, and **design lenses** — one line per lens from [process/design-lenses.md](process/design-lenses.md), `n/a` where a lens does not apply. A `draft` needs only the header and its row in the table, so a seed draft is never blocked.
 
 ## When a spec ships
 

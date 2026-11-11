@@ -15,6 +15,7 @@
 | initiative 6 | I6 repeat departures |
 | spec 004 | spec 004 trip IA |
 | Models: C1, H | Models: host tool, operator app |
+| L13 | L13 scale |
 
 **Fix it where the string is made, not where it is read.** A GitHub milestone titled `M0` makes every notification say "M0" forever. Title the object itself:
 
@@ -38,6 +39,7 @@
 | Revenue model | short name (§4) | host tool | working-doc §3 |
 | Layer | name | Host | working-doc §2 |
 | Horizon | name | Next | tracker.md |
+| Design lens | `L#` | L13 scale | [design-lenses.md](design-lenses.md) §2 |
 | Early tester | `T#` | T2 | early-testers.md, no contact details |
 | Source in a point-in-time doc | `[X#]` | [E1] | that document's Sources section. Document-local |
 
@@ -129,6 +131,7 @@ One lookup, so a person or a Claude session can resolve any code without hunting
 | `B#` | brand | brand-foundations §7 |
 | `ww-D#` | quality bar, rhythm and the Cowork handoff | ways-of-working §8 |
 | `pipe-D#` | the command pipeline | pipeline §8 |
+| `lens-D#` | the design lenses | design-lenses §6 |
 | `name-D#` | naming | this file, §6 |
 
 ## 6. Open decisions
