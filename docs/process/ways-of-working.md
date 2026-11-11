@@ -100,11 +100,11 @@ Two sessions share one repository and no other state. Every extra trip between t
 
 The script stages `docs/` and nothing else, and refuses if anything outside `docs/` reaches the index. That is the whole safety model: a product session cannot commit code, because the script will not let it.
 
-**Prerequisites, all three outstanding on 2026-11-11.** Tried from a product session that day and refused:
+**Prerequisites.** The git identity is set on one computer; the other two were outstanding on 2026-11-11. Tried from a product session that day and refused:
 
 | What | How it failed | Fix, and whose |
 |---|---|---|
-| A git identity | The Cowork shell has no `user.email` or `user.name`, and no session may set git config | Engineering sets both once in the repo. They live in `.git/config` inside the folder, so both computers and both surfaces pick them up |
+| A git identity | The Cowork shell has no `user.email` or `user.name`, and no session may set git config | **Done 2026-11-11** on this computer: `Calvur-Labs` with the GitHub noreply address, in `.git/config`. `.git/config` is not committed, so the other computer needs the same two lines set once |
 | Network to GitHub | `git push` is refused by the proxy, HTTP 403 after CONNECT: github.com is not on this account's egress allowlist for the Cowork shell | Product owner allows github.com for the Cowork workspace in the account's network settings |
 | `gh` | Not installed in the Cowork shell, so the script cannot open the pull request | Install it there, or open the pull request from the compare URL that `git push` prints |
 
