@@ -2,230 +2,395 @@
 
 Status: draft
 Owner: Alberto (product)   Shipped: —   PR: —
-Wireframes: [`wireframes/010-joining-and-naming/`](../../wireframes/010-joining-and-naming/) — 8 frames, including the three [spec 002](002-hosted-event-pilot.md) §6 left undrawn.
-Related: [002 hosted event pilot](002-hosted-event-pilot.md) (F1, F2, F4, F12, F17), [007 profiles and display names](007-profiles-and-display-names.md), [009 roles and permissions](009-roles-and-permissions.md).
+Wireframes: [`wireframes/010-joining-and-naming/`](../../wireframes/010-joining-and-naming/) — 13 frames, including the three [spec 002](002-hosted-event-pilot.md) §6 left undrawn.
+Related: [002 hosted event pilot](002-hosted-event-pilot.md), [003 localization](003-localization.md), [007 profiles](007-profiles-and-display-names.md), [009 roles and permissions](009-roles-and-permissions.md).
 
-> Written 2026-11-11, from a QA pass over spec 002 and its wireframes after [spec 009](009-roles-and-permissions.md). Two of the findings below are regressions spec 002 would ship as written; the rest are the onboarding and naming decisions 002 never had to make because the pilot's Organization is created by hand.
+> Written 2026-11-11 from a QA pass over spec 002 and its wireframes after [spec 009](009-roles-and-permissions.md); extended the same day with the invited path (§5.8), localization (§6) and the consolidated direction (§14).
+>
+> **Three of the findings are regressions spec 002 would ship as written.** Q1 renames existing friend trips, Q4 breaks the host's approval decision, and **Q13 puts an approval step in front of people a host already invited — in front of a mechanism the code already has.**
 
 ## 1. The problem in one line
 
-An **Organization** is an administrative object — it exists for ownership, continuity and billing (D18). Planning a trip is a social act. Spec 002 §5.1 puts the administrative decision at **step 2 of 6**, before the user has made anything or seen anyone, and spec 002's role names turn five friends into "a host and four guests".
+Spec 002 asks for administrative decisions before any value (an Organization at step 2 of 6), renames existing users' friends into "guests", and routes people a host **already invited** through a request-and-wait they do not need.
 
-## 2. What we are actually solving, and the ideal outcome
+## 2. What we are solving, and the outcome to build for
 
-**The aha moment is not "I made a trip."** A trip with one person in it is a worse to-do list. It is **the second person appearing in it** — the moment the thing stops being a document and starts being a group. Everything before that is cost the user pays; everything after is value they receive.
+**The aha moment is not "I made a trip."** A trip with one person in it is a worse to-do list. It is **the second person appearing in it** — when the thing stops being a document and becomes a group.
 
-That gives one number to design against:
+> **North star: time from first contact to being inside the trip with other people.**
+> Measured two ways, because there are two readers: for a **host**, first sign-in → second active member. For a **guest**, link tapped → inside the trip.
 
-> **Time from first sign-in to second active member.**
+Every question we ask before that moment has to justify itself against the clock. The onboarding research is consistent on method — collect the minimum to get the user in, ask for more as context demands, push time-to-value toward zero — with one caveat that matters here: **do not defer steps the product needs in order to function** ([PLG onboarding](https://www.plg.news/p/the-ultimate-guide-to-product-led), [SaaS onboarding practices](https://formbricks.com/blog/user-onboarding-best-practices)).
 
-Every question we ask before that moment has to justify itself against it. The onboarding research is consistent on the method: collect the minimum to get the user in and ask for more as context demands; measure time from signup to the aha moment and push it toward zero; but **do not defer steps the product needs in order to function** ([PLG onboarding guide](https://www.plg.news/p/the-ultimate-guide-to-product-led), [SaaS onboarding practices](https://formbricks.com/blog/user-onboarding-best-practices)).
+So the test is narrow. **Does the product function without this step?**
 
-So the test is narrow and answerable: **does the product function without an Organization?**
-
-| Needs an Organization | Works without one |
+| Step | Needed? |
 |---|---|
-| Shared ownership that outlives one person (continuity) | Creating a trip — it has a host |
-| Billing and payouts (not built) | The invite link and approval |
-| An org-level member list across trips | The schedule, polls, expenses, announcements, AI drafts |
-
-Only continuity and billing genuinely need it, and neither exists in the pilot. **The product functions without an Organization, so the Organization must not be a gate.**
+| An Organization | **No.** Only continuity and billing need one, and neither exists in the pilot (§5.2) |
+| Approval, for someone the host invited by name | **No.** The host already decided. The code already has the mechanism (§5.8) |
+| Approval, for someone arriving on a shared link | **Yes.** Nobody has decided anything about them yet |
+| A display name | **Yes, but only when the provider did not give us one** (§5.5) |
+| A photo, interests, a profile | No (§5.6) |
 
 ## 3. Benchmark
 
 | Product | What it does | What we take |
 |---|---|---|
-| **Figma** — the cautionary one | Allowed personal drafts for years, then required every draft to belong to a team. Users move files **one at a time**: Figma's community confirms there is no bulk move, moves between Organizations are not possible, and a personal-to-organization migration goes through support or a `.fig` export ([Figma blog](https://www.figma.com/blog/updates-to-how-drafts-work/), [Figma forum](https://forum.figma.com/t/drafts-are-changing-here-s-what-you-need-to-know/73701/39)). Notably, **existing collaborators keep working in unmoved drafts, but inviting a new one requires moving the file into a team.** | Two things. Defer the container — Figma did, for years, correctly. **And build the adoption path on day one**, because Figma's pain is not deferral, it is bolting the move on afterwards. Also their gate is the right one: collaboration continues, *adding a new collaborator* is where the team is needed. |
-| **Airbnb** | "Hosted by [first name]" with a face, even for professional managers. The default profile is a first name and the year they joined. An academic study found the more trustworthy a host is perceived to be from her photo, the higher the price of the listing and the probability of its being chosen ([Ert, Fleischer & Magen](https://researchgate.net/profile/Eyal-Ert/publication/315410754_Trust_and_Reputation_in_the_Sharing_Economy_The_Role_of_Personal_Photos_on_Airbnb)). Guesty advises property managers to use a headshot of the primary contact rather than a company logo ([Guesty](https://www.guesty.com/setting-up-profile-airbnb-how-does-it-work/)). | **Trust is carried by a person, not a logo** — even when a business is really behind it. The person goes on the invitation. |
-| **Eventbrite** | The organizer profile is a first-class public identity whose name, image and website appear on the listing where attendees register. It auto-creates an **"unnamed organizer"** profile by default ([Eventbrite help](https://www.eventbrite.com/help/en-us/articles/161196/)) | The org identity is what a stranger checks for legitimacy. And the failure mode: a container created for you, unnamed, shown to the public. Never auto-create one. |
-| **Partiful** | "[Name] invites you." One link, no app, social register (spec 002 benchmark) | The voice for a personal trip. Nobody "hosts" a weekend with friends. |
-| **Slack, Notion, Linear** | Workspace first, always. You name the container before you see the product | What not to do before anyone is sold. These are bought by someone already convinced; our link arrives cold in a WhatsApp group. |
-| **Luma** | Calls the container a **Calendar**, not an organization ([Luma help](https://help.luma.com/p/adding-hosts-and-managers-to-your-event)) | The word matters. See O2. |
+| **Figma** — the cautionary one | Allowed personal drafts for years, then required every draft to belong to a team. Users move files **one at a time**; there is no bulk move, moves between Organizations are not possible, and personal-to-organization migration goes through support or a `.fig` export ([Figma blog](https://www.figma.com/blog/updates-to-how-drafts-work/), [forum](https://forum.figma.com/t/drafts-are-changing-here-s-what-you-need-to-know/73701/39)). Their gate is precise: existing collaborators keep working in an unmoved draft, but **inviting a new one** requires the team. | Defer the container — Figma did, correctly, for years. **And build the adoption path on day one**, because their pain was bolting the move on afterwards. Their gate is also the right shape: the container is needed where collaboration *expands*, not where it starts. |
+| **Luma** | "Require approval" for registrations, but **invited guests skip approval** ([Luma help](https://help.lu.ma/p/helpart-u9pkpOQLUKfvfke/inviting-and-adding-guests-to-your-event)) — already in spec 002's benchmark and already in F17. Calls the container a **Calendar**, not an organization. | Two doors, not one. Invitation and approval are different decisions and the host makes only one of them twice. And the word for the container is a choice (**O2**). |
+| **Airbnb** | "Hosted by [first name]" with a face, even for professional managers. An academic study found the more trustworthy a host is perceived from her photo, the higher the price and the probability of being chosen ([Ert, Fleischer & Magen](https://researchgate.net/profile/Eyal-Ert/publication/315410754_Trust_and_Reputation_in_the_Sharing_Economy_The_Role_of_Personal_Photos_on_Airbnb)); Guesty tells property managers to use a headshot rather than a company logo ([Guesty](https://www.guesty.com/setting-up-profile-airbnb-how-does-it-work/)). | **Trust is carried by a person even when a business is behind it.** The person goes on the invitation; the Organization vouches for it. |
+| **Eventbrite** | The organizer profile is a first-class public identity on the listing — and it **auto-creates an "unnamed organizer"** by default ([Eventbrite help](https://www.eventbrite.com/help/en-us/articles/161196/)). | The org identity is what a stranger checks. And the failure to avoid: never auto-create a container (Q9). |
+| **Partiful** | "[Name] invites you." One link, no app, social register. | The voice for a personal trip. Nobody hosts a weekend with friends. |
+| **Slack, Notion, Linear** | Workspace first, always. | What not to do before anyone is sold. These are bought by someone already convinced; our link arrives cold in a group chat. |
 
 ## 4. QA register
 
-Findings from the pass over spec 002, its 13 frames and spec 009. **Q1 and Q2 are regressions spec 002 would ship as written.**
+**Q1, Q4 and Q13 are regressions spec 002 would ship as written.**
 
 | # | Finding | Where | Severity | Position |
 |---|---|---|---|---|
-| **Q1** | **"Guest" is applied to existing friend trips.** F7 migrates creator → host, organizers → co-hosts, members → **guests**. Today the words are "organizer" and "member". Five friends planning Lisbon become a host and four guests. Brand foundations §1.3 says the personality is **Fair — "everyone has a voice", not "bossy, organizer-only"**. Calling your friends guests is precisely that register. | 002 F7, every member-facing screen | **High** — it is a visible regression for every existing user, on a migration that cannot be partially undone | **Label the role per trip kind** (§5.3). Free: spec 009 made roles presets, so the stored role is unchanged and only the lookup differs. |
-| **Q2** | **The Organization is a gate before any value.** §5.1 makes "create an Organization, or pick one" step 2 of 6, before the trip exists. | 002 §5.1 | **High** for self-serve; **zero for the pilot**, where the owner creates the Organization by hand | Never required (§5.2). |
-| **Q3** | **The join page shows no Organization at all.** F12 and S1 give "event name, dates, **host name** and cover". For a link arriving cold in a WhatsApp group, the company name is the legitimacy signal, and it is missing. | 002 F12, frame 1 | Medium | Attribution rule, §5.4. F12's "host name" becomes "who is hosting". |
-| **Q4** | **A host cannot tell who is asking to join.** Frame 5 shows "Marta R. · marta@example.com". With Google we get a name; with an email link we have **only an email**, so the queue shows bare addresses and the host cannot decide. | 002 F14, frame 5 | **High** — it breaks the approval decision itself | Ask one field, only on the email-link path (§5.5). |
-| **Q5** | **The waiting state is a dead end** for up to the 1-hour approval target in §11. | 002 frame 4 | Medium | Make it the progressive-profiling moment (§5.6). |
-| **Q6** | **"Create an Organization" is a permanent menu item** in frame 13, which both promotes it (against S7's "not promoted") and offers it at the one moment nobody needs it. | frame 13 | Low | Contextual prompt at the continuity moment (§5.2). |
-| **Q7** | **No path from a personal trip to an Organization.** Spec 009 case 10 reserved `Trip.orgId` as settable but nothing requires the path. Deferring the Organization makes this load-bearing — this is exactly Figma's mistake. | 009 case 10 | **High if O1 lands on "defer"** | Build the data in block 1, the screen in Phase 1 (§5.7). |
-| **Q8** | **Attribution has no rule anywhere.** "Hosted by Alberto C." is hard-coded in frames 1 and 4 with no statement of what happens when an Organization exists, when it does not, or on a personal trip. | frames 1, 4, 9; F12 | Medium | §5.4. |
-| **Q9** | **An Organization could be auto-created** to satisfy D18 ("Organizations own hosted trips") when a user has none — Eventbrite's "unnamed organizer" failure. | implied by D18 | Medium | Never auto-create. A trip with no Organization is personally owned, full stop (§5.2). |
-| **Q10** | The privacy note (frame 3) is shown **before** the request, but a first-name field (Q4) would land on the same screen. Two asks in one step. | frame 3, frame 19 | Low | One screen, one ask: the name goes on the request screen, the privacy note keeps its own (§5.5). |
-| **Q11** | **An approved guest's first screen is unspecified.** F16 says approval "makes the event available"; §5.2 step 5 says it opens on the next visit. If the agenda is not published yet they land in an empty trip. | 002 F16 | Low | §5.1's ordering already puts import (step 4) before sharing (step 5). Confirmed correct; no change, but it is an ordering the build must not swap. |
-| **Q12** | **The word "Organization" is cold** outside a company. The pilot is a corporate gathering so it fits; a wedding or a retreat is not an organization. Luma says Calendar, Slack and Notion say Workspace, Meta says Business portfolio. | everywhere | Low now, higher with the wedding segment | **O2**, owner's call. |
+| **Q1** | **"Guest" is applied to existing friend trips.** F7 migrates members → **guests**; today the word is "member". Five friends planning Lisbon become a host and four guests. [Brand foundations](../brand/brand-foundations.md) §1.3 says the personality is **Fair — "everyone has a voice", not "bossy, organizer-only"**. | 002 F7, every member screen | **High** — visible regression for every existing user, on a migration that cannot be partly undone | Label roles per trip kind (§5.3). Free: spec 009 made roles presets, so the stored role never changes. |
+| **Q2** | **The Organization is a gate before any value** — §5.1 step 2 of 6, before the trip exists. | 002 §5.1 | High for self-serve; **zero for the pilot**, where the Organization is created by hand | Never required (§5.2). |
+| **Q3** | **The join page shows no Organization at all.** F12 gives "event name, dates, host name, cover". For a link arriving cold in a group chat the company name is the legitimacy signal. | 002 F12, S1, frame 1 | Medium | Attribution rule (§5.4). |
+| **Q4** | **A host cannot tell who is asking to join.** The queue draws "Marta R. · marta@example.com", but on the email-link path there is **no name**, so the host is asked to approve `j.p.2847@example.com`. | 002 F14, frame 5 | **High** — breaks the approval decision itself | Ask one field, only on that path (§5.5). |
+| **Q5** | **The waiting state is a dead end** for up to the 1-hour approval target. | 002 frame 4 | Medium | Make it the profile moment (§5.6). |
+| **Q6** | **"Create an Organization" is a permanent menu item**, which promotes it against S7 and offers it when nobody needs it. | frame 13 | Low | Contextual prompt (§5.2). |
+| **Q7** | **No path from a personal trip to an Organization.** Exactly Figma's mistake. | 009 case 10 | High if O1 is (b) | §5.7. |
+| **Q8** | **Attribution has no rule anywhere.** | frames 1, 4, 9; F12 | Medium | §5.4. |
+| **Q9** | **An Organization could be auto-created** to satisfy D18 — Eventbrite's "unnamed organizer". | implied by D18 | Medium | Never auto-create (§5.2). |
+| **Q10** | Privacy note and a name field would land on the same screen. | frames 3, 19 | Low | One screen, one ask (§5.5). |
+| **Q11** | An approved guest's first screen is unspecified; if the agenda is unpublished they land in an empty trip. | 002 F16 | Low | §5.1's ordering already puts import before sharing. Confirmed correct; must not be swapped. |
+| **Q12** | **"Organization" is a cold word** outside a company. Luma says Calendar; Slack and Notion say Workspace. | everywhere | Low now, higher with weddings | **O2**, owner's call. |
+| **Q13** | **Invited people are sent through request-and-wait.** F17 says they skip *approval*, but every frame and the whole §5.2 flow routes one journey: open → sign in → privacy → **Request to join** → wait → approved → in. For someone the host added by name that is a request to confirm a decision already made, and a wait of up to an hour for it. **`TripInvitation` already carries a unique per-invitation token and `POST /:groupId/invitations/:token/accept` already activates the member with no approval** (`server/routes/groups.js:371`). The spec would layer a queue on top of a working one-tap path. | 002 §5.2, F17, frames 1–5 | **High** — it is the dominant path for the pilot's 38 attendees | Three doors (§5.8). |
+| **Q14** | **The pilot's headline metric cannot be computed.** §11 targets *join rate = joined ÷ invited ≥ 60%*. F30 records `invite_link_opened`, `join_requested`, `join_approved`, `join_declined` — **nothing for the invited path**, which is most of the pilot. An invited person generates an open and then nothing until `trip_viewed`. | 002 F30, §11 | **High** — we would run the pilot and not be able to answer its first question | §5.9.1. |
+| **Q15** | **No way to invite 38 people.** F2 adds org members by email one at a time, and `groups.js:10` does the same for trips. The host does this on 20 Nov for 38 people. | 002 F2; `routes/groups.js` | **High for the pilot**, low after | Bulk invite (§5.9.2). |
+| **Q16** | **Nothing makes the approval target happen.** §11 targets request → approval median **< 1 hour**. If a host does not notice, the funnel stalls at the precise point being measured. | 002 §11 | Medium | Host nudge (§5.9.3). |
+| **Q17** | **The invite token may not survive sign-in.** AC 5 and 6 require returning to the same join page after a Google redirect or an email link. If the token is dropped the user lands on an empty trip list and the one-tap claim collapses silently. | 002 AC 5, AC 6 | Medium | §5.9.4. |
+| **Q18** | **Role labels do not survive translation ungendered.** Spanish and Portuguese inflect *anfitrión/anfitriona*, *invitado/invitada*. We do not collect gender and should not. | §5.3 × 003 | Medium | §6.2, **O8**. |
+| **Q19** | **The first invitation email has no language.** F36 sends push and email in the recipient's saved language — an invitee has no account yet, so there is none. | 002 F36 | Medium | §6.5, **O9**. |
 
 ## 5. The design
 
 ### 5.1 Principle
 
-> **Nothing administrative before the second person.** Every question between first sign-in and the second active member must be one the product cannot function without.
+> **Nothing before the second person that the product does not need.** Not an Organization, not a profile, and not an approval for a decision the host has already made.
 
 ### 5.2 The Organization is never a gate
 
-| Moment | Organization required? |
+| Moment | Required? |
 |---|---|
-| Signing up | No |
-| Creating a trip | No |
-| **Creating the invite link, and inviting the first guests** | **No** — this is the aha moment; gating it is the one change that would cost most |
-| Publishing the agenda | No |
-| Adding a co-host | No |
-| **Adding a co-host who must keep access if the host leaves** | **This is the first real need.** Offer here, do not force |
+| Signing up, creating a trip, creating the invite link, **inviting the first guests**, publishing, adding a co-host | **No** |
+| Adding a co-host who must keep access if the host leaves | **The first real need.** Offer, do not force |
 | A second hosted event by the same person | Offer |
 | Billing and payouts | Require — not built |
 
-A trip with no Organization is **personally owned**: its host is a person, and §9 of spec 009 already covers what happens to it. It is never auto-adopted into one, and an Organization is never auto-created (Q9).
+A trip with no Organization is **personally owned**. It is never auto-adopted, and an Organization is never auto-created without a name a user typed (Q9).
 
-**This changes the reading of D18** ("Organizations own hosted trips"), which is why it is **O1** and not a decision taken here. It costs the pilot nothing: §5.1 already says the product owner creates the pilot Organization by hand and adds the organizers as admins, so the self-serve path is not exercised on 24 Nov either way.
+This changes the reading of D18 ("Organizations own hosted trips"), which is why it is **O1**. It costs the pilot nothing: the pilot Organization is created by hand either way.
 
 ### 5.3 Role labels follow the trip kind
 
-The stored role is unchanged. Only the word differs, resolved in one lookup and three locale files.
+Stored role unchanged; only the word differs, in one lookup.
 
-| Stored role (009) | Personal trip | Hosted event |
+| Stored (009) | Personal trip | Hosted event |
 |---|---|---|
 | `host` | **Organizer** | **Host** |
 | `co-host` | **Organizer** | **Co-host** |
 | `guest` | **Member** | **Guest** |
 
-Consequences worth stating: after the F7 migration an existing user sees **no change in wording at all**, which is what "no user loses access they have today" (AC 4) should mean in the interface as well as in the permission table. And the capability difference between the two columns stays exactly where spec 009 §5.2 put it — in `Trip.guestPermissions`, not in a word.
+After the F7 migration an existing user therefore sees **no change in wording at all** — which is what "no user loses access they have today" (AC 4) should mean in the interface as well as the permission table. See §6.2: this table does not survive translation unchanged.
 
 ### 5.4 Attribution — the rule
 
-Two different questions, asked at two different moments:
+Two questions, two readers:
 
-- **"Is this real?"** — answered by the **Organization**.
-- **"Do I know who is asking me?"** — answered by the **person**, with a face. This is the Airbnb finding: trust transfers from a human even when a business is behind it.
+- **"Is this real?"** → the **Organization**.
+- **"Do I know who is asking me?"** → a **person, with a face**.
 
 > **An Organization is never the author of anything. People write, post and host; Organizations own and vouch.**
 
 | Context | What it says |
 |---|---|
-| Join page — hosted trip in an Organization | Organization name above the event name, small. Below: the host's face and **"Alberto C. and 2 others"**. Legitimacy first for a stranger, then the human. |
-| Join page — hosted trip, no Organization | **"Hosted by Alberto C."** with a face. The person is the only legitimacy there is. |
-| Join page — personal trip | **"Marta invited you."** Social register, no institution, no "host". |
-| Inside a trip | Person first in the header; the Organization appears in trip info. They are already in; the question has changed. |
-| Announcements | **Always the person.** A company does not write "breakfast moved to the lobby". |
-| Push notifications | The person's name (brand voice rule 2: use people's names, never emails). |
-| Analytics and audit | The Organization, because that is the owning entity. |
+| Join page, hosted trip in an Organization | Organization above the event name, small. Below, the host's face and "Alberto C. and 2 others". |
+| Join page, hosted trip, no Organization | "Hosted by Alberto C." with a face. |
+| Join page, personal trip | "Marta invited you." No institution, no "host". |
+| **Invitation email and push** | **The person**, always: "Alberto invited you to Annual Gathering". The Organization appears as a line inside, never as the sender's name. |
+| Inside a trip | Person first; Organization in trip info. |
+| Announcements | Always the person. A company does not write "breakfast moved to the lobby". |
+| Analytics and audit | The Organization — the owning entity. |
 
-**Edge case:** when the event name already starts with the Organization name ("eDreams ODIGEO Gathering" by "eDreams ODIGEO"), drop the Organization line on the join page and show it in trip info only. Never print the same words twice on one screen.
+**Edge case:** when the event name already starts with the Organization name, drop the Organization line on the join page. Never print the same words twice.
 
 ### 5.5 What a joining guest is asked
 
-The approval queue is a decision screen. A host who cannot tell who is asking cannot make it (Q4). That is the one piece of information the join flow genuinely needs.
-
-| Signed in with | We already have | Asked at join |
+| Signed in with | We have | Asked |
 |---|---|---|
-| Google | Name, email, picture | **Nothing.** Straight to Request to join. |
-| Email link | Email only | **One field: first name**, with the reason in-line — "so {host} knows who is asking". |
+| Google | Name, email, picture | **Nothing.** |
+| Email link | Email only | **One field: first name**, reason in line — "so {host} knows who is asking". |
 
-Nothing else. No avatar, no surname, no interests (out of scope, D2), no company. Spec 007 already agrees: the profile is "prompted once after sign-up or after the first trip join, **never blocking**".
+Nothing else. Spec 007 already agrees: prompted once, "never blocking".
 
 ### 5.6 The waiting state is the profile moment
 
-Approval is targeted at under an hour (§11) and frame 4 currently leaves the requester staring at a status card (Q5). That hour is free: they are blocked on someone else, so anything offered there costs the critical path nothing.
-
-Offer — never require — a photo and a confirmed name, framed as what it is: *"so people recognise you when you are in."* It collects exactly what spec 007 wants, at the one moment it is not friction. If they skip it, initials on a colour derived from the uid (spec 007 §4) and nothing is blocked.
+Only door B (§5.8) has a wait. That hour is free — the person is blocked on someone else — so the profile step we took off the critical path is offered there, never required. It collects exactly what spec 007 wants at the one moment it is not friction. Skipping gives initials on a colour from the uid (007 §4).
 
 ### 5.7 Moving a trip into an Organization
 
-Figma's lesson is not "do not defer". It is "do not bolt the move on afterwards" (Q7). If O1 lands on deferral, this path is load-bearing from day one:
+Figma's lesson is not "do not defer", it is "do not bolt the move on afterwards". If O1 lands on deferral this is load-bearing from day one:
 
-- `Trip.orgId` is nullable and settable after creation — **spec 009 §10.2 already reserves the field; this spec requires the path exists.**
-- Only the trip's host can move it, and only into an Organization they belong to.
-- Moving changes who can *claim* the trip (spec 009 R1) and who it survives. It is shown as that, not as a filing action.
-- It is one-way in v1. Moving a trip out of an Organization is not built.
+- `Trip.orgId` nullable and settable after creation — spec 009 §10.2 reserves the field; **this spec requires the path exists**.
+- Host only, into an Organization they belong to. One way in v1.
+- Shown as what it is: the trip now survives its host (spec 009 R1).
 
-## 6. Requirements
+### 5.8 Three doors
+
+**This is the main correction.** There is not one way in; there are three, and they differ by **who has already decided about you**.
+
+| Door | How you arrive | Approval | Why |
+|---|---|---|---|
+| **A — Invited** | A host added your email. You get a mail or push carrying a token unique to **your** invitation. | **None.** One tap in. | The host already decided. Asking them again is asking them to confirm their own decision — and making you wait an hour for it. |
+| **B — Shared link** | The link was posted in a group chat. Nobody has decided anything about you. | **Request → approve.** | Approval is where the host makes the decision for the first time. |
+| **C — Invited, arrived via the shared link** | You open the shared link and a pending invitation matches your verified email. | **None.** Silently upgraded to door A. | Same decision, different door. |
+
+**What this costs today, for the pilot's dominant path:**
+
+| | Steps |
+|---|---|
+| Door A as spec 002 reads | open → sign in → privacy → **request** → *wait up to 1h* → approved → open again → in |
+| Door A as designed | open → sign in → privacy *(first time ever only)* → **in** |
+
+The button says **"Join Annual Gathering"**, not "Request to join". The privacy note stays — it is the consent moment (N4) — but it is **once per person, before first entering any trip**, not once per trip.
+
+#### 5.8.1 The token is the credential, not the email
+
+This also closes the principle-3 hole I flagged in F17. F17 removes the exact-email match so an invitee can accept with any account — which is right (work Google, personal mailbox) and which, on its own, makes a **forwarded invitation a usable key**.
+
+The fix is already half-built. `TripInvitation` carries a unique token per invitation (`models/TripInvitation.js`), and the accept route resolves it (`routes/groups.js:371`). So:
+
+| Rule | Why |
+|---|---|
+| The **token** identifies which invitation is being accepted. The email does not. | One invitation, one person, one credential. |
+| Any signed-in account may accept. | What F17 wanted. The work/personal split is real. |
+| The invitation is marked **consumed** by that account, whatever its email. | Fixes spec 009 case 8 — one human holding two TripMembers, one pending forever. |
+| An email mismatch is **recorded and shown to the host**, not blocked: "Marta's invitation was accepted by alberto@gmail.com". | Attributable. A host can revoke that one person. |
+| Revoking one invitation touches only that person. | Unlike the shared link, where revoke resets everyone (F11). |
+
+A forward is now a traceable, revocable, single-use event instead of an anonymous shared secret. That is strictly better than both today's exact-match (too strict — breaks the work/personal case, `groups.js:395`) and F17 as written (too loose).
+
+### 5.9 Four more things the outcome needs
+
+#### 5.9.1 The invited path must be measured (Q14)
+
+`join rate = joined ÷ invited ≥ 60%` is the pilot's first threshold and today it is uncomputable for door A. Add: `invitation_sent`, `invitation_opened`, `invitation_accepted` (property: `emailMatched`), and `invitation_revoked`. Then:
+
+- **Door A funnel:** sent → opened → accepted.
+- **Door B funnel:** link_opened → requested → approved (F30 as written).
+
+Reported separately, because they are different decisions and mixing them hides which one leaks.
+
+#### 5.9.2 Bulk invite (Q15)
+
+One paste box: emails separated by commas, spaces or newlines. Parse, show "34 addresses, 2 look wrong, 1 already invited", pick a role for all of them, send. Idempotent — re-pasting the same list sends nothing new.
+
+#### 5.9.3 Host nudge on pending requests (Q16)
+
+Push to hosts and co-hosts when the first request arrives, and again when anything has been pending **30 minutes**. It is the only mechanism aimed directly at the §11 median, and it rides the notification plumbing spec 002 part 7 builds anyway. Subject to the host's own category settings (F28).
+
+#### 5.9.4 Carry the token through sign-in (Q17)
+
+The invite or join token must survive the Google redirect and the email-link round trip, and return the person to the page they tapped. If it is lost they land on an empty trip list, which looks like the invitation was wrong. Deep-link state is a named requirement, not an implementation detail (AC 5, AC 6).
+
+## 6. Localization
+
+Spec 003 shipped the base: `react-i18next`, `en.json` / `es.json` / `pt.json` (pt-BR per S5), language order saved → country from IP → browser → English, AI output in the request language. i18next plurals (`_one` / `_other`) and `{{name}}` interpolation are already in use. **Everything new in this spec and spec 002 ships in all three languages from the start** (F33) — these are the parts that are not mechanical.
+
+### 6.1 Never assemble a sentence
+
+Every string with a name or a number in it is **one key**, with `{{name}}` and `{{count}}`. Never concatenate fragments — word order differs and the pieces cannot be reordered by a translator.
+
+| | |
+|---|---|
+| Wrong | `t('hostedBy') + name + t('andOthers', n)` |
+| Right | `joinPage.hosts` with `_one` / `_other`: EN "{{name}} and {{count}} others are hosting" · ES "{{name}} y {{count}} personas más organizan" · pt-BR "{{name}} e mais {{count}} pessoas organizam" |
+
+Applies to: "Marta invited you", "Alberto usually approves within the hour", "Goes to {{count}} people", "{{count}} will get a push", "34 addresses, 2 look wrong".
+
+### 6.2 Role labels, and the gender problem (Q18, O8)
+
+§5.3 is 2 trip kinds × 3 roles × 3 languages = **18 flat keys** (`roles.hosted.host`, `roles.personal.host`, …). Never derived by concatenating kind and role.
+
+The problem: English role nouns are ungendered; Spanish and Portuguese ones are not. *Anfitrión/anfitriona*, *invitado/invitada*, *organizador/organizadora* all inflect. **We do not collect gender and should not** — it is not needed for anything else, and guessing it from a name is exactly the error to avoid.
+
+Three ways out, and only one is acceptable: slashes ("Invitado/a") are ugly and still signal that we wanted to know; guessing is wrong; **so the labels must use forms that do not inflect.** Proposed, and explicitly **for the native reviewers in spec 003 §6 to confirm** before any of it is written into a locale file:
+
+| Stored | EN personal | EN hosted | ES personal | ES hosted | pt-BR personal | pt-BR hosted |
+|---|---|---|---|---|---|---|
+| `host` | Organizer | Host | Organiza | Organiza | Organiza | Organiza |
+| `co-host` | Organizer | Co-host | Coorganiza | Coorganiza | Coorganiza | Coorganiza |
+| `guest` | Member | Guest | Participante | Asistente | Participante | Participante |
+
+Two things to note honestly. **The verb forms ("Organiza") are a workaround**, not natural label copy, and a native reviewer may well have something better. And **the personal/hosted distinction partly collapses in Spanish and Portuguese** — the English pair carries a tonal difference that the ungendered options do not reproduce. That weakens Q1's fix outside English, which is a real cost of choosing ungendered forms and belongs in **O8** rather than being hidden.
+
+### 6.3 Dates, times and the event zone
+
+`Intl.DateTimeFormat` with `timeZone: trip.timeZone` and `timeZoneName`, so "Madrid time (CET)" localizes to "hora de Madrid (CET)" rather than being assembled from a hardcoded English word plus an abbreviation (F35, AC 28).
+
+### 6.4 Layout under expansion
+
+N6 budgets ~30% expansion. The tightest elements in the new frames are the **role pills** — "Co-host" → "Coorganiza" is half as long again — and the role choices in frame 7. Pills wrap or truncate with the full value available; they never clip.
+
+### 6.5 The first invitation has no recipient language (Q19, O9)
+
+F36 sends push and email in the recipient's saved `User.locale`. A door-A invitee **has no account yet**, so there is none. The first invitation needs a language chosen for it; everything after it uses their own.
+
+### 6.6 The missing-key check belongs in CI
+
+Spec 002 part 10 adds a script that fails when a key is missing in any locale. A script nobody runs is not a check — it runs in CI on every PR (ww-D1), or the three files drift the first busy week.
+
+## 7. Requirements
 
 | # | Requirement |
 |---|---|
 | O-F1 | No flow requires an Organization: sign-up, trip creation, invite link, approval, publishing and adding co-hosts all work without one. |
-| O-F2 | An Organization is never created automatically, and never created without a name the user typed. |
-| O-F3 | `Trip.orgId` is nullable. A trip with none is personally owned and behaves identically except for continuity (spec 009 R1). |
+| O-F2 | An Organization is never created automatically, and never without a name the user typed. |
+| O-F3 | `Trip.orgId` is nullable. A trip with none is personally owned. |
 | O-F4 | A trip's host can move it into an Organization they belong to. One way in v1. |
-| O-F5 | Role labels resolve from `trip.kind`: organizer/organizer/member on personal, host/co-host/guest on hosted. One lookup; the stored role never changes. |
-| O-F6 | The join page shows the Organization when there is one and the event name does not already start with it, the host's name and face always, and the personal-trip wording on a personal trip. |
-| O-F7 | A user signing in with Google is asked for nothing at join. A user signing in by email link is asked for a first name, one field, with the reason shown. |
+| O-F5 | Role labels resolve from `trip.kind`. The stored role never changes. |
+| O-F6 | The join page shows the Organization when there is one and the event name does not repeat it, the host's name and face always, and personal-trip wording on a personal trip. |
+| O-F7 | Google sign-in asks nothing at join. Email-link sign-in asks for a first name, one field, with the reason shown. |
 | O-F8 | The approval queue always shows a human-readable name, never a bare email. |
-| O-F9 | The waiting state offers a photo and name and never requires them. Skipping blocks nothing. |
-| O-F10 | Announcements, pushes and activity are attributed to a person. The Organization is never the author. |
-| O-F11 | Creating a trip asks which kind it is (personal or hosted event) and does not ask about Organizations. |
+| O-F9 | The waiting state offers a photo and name and never requires them. |
+| O-F10 | Announcements, pushes, invitations and activity are attributed to a person. The Organization is never the author or the sender. |
+| O-F11 | Creating a trip asks which kind it is and does not ask about Organizations. |
+| **O-F12** | **An invited person enters without approval and without a request.** Door A and door C reach the trip in one tap after sign-in. |
+| **O-F13** | **The invitation token is the credential.** Any signed-in account may accept. The invitation is marked consumed by that account; an email mismatch is recorded and shown to the host, not blocked. |
+| **O-F14** | Revoking one invitation affects only that person. |
+| **O-F15** | The privacy note is shown once per person, before first entering any trip — not once per trip. |
+| **O-F16** | Analytics records `invitation_sent`, `invitation_opened`, `invitation_accepted` (with `emailMatched`) and `invitation_revoked`, and reports the invited and link funnels separately. |
+| **O-F17** | A host can invite many people in one paste. Parsing reports valid, malformed and already-invited counts before sending. Re-sending the same list sends nothing new. |
+| **O-F18** | Hosts and co-hosts are notified when the first request arrives and when any request has been pending 30 minutes, subject to their notification settings. |
+| **O-F19** | The invite or join token survives Google and email-link sign-in and returns the person to the page they tapped. |
+| **O-F20** | Every string added by this spec and spec 002 exists in `en`, `es` and `pt`. Strings containing a name or a count are single keys with interpolation and plurals, never concatenated. |
+| **O-F21** | Role labels are 18 flat keys and use forms that do not inflect for gender. |
+| **O-F22** | The missing-key check runs in CI on every pull request. |
 
-## 7. Acceptance criteria
+## 8. Acceptance criteria
 
 1. Given a brand-new account, when I create a trip, publish a schedule, create an invite link and approve a guest, then I am never asked about an Organization.
 2. Given a user with no Organization, then no Organization exists for them in the database.
-3. Given a personal trip, then the interface says organizer and member; given a hosted event, host, co-host and guest. The stored `TripMember.role` is identical in both.
-4. Given an existing trip migrated by F7, when its members open it, then the words they see are the words they saw before the migration.
-5. Given a hosted trip in an Organization whose name the event name does not repeat, when a stranger opens the invite link, then the Organization name appears above the event name and the host's name and face appear below it.
-6. Given a hosted trip whose event name starts with the Organization name, then the Organization line is not shown on the join page.
-7. Given a personal trip, when someone opens its invite link, then it says "{name} invited you" and the words host and guest do not appear.
-8. Given I sign in with Google on a join page, then I reach Request to join without being asked for anything.
-9. Given I sign in with an email link, then I am asked for a first name, and the host's approval queue shows that name.
-10. Given I am waiting for approval, when I skip the profile offer, then nothing is blocked and I appear to the host with initials.
-11. Given a host on a personally owned trip, when they move it into an Organization they belong to, then the trip's `orgId` is set, the members and their roles are unchanged, and the trip is listed under that Organization.
-12. Given an announcement posted by a host in an Organization's trip, then it is attributed to the person, in-app and in the push.
+3. Given a personal trip the interface says organizer and member; given a hosted event, host, co-host and guest. The stored role is identical.
+4. Given a trip migrated by F7, when its members open it, then the words they see are the words they saw before.
+5. Given a hosted trip in an Organization whose name the event name does not repeat, when a stranger opens the invite link, then the Organization appears above the event name and the host's name and face below it.
+6. Given an event name starting with the Organization name, then the Organization line is not shown on the join page.
+7. Given a personal trip, then the join page says "{name} invited you" and the words host and guest do not appear.
+8. Given Google sign-in on a join page, then I reach the join action without being asked for anything.
+9. Given email-link sign-in, then I am asked for a first name and the host's queue shows that name.
+10. Given I am waiting for approval, when I skip the profile offer, then nothing is blocked and I appear with initials.
+11. Given a host on a personally owned trip, when they move it into an Organization, then `orgId` is set and members and roles are unchanged.
+12. Given an announcement posted in an Organization's trip, then it is attributed to the person, in-app and in the push.
+13. **Given an invitation sent to me, when I open its link and sign in, then I am inside the trip with no request and no approval, and the button I pressed said Join.**
+14. **Given an invitation sent to `marta@work.com`, when Marta accepts signed in as `marta@gmail.com`, then she joins, the invitation is consumed, and the host's people screen shows the mismatch.**
+15. **Given a consumed invitation, when its link is opened again by anyone, then it does not grant access.**
+16. **Given a host revokes one invitation, then only that person's link stops working and every other invitation still works.**
+17. **Given I open the shared link and a pending invitation matches my verified email, then I join without a request (door C).**
+18. **Given I have already seen the privacy note on another trip, when I accept an invitation, then I am not shown it again.**
+19. **Given the pilot runs, when the product owner exports the events, then join rate is computable separately for invited people and for shared-link arrivals.**
+20. **Given a host pastes 38 addresses of which 2 are malformed and 1 is already invited, then they see those three counts before sending, and sending invites 35.**
+21. **Given a request has been pending 30 minutes, then the hosts are notified unless they turned that category off.**
+22. **Given I tap an invitation on a device where I am signed out, when I complete Google sign-in, then I land on that trip and not on an empty trip list.**
+23. **Given any screen added by this spec or spec 002, then every string resolves in `en`, `es` and `pt`, and the missing-key check passes in CI.**
+24. **Given a Spanish or Portuguese interface, then no role label is gendered and none is rendered with a slash.**
+25. **Given an event in Europe/Madrid viewed in Spanish from another time zone, then times show in Madrid time with the zone named in Spanish.**
 
-## 8. Product principles
+## 9. Product principles
 
 | Principle | This spec |
 |---|---|
 | 1. One source of truth | Unaffected. |
 | 2. Real-time by default | Unaffected. |
-| 3. Privacy first | **Strengthened.** §5.5 reduces what we collect and when. The join page still shows only what S1 allows, plus the Organization, which is less personal than the host name already shown. |
+| 3. Privacy first | **Strengthened twice.** §5.5 collects less. §5.8.1 closes the forwarded-invitation hole that F17 opens, by making the credential a revocable per-person token instead of an email address anyone can forward. |
 | 4. AI drafts are editable | Unaffected. |
 
-**Brand check.** Q1 is a direct conflict with brand foundations §1.3 ("Fair: everyone has a voice… not bossy, organizer-only") and §1.4 rule 2 ("use people's names"). §5.3 and §5.4 resolve both.
+**Brand check.** Q1 conflicts with brand foundations §1.3 ("Fair… not bossy, organizer-only") and §1.4 rule 2 ("use people's names"). §5.3 and §5.4 resolve both — with the caveat in §6.2 that the fix is weaker in Spanish and Portuguese.
 
-## 9. Open decisions — need your call
-
-**O1 is the one that matters, and it changes how D18 reads.** The rest can run on their recommendation (D27).
+## 10. Open decisions — need your call
 
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
-| **O1** | Is an Organization ever required to host a trip? D18 says "Organizations own hosted trips". | (a) Required to create a hosted trip — spec 002 §5.1 as written / (b) **Never required; offered when continuity or billing makes it useful; a trip with none is personally owned** / (c) Required before inviting the first guest | **(b).** The product functions without one (§2), and (c) gates exactly the aha moment. It costs the pilot nothing, because the pilot Organization is created by hand either way. If you take (b), D18 should be re-read as "Organizations *may* own hosted trips", and Q7's adoption path becomes required rather than reserved. |
-| **O2** | The user-facing word for an Organization | (a) **Organization** / (b) Team / (c) Workspace / (d) Something brand-specific, as Luma chose "Calendar" | **(a) for the pilot**, where the user really is a company, and revisit when the wedding and retreat segments are tested — "organization" is wrong for a wedding and the brand doc has not named the alternative. This is a naming decision and belongs with brand foundations §3, not here. |
-| **O3** | Role labels per trip kind (§5.3) | (a) **Yes** / (b) One vocabulary everywhere (host/co-host/guest) / (c) One vocabulary everywhere (organizer/member) | **(a).** It is a lookup and three locale files, it removes a visible regression for every existing user, and (b) is the regression. |
-| **O4** | Join-page attribution order (§5.4) | (a) **Organization above, person below with a face** / (b) Person only, as drawn today / (c) Organization only | **(a).** Legitimacy and trust are different questions and a cold link needs both answered. |
-| **O5** | Ask email-link users for a first name at join | (a) **Yes, one field** / (b) No, show the email to the host / (c) Ask after approval | **(a).** (b) breaks the host's decision (Q4), and (c) is too late for the only moment it is needed. |
-| **O6** | Offer the profile step in the waiting state | (a) **Yes, optional** / (b) No, keep the waiting state static / (c) Require it before the request is sent | **(a).** Free time that is otherwise dead, and it is the data spec 007 wants. (c) would put it back on the critical path. |
-| **O7** | When do we build the move-into-an-Organization path? | (a) Data in block 1, screen in Phase 1 / (b) **Data in block 1, screen when the first user asks** / (c) Both in the pilot | **(b).** The field costs nothing now and is the whole of Figma's lesson; the screen has no pilot user, since the pilot Organization exists before its trip does. |
+| **O1** | Is an Organization ever required to host a trip? (D18 says "Organizations own hosted trips") | (a) Required — 002 §5.1 as written / (b) **Never required; offered when continuity or billing makes it useful** / (c) Required before inviting the first guest | **(b).** The product functions without one, and (c) gates exactly the aha moment. Costs the pilot nothing. If taken, D18 re-reads as "Organizations *may* own hosted trips" and Q7's move path becomes required. |
+| **O2** | The user-facing word for an Organization | (a) **Organization** / (b) Team / (c) Workspace / (d) Brand-specific, as Luma chose "Calendar" | **(a) for the pilot**, where the user is a company. Revisit with the wedding and retreat segments — "organization" is wrong for a wedding. Belongs with [brand foundations](../brand/brand-foundations.md) §3. |
+| **O3** | Role labels per trip kind | (a) **Yes** / (b) host/co-host/guest everywhere / (c) organizer/member everywhere | **(a)**, with §6.2's caveat that it is weaker in ES and pt-BR. |
+| **O4** | Join-page attribution order | (a) **Organization above, person below with a face** / (b) person only / (c) Organization only | **(a).** Legitimacy and trust are different questions; a cold link needs both. |
+| **O5** | Ask email-link users for a first name | (a) **Yes, one field** / (b) no, show the email / (c) after approval | **(a).** (b) breaks the host's decision, (c) is after the only moment it is needed. |
+| **O6** | Offer the profile step while waiting | (a) **Yes, optional** / (b) no / (c) require it | **(a).** Otherwise-dead time, and it is the data spec 007 wants. |
+| **O7** | When to build the move-into-an-Organization path | (a) data in block 1, screen in Phase 1 / (b) **data in block 1, screen when a user asks** / (c) both in the pilot | **(b).** The field is the whole of Figma's lesson; the screen has no pilot user. |
+| **O8** | Role labels in ES and pt-BR (Q18) | (a) **Ungendered forms (§6.2 table), confirmed by the native reviewers** / (b) gendered with a slash ("Invitado/a") / (c) collect gender | **(a).** (c) is out of the question and (b) still signals we wanted to know. Accept that the personal/hosted tonal split is weaker outside English — the alternative is misgendering real attendees at a real company event. **This needs the spec 003 §6 native reviewers before any locale file is written.** |
+| **O9** | Language of the **first** invitation email, before the invitee has an account (Q19) | (a) **The trip's language, set by the host when they create it** / (b) the inviter's own language / (c) English always | **(a).** The host knows who they are inviting better than we do, and one field at trip creation covers the whole guest list. (b) breaks when an English-speaking admin invites a Spanish team. |
+| **O10** | What a declined requester sees (carried from 009 R6) | (a) "request sent" forever / (b) **"The host has not added you. Ask them directly."**, re-request allowed if a host re-opens it / (c) explicit "declined" | **(b).** (a) is a lie they will act on; (c) delivers a rejection nobody asked us to send. F16's silence is kept without being false. |
+| **O11** | Does the join page show how many people are going? | (a) **A count only, no names, and only when it is 3 or more** / (b) nothing / (c) names and faces | **(a).** Social proof raises join rate (Partiful, Luma) and a count identifies nobody, so principle 3 holds. The threshold stops a new event looking abandoned. (c) breaks principle 3 outright. |
+| **O12** | Does door A still show the privacy note? | (a) **Yes, once per person before first entering any trip** / (b) once per trip / (c) not for invited people | **(a).** It is the consent moment (N4) and consent is not per trip. (c) would mean most pilot attendees never see it. |
 
-**Still TBD and not for me:** O2's eventual answer belongs with the naming work in [brand foundations](../brand/brand-foundations.md) §3.
+**Still TBD and not mine:** O2's eventual answer (brand foundations §3) and O8's exact Spanish and Portuguese wording (spec 003 §6 native reviewers).
 
-## 10. Build order
+## 11. Direction, in one page
 
-| Block | What | In the pilot? |
-|---|---|---|
-| **1** | §5.3 role labels; `Trip.orgId` nullable and settable; the approval queue showing names not emails (Q4); the join-page attribution rule (§5.4) | **Yes.** Q1 and Q4 are regressions and the other two are copy and one nullable field. All inside epic [#20](https://github.com/Fogataz/trip-planner/issues/20) and spec 002 part 3. |
-| **2** | §5.5 first-name field on the email-link path; §5.6 waiting-state profile offer | **Yes if spec 002 part 9 (email-link sign-in) ships.** Both are cut if it is cut — they only exist on that path. |
-| **3** | Trip kind at creation without an Organization (O-F11); no Organization gate anywhere (O-F1) | Only if O1 is (b). Small: it is the removal of a step. |
-| **4** | Create an Organization as a contextual prompt; Organization member list; move a trip into an Organization | No. Phase 1. The pilot Organization is made by hand. |
+Three sentences, then the shape.
 
-## 11. Out of scope
+> **We are building the shortest possible path from a link in a group chat to a person inside a live trip, and nothing administrative stands in it.** Roles, Organizations and approval exist to protect that path, not to precede it. Where a decision has already been made — a host invited you by name — the product acts on it instead of asking again.
 
-Organization home page beyond the switcher and member list (spec 002 §10); billing and payouts; interests onboarding (D2); avatars beyond what Google provides and what §5.6 offers (spec 007 owns profiles); moving a trip *out* of an Organization; partner-style sharing between Organizations (spec 009 block 5); the naming decision behind O2 (brand foundations §3).
+What that means concretely, across the three specs:
 
-## 12. What this changes elsewhere
+| | Direction |
+|---|---|
+| **Access** | One capability table, roles as presets, two layers. Access comes only from an active trip role; an Organization grants the right to *obtain* one, never to read (009). |
+| **Entry** | Three doors, by who has already decided about you. Invited is one tap; shared-link is request-and-approve; the token is the credential, so one-tap and principle 3 stop fighting (010 §5.8). |
+| **Structure** | The container arrives when it earns its keep, and the path into it is built on day one because Figma's is not (010 §5.2, §5.7). |
+| **Words** | A person authors, an Organization vouches. Role words follow the trip's kind, and no role word guesses anyone's gender (010 §5.4, §6.2). |
+| **Proof** | Two funnels measured separately, because invited and uninvited leak for different reasons (010 §5.9.1). |
+
+**The one real risk is the calendar.** The build window is 12–19 Nov for an event on 24–25 Nov. Everything above is sized against that in §12: the pilot slices contain the three regressions and nothing speculative, and §5.8's one-tap path is largely **removing** a step from a mechanism the code already has.
+
+## 12. Build slices
+
+Spec 002 §12 has eleven build-order rows. These are the same rows grouped into shippable slices, with the new work folded in — not a competing plan.
+
+| Slice | 002 rows | Plus | Pilot? | Maps to |
+|---|---|---|---|---|
+| **S1 · Permissions foundation** | 1 | 009 block 1 (capability table, `can()`, TripMember/OrgMember, migration with dry-run and reverse, G3, G5) and **G4** (socket and live-location revocation); role labels (§5.3) | **Must** | Epic [#20](https://github.com/Fogataz/trip-planner/issues/20) — enrich, do not replace |
+| **S2 · The door** | 2, 3, 9 | §5.8 three doors, token-as-credential, §5.5 name field, §5.6 waiting state, §5.9.2 bulk invite, §5.9.3 host nudge, §5.9.4 deep link, §5.4 attribution | **Must** | New epic |
+| **S3 · Localization of the new surface** | 4, 10 | §6 in full: 18 role keys, no concatenation, `Intl` zone names, CI missing-key check, O8 and O9 | **Must** | New epic |
+| **S4 · Analytics** | 5 | §5.9.1 invited-path events and two separate funnels | **Must** | New epic |
+| **S5 · Agenda drafts** | 6, 11 | — | **Must** | New epic |
+| **S6 · Announcements and notifications** | 7, 8 | — | Must / Should | New epic |
+| **S7 · Lifecycle hardening** | — | 009 block 2 remainder (G1 last host, G2 last owner) | Should | New epic |
+| **S8 · After the pilot** | — | 009 blocks 3–5 (guest proposals, per-member overrides, org reach); 010 §5.7 move screen; Organization member list and contextual create | **No** | Phase 1 |
+
+**Dependency:** S1 before everything. S2 and S3 run together. S4 must land before the dry run on 20 Nov or the pilot produces no numbers.
+
+## 13. Out of scope
+
+Organization home page beyond the switcher and member list; billing and payouts; interests onboarding (D2); avatars beyond Google's and §5.6's offer (spec 007 owns profiles); moving a trip *out* of an Organization; partner sharing between Organizations (009 block 5); a fourth language; machine translation of content; the naming decision behind O2.
+
+## 14. What this changes elsewhere
 
 | Document | Change |
 |---|---|
-| **002** §5.1 | Step 2 "Create an Organization, or pick one you belong to" becomes optional and moves after the trip exists. Subject to O1. |
-| **002** F12, S1 | "host name" becomes "who is hosting", resolved by §5.4. |
-| **002** F7 | Unchanged in data. The interface words are §5.3's, so the migration is invisible to existing users. |
-| **002** F14, frame 5 | The approval queue shows a name. Requires §5.5. |
-| **002** frames 1, 4, 13 | Attribution (§5.4), the waiting-state offer (§5.6), and "Create an Organization" leaving the switcher (Q6). |
-| **009** §10.2, case 10 | `Trip.orgId` settable moves from reserved to required, if O1 is (b). |
-| **007** | Agrees already. §5.5 and §5.6 are where its profile prompt lands; 007 keeps ownership of profiles. |
+| **002** §5.1 step 2 | Organization becomes optional and moves after the trip exists (O1). |
+| **002** §5.2 | Becomes door B only. Door A is §5.8 and does not pass through it. |
+| **002** F12, S1 | "host name" → "who is hosting" (§5.4). |
+| **002** F14 | The queue shows a name (§5.5). |
+| **002** F17 | Kept, with the credential corrected: the **token**, not the email, and a recorded mismatch instead of a block (§5.8.1). |
+| **002** F7 | Unchanged in data; the words are §5.3's. |
+| **002** F30, §11 | Four invited-path events; two funnels reported separately (§5.9.1). |
+| **002** F2 | Bulk paste (§5.9.2). |
+| **002** F36 | Needs O9 for the first invitation. |
+| **002** part 10 | The missing-key script runs in CI (§6.6). |
+| **002** frames 1, 4, 5, 13 | Attribution, the waiting offer, names in the queue, and "Create an Organization" leaving the switcher. |
+| **009** case 8, §10.2 case 10 | Case 8 is closed by consumed-on-accept (§5.8.1); case 10 becomes required if O1 is (b). |
+| **009** R6 | Carried here as O10. |
+| **003** §6 | Its native-review gap now blocks O8. |
+| **007** | Agrees; §5.5 and §5.6 are where its prompt lands. |
 
-## 13. Build status
+## 15. Build status
 
 Not started. Draft, pending the gate.

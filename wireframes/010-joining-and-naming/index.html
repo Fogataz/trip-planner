@@ -99,7 +99,7 @@
 <div class="wrap">
 
   <h1>Joining and naming — lo-fi wireframes</h1>
-  <p class="sub">Spec 010: <a href="../../docs/specs/010-joining-naming-and-the-first-trip.md">docs/specs/010-joining-naming-and-the-first-trip.md</a> (<strong>Status: draft</strong>). Ten frames.</p>
+  <p class="sub">Spec 010: <a href="../../docs/specs/010-joining-naming-and-the-first-trip.md">docs/specs/010-joining-naming-and-the-first-trip.md</a> (<strong>Status: draft</strong>). Thirteen frames.</p>
   <p class="sub">Includes the three screens <a href="../002-hosted-event-pilot/index.html">spec 002's set</a> left undrawn — create an Organization (F1), the Organization member list (F2), and trip people and roles (F4) — because what they show is decided here.</p>
 
   <div class="cards">
@@ -115,8 +115,8 @@
     </div>
     <div class="card">
       <h3>Open decisions drawn as defaults</h3>
-      <p>O1 Organization never required — frames 5, 8, 10.<br>O3 role labels per trip kind — frames 6, 7.<br>O4 attribution order — frames 1, 2.<br>O5 first name on the email-link path — frame 3.<br>O6 profile offer while waiting — frame 4.<br>O7 move path, data now and screen later — frame 10.</p>
-      <p><strong>O1 is the one that matters.</strong> If it lands on "Organization required", frames 5, 8 and 10 change shape and frame 5 gains a gate.</p>
+      <p>O1 Organization never required — frames 5, 8, 10.<br>O3 role labels per trip kind — frames 6, 7, 13.<br>O4 attribution order — frames 1, 2.<br>O5 first name on the email-link path — frame 3.<br>O6 profile offer while waiting — frame 4.<br>O7 move path, data now and screen later — frame 10.<br>O8 ungendered role labels — frame 13.<br>O9 the event's language for first invitations — frame 12.<br>O11 a count, never names — frame 11.<br>O12 privacy note once per person — frame 11.</p>
+      <p><strong>O1 and the door-A design are the ones that matter.</strong> If O1 lands on "Organization required", frames 5, 8 and 10 change shape. If door A is not taken, frame 11 disappears and the pilot's 38 attendees all go through request-and-wait.</p>
     </div>
   </div>
 
@@ -619,8 +619,155 @@
     </div>
   </section>
 
+  <!-- ===================== ROW 5 ===================== -->
+  <section class="row">
+    <h2>5 · Three doors — and the one the pilot actually uses</h2>
+    <p class="lede">There is not one way in. There are three, and they differ by <strong>who has already decided about you</strong>. Door A is someone a host added by name: the decision is made, so the product acts on it instead of asking again. For the pilot's 38 attendees this is the dominant path, and <a href="../../docs/specs/002-hosted-event-pilot.md">spec 002</a> routes all of them through request-and-wait.</p>
+    <div class="strip">
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">11 · Invited — one tap in</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>Trip Planner</span><span class="pill">EN ▾</span></div>
+            <div class="cover">COVER</div>
+            <div class="bd">
+              <div style="display:flex;align-items:center;gap:11px">
+                <div class="av lg"></div>
+                <div class="grow"><p style="font-weight:600">Alberto invited you</p><p class="xs">to this event</p></div>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+                  <div class="av sq" style="width:18px;height:18px"></div>
+                  <h5 style="color:#1a1a1a">eDreams ODIGEO</h5>
+                </div>
+                <h4>Annual Gathering</h4>
+                <p style="margin-top:6px">Mon 24 – Tue 25 Nov 2026</p>
+                <p class="m" style="margin-top:3px">Madrid time (CET)</p>
+              </div>
+              <div class="rule"></div>
+              <div class="li" style="padding-top:0">
+                <div style="display:flex">
+                  <div class="av"></div>
+                  <div class="av" style="margin-left:-10px;box-shadow:0 0 0 2px #fff"></div>
+                  <div class="av" style="margin-left:-10px;box-shadow:0 0 0 2px #fff"></div>
+                </div>
+                <div class="grow"><p class="m">14 people are going</p></div>
+              </div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs"><strong>No request, no waiting.</strong> Alberto already added you — tap Join and you are in.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Join Annual Gathering</div>
+              <p class="xs" style="text-align:center;margin-top:2px">Signed in as marta@example.com · <span style="text-decoration:underline">not you?</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q13 — 002 §5.2, F17, frames 1–5 · O-F12, O11, O12</h3>
+          <p><strong>Spec 002 routes one journey:</strong> open → sign in → privacy → <em>Request to join</em> → wait up to an hour → approved → open again → in. F17 says invited people skip <em>approval</em>, but nothing skips the <em>request</em>. This frame is the whole of door A: open → sign in → privacy (first time ever) → <strong>in</strong>.</p>
+          <p><strong>The mechanism already exists.</strong> <code>TripInvitation</code> carries a unique token per invitation and <code>POST /:groupId/invitations/:token/accept</code> already activates the member with no approval (<code>server/routes/groups.js:371</code>). The spec would layer a queue on top of a working one-tap path.</p>
+          <p>The button says <strong>Join</strong>, not Request to join — the word has to match what happens. "14 people are going" is O11: a count, never names, and only shown from 3 up so a new event does not look abandoned.</p>
+          <p>"Signed in as … not you?" is the escape hatch for the shared-device case, and the point where an email mismatch gets recorded rather than blocked (§5.8.1).</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">12 · Host: invite people</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">Invite</span></div>
+            <div class="bd">
+              <div>
+                <h4>Invite people</h4>
+                <p class="m" style="margin-top:6px">They go straight in — no approval needed.</p>
+              </div>
+              <div>
+                <h5 style="margin-bottom:8px">Paste email addresses</h5>
+                <div class="fld filled" style="height:132px;font-size:12.5px;line-height:1.6">marta@example.com, joao@example.com,
+chloe@example.com, sam@example.com,
+irene@example.com, diego@exmaple,
+nuria@example.com …</div>
+                <p class="xs" style="margin-top:7px">Commas, spaces or one per line.</p>
+              </div>
+              <div class="box" style="border-color:#1a1a1a">
+                <div class="li" style="padding-top:0"><div class="grow"><p style="font-weight:600">35 ready to invite</p></div><span class="pill on">Guest ▾</span></div>
+                <div class="li"><div class="grow"><p class="xs">2 do not look like addresses</p><p class="xs" style="margin-top:2px">diego@exmaple, sam@</p></div><span class="xs" style="text-decoration:underline">Fix</span></div>
+                <div class="li"><div class="grow"><p class="xs">1 is already invited</p><p class="xs" style="margin-top:2px">nuria@example.com</p></div><span class="xs">Skipped</span></div>
+              </div>
+              <div class="box dash">
+                <p class="xs">Each person gets their own link. Revoking one does not affect anybody else.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="ft">
+              <div class="btn pri">Send 35 invitations</div>
+              <p class="xs" style="text-align:center">In the event's language: English</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q15 — 002 F2 · O-F14, O-F17, O9</h3>
+          <p><strong>Today there is no way to invite 38 people.</strong> F2 adds Organization members by email one at a time, and <code>routes/groups.js:10</code> does the same for a trip. The host does this on 20 Nov, for 38 people, by hand.</p>
+          <p>The three counts are shown <strong>before</strong> sending, because the failure a host fears is half a list going out. <code>diego@exmaple</code> is a real typo drawn deliberately — a missing TLD is the common one and it is silently undeliverable.</p>
+          <p>The dashed note is §5.8.1 in the host's words: <strong>each invitation is its own revocable credential</strong>, unlike the shared link where revoking resets everyone (F11).</p>
+          <p>The footer line is <strong>O9</strong>: an invitee has no account yet, so there is no saved language to send in. The recommendation is the event's language, set once by the host, covering the whole guest list.</p>
+        </div>
+      </figure>
+
+      <figure class="board">
+        <figcaption class="label"><span class="name">13 · The same screen in Español</span><span class="dims">390×844</span></figcaption>
+        <div class="stage" style="width:390px;height:844px">
+          <div class="f" lang="es">
+            <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">Personas · 41</span></div>
+            <div class="bd tight">
+              <div style="display:flex;gap:8px">
+                <div class="btn sm grow" style="text-align:center">Enlace de invitación</div>
+                <div class="btn sm grow ghost" style="text-align:center">Solicitudes · 4</div>
+              </div>
+              <div class="rule"></div>
+              <h5>Organiza · 3</h5>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Alberto C. <span class="xs">(tú)</span></p><p class="xs">alberto@example.com</p></div>
+                <span class="pill on">Organiza</span>
+              </div>
+              <div class="li">
+                <div class="av"></div>
+                <div class="grow"><p style="font-weight:600">Nuria V.</p><p class="xs">nuria@example.com</p></div>
+                <span class="pill">Coorganiza</span>
+                <span class="xs" style="font-weight:700">⋯</span>
+              </div>
+              <div style="height:4px"></div>
+              <h5>Asistentes · 38</h5>
+              <div class="li"><div class="av"></div><div class="grow"><p>Marta R.</p><p class="xs">Se unió hace 2 días</p></div><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="li"><div class="av"></div><div class="grow"><p>João P.</p><p class="xs">Se unió hace 2 días</p></div><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="li"><div class="av"></div><div class="grow"><p>Chloé D.</p><p class="xs">Se unió ayer</p></div><span class="xs" style="font-weight:700">⋯</span></div>
+              <div class="rule" style="margin-top:6px"></div>
+              <div class="box" style="border-color:#e6e6e6;background:#fafafa">
+                <p class="xs"><strong>Horario:</strong> lun 24 – mar 25 nov 2026, hora de Madrid (CET)</p>
+              </div>
+              <div class="grow"></div>
+              <p class="xs">Solo quien organiza ve los correos electrónicos.</p>
+            </div>
+          </div>
+        </div>
+        <div class="note fix">
+          <h3>Fixes Q18 — 010 §6.2, O8 · 003 §6</h3>
+          <p>Frame 6 in Spanish, and the reason it is drawn at all: <strong>English role nouns are ungendered and Spanish ones are not.</strong> <em>Anfitrión/anfitriona</em>, <em>invitado/invitada</em> all inflect. We do not collect gender and should not, so the labels must use forms that do not inflect — hence <strong>Organiza, Coorganiza, Asistentes</strong> rather than <em>Anfitrión</em> and <em>Invitados</em>.</p>
+          <p><strong>Two honest costs, drawn rather than hidden.</strong> The verb forms are a workaround, not natural label copy. And the personal/hosted tonal split that fixes Q1 in English partly collapses here — which is why <strong>O8 needs the spec 003 §6 native reviewers</strong> before a single word goes into a locale file.</p>
+          <p>Note the width: "Coorganiza" is half as long again as "Co-host". N6 budgets ~30% expansion and the role pills are the tightest element in the whole set — they wrap or truncate, never clip (§6.4).</p>
+          <p>"hora de Madrid (CET)" comes from <code>Intl.DateTimeFormat</code> with <code>timeZoneName</code>, not from an English word glued to an abbreviation (§6.3, AC 25).</p>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
   <section class="row" style="margin-bottom:0">
-    <h2>What these ten frames do not cover</h2>
+    <h2>What these thirteen frames do not cover</h2>
     <p class="lede">
       The Organization switcher and the trip list stay as drawn in <a href="../002-hosted-event-pilot/index.html">002 frame 13</a>, minus the permanent "Create an Organization" row (Q6). Join requests, the invite link panel, agenda import, draft review, the event home, announcements, notification settings and the language switcher are all in the 002 set and unchanged by this spec.
     </p>

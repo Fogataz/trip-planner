@@ -73,7 +73,7 @@ Five products that solve parts of this today.
 4. Screen: "Request sent. You'll get a notification when a host approves you." If push is not possible (for example iPhone without the app on the home screen), we show the "Add to Home Screen" steps.
 5. On approval: push (where available), and the event opens on the next visit.
 
-People already invited by email skip approval (as in Luma).
+People already invited by email skip approval (as in Luma). **⚠ Not enough — corrected 2026-11-11 ([spec 010](010-joining-naming-and-the-first-trip.md) §5.8, Q13).** The five steps above are **door B**: someone arriving on a link posted in a group chat, about whom nobody has decided anything. An invited person is **door A** and does not pass through them at all — open → sign in → privacy note (once per person, ever) → **in**, on a button that says Join. For the pilot's 38 attendees door A is the dominant path, and the mechanism already exists in the code (`POST /:groupId/invitations/:token/accept`).
 
 ### 5.3 Organizer: agenda import as a draft
 
@@ -144,7 +144,7 @@ Mobile first; desktop is the same layout, wider.
 | # | Requirement |
 |---|---|
 | F1 | A signed-in user can create an Organization. The creator is its owner. |
-| F2 | An owner or admin can add people to the Organization by email as admin or member, and remove them. |
+| F2 | An owner or admin can add people to the Organization by email as admin or member, and remove them. **Added 2026-11-11 ([spec 010](010-joining-naming-and-the-first-trip.md) Q15, §5.9.2):** adding people — to an Organization and to a trip — takes a **paste of many addresses**, reporting valid, malformed and already-invited counts before sending. There is no way to invite 38 people one at a time on 20 Nov. |
 | F3 | Organization owners, admins and members can create hosted trips in that Organization. The creator becomes the trip's host. |
 | F4 | Trip roles are host, co-host and guest. Hosts and co-hosts can edit the event, publish drafts, approve requests, post announcements and manage roles. |
 | F5 | Organization membership alone gives no access to a trip (D19). Only an active trip role does. |
@@ -169,7 +169,7 @@ Mobile first; desktop is the same layout, wider.
 | F14 | Hosts and co-hosts see pending requests and can approve or decline each, or approve all. **The queue always shows a human-readable name, never a bare email** — on the email-link path there is no name unless we ask for one ([spec 010](010-joining-naming-and-the-first-trip.md) Q4, §5.5, O5). |
 | F15 | A requester cannot see members, schedule, polls, expenses, questions, announcements or locations, and cannot join the trip's real-time room, until approved. |
 | F16 | Approval sends the requester a push (if registered) and makes the event available. Decline sends nothing. |
-| F17 | People invited by email skip approval when they accept with any signed-in account (the exact-email match is removed). |
+| F17 | People invited by email skip approval when they accept with any signed-in account (the exact-email match is removed). **⚠ Corrected 2026-11-11 ([spec 010](010-joining-naming-and-the-first-trip.md) Q13, §5.8):** they must skip the **request** too, not only the approval — §5.2 below routes every arrival through "Request to join", including people a host added by name. The credential is the **per-invitation token** (`models/TripInvitation.js`, already built), not the email address; a mismatch is recorded and shown to the host instead of blocking, which closes the forwarded-invitation hole that removing the email match would otherwise open. |
 
 **AI drafts and agenda import**
 
@@ -197,7 +197,7 @@ Mobile first; desktop is the same layout, wider.
 
 | # | Requirement |
 |---|---|
-| F30 | The product records these events: invite_link_opened, join_requested, join_approved, join_declined, signed_in (method), trip_viewed, schedule_viewed, poll_voted, question_asked, announcement_posted, announcement_opened, notifications_changed (category, on/off), location_sharing_started, draft_created (source, item count), draft_published (items edited, deleted), language_changed. |
+| F30 | The product records these events: invite_link_opened, join_requested, join_approved, join_declined, signed_in (method), trip_viewed, schedule_viewed, poll_voted, question_asked, announcement_posted, announcement_opened, notifications_changed (category, on/off), location_sharing_started, draft_created (source, item count), draft_published (items edited, deleted), language_changed. **⚠ Incomplete — added 2026-11-11 ([spec 010](010-joining-naming-and-the-first-trip.md) Q14, §5.9.1):** `invitation_sent`, `invitation_opened`, `invitation_accepted` (`emailMatched`) and `invitation_revoked`. Without them §11's headline metric — join rate = joined ÷ invited — **cannot be computed for invited people**, who are most of the pilot. The invited and shared-link funnels are reported separately, because they leak for different reasons. |
 | F31 | Each event stores: name, trip id, role, time, a pseudonymous user id, and small properties listed above. Never content, names, emails or coordinates. |
 | F32 | A product owner can export the events for a trip as CSV for the retro. |
 
@@ -205,10 +205,10 @@ Mobile first; desktop is the same layout, wider.
 
 | # | Requirement |
 |---|---|
-| F33 | Every new string in this spec is added to `en.json`, `es.json` and `pt.json` (spec 003 set up the files; Portuguese is pt-BR, S5). |
+| F33 | Every new string in this spec is added to `en.json`, `es.json` and `pt.json` (spec 003 set up the files; Portuguese is pt-BR, S5). **Added 2026-11-11 ([spec 010](010-joining-naming-and-the-first-trip.md) §6):** strings carrying a name or a count are **single keys** with interpolation and plurals, never concatenated; role labels are 18 flat keys using **forms that do not inflect for gender** (Q18, O8 — needs the spec 003 §6 native reviewers); the missing-key check runs in **CI**, not as a script somebody remembers. |
 | F34 | Language detection stays as in spec 003. In addition, a signed-in user's choice is saved to their account (`User.locale`) and applied on sign-in on any device. |
 | F35 | Dates and times are formatted for the user's language and shown in the event's time zone (`trip.timeZone`), with the zone named. |
-| F36 | Push notifications and the sign-in email use the recipient's saved language (closes spec 003's "push text is English" gap for the categories in this spec). |
+| F36 | Push notifications and the sign-in email use the recipient's saved language (closes spec 003's "push text is English" gap for the categories in this spec). **Gap ([spec 010](010-joining-naming-and-the-first-trip.md) Q19, O9):** the **first invitation** goes to someone with no account and therefore no saved language. Recommended: the event's language, set once by the host. |
 | F37 | AI answers use the asker's language (built in spec 003). AI agenda drafts keep the source language. Content is never machine-translated in this version. |
 
 ### 7.2 Technical
@@ -327,9 +327,9 @@ Proposed pilot thresholds (working doc, section 5; D7 to confirm).
 
 | Signal | Target |
 |---|---|
-| Join rate (joined ÷ invited) | ≥ 60% |
+| Join rate (joined ÷ invited) | ≥ 60% — **reported as two funnels**, invited (sent → opened → accepted) and shared link (opened → requested → approved). See F30. |
 | Link opened → request sent, median | < 2 minutes |
-| Request → approval, median | < 1 hour |
+| Request → approval, median | < 1 hour — **nothing in this spec makes it happen** ([spec 010](010-joining-naming-and-the-first-trip.md) Q16): hosts are notified on the first request and again at 30 minutes pending (§5.9.3). Door A arrivals are not in this metric at all; they never wait. |
 | Day 1 / day 2 active (of joined) | ≥ 60% / ≥ 40% |
 | Actions per active attendee per day | ≥ 3 |
 | Poll participation (of joined) | ≥ 50% |
