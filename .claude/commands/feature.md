@@ -14,3 +14,8 @@ The process is defined in `docs/README.md`, section "How a feature goes from ide
 5. **Gate:** do not write code until the spec has `Status: approved` and its open decisions are answered. If it is not approved, stop and say what is missing.
 6. Once approved: work on a branch (never `main`), build in the spec's build order, check against its acceptance criteria, and in the same PR update the spec, `docs/features.md`, `docs/product/roadmap.md` and the specs table in `docs/README.md`.
 7. Pull at the start and commit and push at the end of the session. Open a PR to `main`; do not merge without the product owner's OK.
+8. Hand over (docs/process/pipeline.md §4). End by naming the next command:
+   - after stage 4 (spec drafted): "Next: `/epic <spec>` to link the spec and set fields";
+   - after the approval gate: "Next: `/epic <spec>` to create one story per build-order row";
+   - after it ships: "Next: `/audit <spec>` once it is live" (`/audit` is planned for
+     December, pipeline.md §7; until it exists, say so).

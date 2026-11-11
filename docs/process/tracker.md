@@ -49,10 +49,70 @@ Set on the board (project fields):
 
 | Field | Values |
 |---|---|
+| Horizon | Now, Next, Later. Set on initiatives and epics. Roadmap and Backlog views can group by it |
 | Status | Backlog, Spec draft, Spec approved, In build, In review, Shipped |
 | Sprint | 1-week iterations, from Mon 10 Nov |
 
 Layer, Phase and Revenue Model live on the **epic only**. A story inherits context from its parent.
+
+## Milestones
+
+Three gate milestones in `Fogataz/trip-planner`. The criteria are from [venture-analysis.md](../product/venture-analysis.md) §9. Put them in each milestone's description. Every initiative and epic belongs to one.
+
+| Milestone | Due | Gate |
+|---|---|---|
+| **M0 Pilot retro** | 2026-11-27 | Pilot retro against the [working doc](../product/working-doc.md) §5 thresholds |
+| **M1 Phase 1 gate** | 2027-02-26 | At least 2 hosts paid or committed a departure with a deposit; 8 of 15 interviewed hosts describe the pain unprompted; setup under 2 hours per departure |
+| **M2 Phase 2 gate** | 2027-06-30 | 10+ paying hosts; first host collecting deposits in the app; second departure run without our help |
+
+## Writing an epic
+
+Epics are written by the `/epic` command (`.claude/commands/epic.md`), which follows this section.
+
+### Rules
+
+| Rule | Why |
+|---|---|
+| **The title is an outcome**: what changes for a host or traveller, in plain words. "Hosts start a new departure from a past one in minutes", not "Templates". Once a spec exists, prefix its number: `[009] Hosts start…` | Roadmaps work best when they name problems and outcomes, not features [E3][E4]. The title survives if the solution changes. |
+| **Every epic carries a hypothesis and a measure** | An epic is a bet. A testable hypothesis plus early (leading) indicators lets us stop or continue before all the work is spent [E1][E2]. |
+| **3–6 main user stories, from named personas (personas in [epic-briefs.md](../product/epic-briefs.md) §2)** | Enough to show the shape of the work. Stories become sub-issues only after the spec is approved, from its build order (tracker.md). |
+| **Before a spec:** the issue body is the full brief. **After a spec:** the body keeps outcome, hypothesis, measures and stories, and links the spec for requirements and acceptance criteria | Keeps one source of truth: the brief, then the spec. The board never restates a spec (tracker.md). |
+| **Principles check in every brief** | CLAUDE.md asks us to flag conflicts early. |
+| **Owner questions are listed, never answered** | D27: each has a recommendation that is the working default. |
+| **Size:** 2–8 weeks. Bigger means two epics | tracker.md level 2. |
+
+### Issue body template
+
+```markdown
+**Outcome:** <one sentence: what changes for whom>
+**Initiative:** #<n> · **Horizon:** Now | Next | Later · **Milestone:** M0 | M1 | M2
+**Models:** <A…I> · **Layer:** Core | Host | Money | Public | Content
+**Spec:** none yet (next step: /feature benchmark) | [NNN](link)
+
+### Problem
+<2–3 sentences, with the evidence and a link>
+
+### Hypothesis
+We believe <capability> for <persona> will <outcome>.
+We'll know when <measure and target>.
+
+### Measures
+- Leading (during build or the first departure): …
+- Lagging (by the milestone): …
+
+### Main user stories
+- As a <persona>, I want <goal>, so that <reason>.
+
+### Scope
+- In: …
+- Not in: …
+
+### Depends on
+### Principles check
+### Open questions for the owner (with recommendation)
+### Done when
+Spec shipped and docs updated (docs/README.md "When a spec ships"), and the measure checked at the milestone.
+```
 
 ## Views
 
@@ -79,7 +139,7 @@ Put the spec number in the epic title: `[002] Invite link, requests and approval
 
 ## Seeding
 
-The initiatives, epics and stories below were created in `Fogataz/trip-planner` on 2026-11-10 by a one-off
+Initiatives 1–5 and their epics below were created in `Fogataz/trip-planner` on 2026-11-10 by a one-off
 script, since removed (it is in git history). Shipped specs 001 and 003 are **not** seeded — they are already recorded
 in the specs table, and back-filling closed issues adds noise.
 
@@ -109,19 +169,20 @@ they are seeded as epics only.
 Plus two tasks on the initiative itself: the 13 lo-fi wireframe frames (§6) and the dry run on
 Fri 20 Nov (§12.4).
 
-### Initiative 2 — Prove the offsites model (decide D3)
+### Initiative 2 — Learn from the pilot and keep offsites as a benchmark
 
-Outcome: D3 is decided on pilot evidence, and a second event runs without hand-holding.
-Target 19 Dec. Revenue Model: D.
+> Renamed and refocused 2026-11-10 (D33). Was "Prove the offsites model". RSVP and Organization home moved to initiative 6, the public share page to initiative 8. Closes after M0.
+
+Outcome: the pilot is written up and its metrics are the benchmark premium hosts must meet.
+Horizon: Now. Milestone: M0. Revenue Model: D.
 
 | Epic | Layer | Source |
 |---|---|---|
-| Spike: pilot retro against the §11 signals, and the D3 call | — | spec 002 §11 |
-| RSVP, capacity, check-in and guest forms | Host | working-doc §4.1 item 9 |
-| Organization home | Host | working-doc §4.1 item 10 |
-| Public share page | Public | working-doc §4.1 item 11 |
+| Spike: what the pilot teaches us about hosts (brief 2) | — | spec 002 §11 |
 
-### Initiative 3 — Close the gaps in what is already built
+### Initiative 3 — What we have built works as documented
+
+> Renamed from "Close the gaps in what is already built". Add a CI task. Horizon: Now.
 
 Outcome: `features.md` matches the code, and the known defects are gone. Target 5 Dec.
 
@@ -133,7 +194,9 @@ Outcome: `features.md` matches the code, and the known defects are gone. Target 
 | Remove duplicate Mongoose index definitions | Task | roadmap, next priority 5 |
 | Fix the Redis URL configuration | Task | roadmap, next priority 5 |
 
-### Initiative 4 — Transport awareness
+### Initiative 4 — Travellers hear about delays before they matter
+
+> Renamed from "Transport awareness". Horizon: Later.
 
 Outcome: members are alerted to delays that affect the schedule. No target date: blocked on the
 provider and budget (**TBD**). Phase 5.
@@ -146,7 +209,9 @@ status first, then one flight API.
 | Spike: choose a transport data provider (coverage, budget) | Spike |
 | Transport delay alerts | Epic |
 
-### Initiative 5 — Give the product a structure
+### Initiative 5 — Give the product a structure (closed)
+
+> Closed 2026-11-10: spec 004 shipped.
 
 Outcome: people can tell what the app is for and find the one thing that matters to them right now.
 Added after the first seed, when spec 004 was approved (2026-11-10). It is the foundation that specs
@@ -158,3 +223,26 @@ Added after the first seed, when spec 004 was approved (2026-11-10). It is the f
 
 Spec 007 (profiles and display names) is a separate epic under initiative 1, because it ships with
 Google sign-in.
+
+## Initiatives added by venture-analysis.md §12.2
+
+Added 2026-11-10 after D33 (premium hosts lead). Outcome titles; epics come from [epic-briefs.md](../product/epic-briefs.md).
+
+| # | Initiative | Horizon | Key result | Epics |
+|---|---|---|---|---|
+| 6 | Premium hosts run a repeat departure without our help | Now | 2 hosts run a second departure with under 2 hours of setup | Briefs 3–7 |
+| 7 | We know which premium hosts will pay, and for what | Now | Phase 2 scope chosen on evidence at M1 | Discovery spikes (epic-briefs §3) |
+| 8 | Hosts collect guest money inside the trip | Next | First host collects deposits in the app by M2 | Brief 8 now; briefs 9–12 after M1 |
+
+### Summary of initiatives
+
+| # | Initiative | Horizon | Milestone |
+|---|---|---|---|
+| 1 | Run the hosted event pilot | Now | M0 |
+| 2 | Learn from the pilot and keep offsites as a benchmark | Now | M0 |
+| 3 | What we have built works as documented | Now | — |
+| 4 | Travellers hear about delays before they matter | Later | — |
+| 5 | Give the product a structure | — | Closed |
+| 6 | Premium hosts run a repeat departure without our help | Now | M1 |
+| 7 | We know which premium hosts will pay, and for what | Now | M1 |
+| 8 | Hosts collect guest money inside the trip | Next | M2 |
