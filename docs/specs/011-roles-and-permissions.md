@@ -409,6 +409,6 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 | L13 | Scale | `TripMember` is a collection rather than an embedded array precisely for hundreds of members (working doc §4.2); unique index on `(tripId, userId)`, and the capability check reads one member document, not the member list. The people list is the one unbounded list and is paged in [spec 012](012-joining-naming-and-the-first-trip.md) frame 6. |
 | L14 | Lifecycle | Roles apply identically before, during and after. **R7 · Trip after it ends** keeps a trip writable once it is over, because settle-up ([spec 005](005-settle-up.md)) needs writes after the event. A week later, roles still gate the ledger. |
 
-## 15. Build status
+## 16. Build status
 
 Not started. Draft, pending the gate. Block 1 is epic [#20](https://github.com/Fogataz/trip-planner/issues/20) under milestone M0.

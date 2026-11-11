@@ -391,7 +391,7 @@ What that means concretely, across the three specs:
 
 **The one real risk is the calendar.** The build window is 12–19 Nov for an event on 24–25 Nov. Everything above is sized against that in §12: the pilot slices contain the three regressions and nothing speculative, and §5.8's one-tap path is largely **removing** a step from a mechanism the code already has.
 
-## 12. Build slices
+## 12. Build order — the slices
 
 Spec 002 §12 has eleven build-order rows. These are the same rows grouped into shippable slices, with the new work folded in — not a competing plan.
 
@@ -453,6 +453,6 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 | L13 | Scale | Built for the hosted-event numbers, not eight friends: bulk invite parses a paste of 38+ and reports counts before sending (§5.9.2); the people list and approval queue are paged; counts read `status: 'active'` only, so 41 means 41 (**Q15 · No bulk invite**, [spec 011](011-roles-and-permissions.md) case 15). |
 | L14 | Lifecycle | Mostly **before**: joining, inviting, approving. During the event the host nudge still fires and the people screen is how a host fixes a wrong role. After it ends, nothing here runs except **O7 · Move path timing**'s move into an Organization, which is a continuity act and is most likely to happen once the event is over. |
 
-## 15. Build status
+## 16. Build status
 
 Not started. Draft, pending the gate.
