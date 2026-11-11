@@ -221,7 +221,7 @@
     "upload": "Upload",
     "drop": "Drop an image here",
     "chooseFile": "Choose a file",
-    "formats": "JPG, PNG or WebP · up to 8 MB · wide images work best",
+    "formats": "JPG, PNG or WebP · up to 8 MB · wide pictures work best",
     "resized": "Resized in your browser · {{progress}}%",
     "resizeNote": "Images are resized to 1600px before they leave your device, so uploads stay small.",
     "remove": "Remove cover",
@@ -248,7 +248,13 @@
       "removeFailed": "The cover could not be removed. Try again.",
       "cannotOpen": "That image could not be opened.",
       "cannotProcess": "That image could not be processed in this browser."
-    }
+    },
+    "edit": "Edit cover",
+    "sheetTitle": "Cover",
+    "previewTitle": "How it will look on the trip page",
+    "previewTall": "This picture is tall, so only a slice will show. You can choose the slice after you save.",
+    "usePicture": "Use this picture",
+    "chooseAnother": "Choose another"
   },
   "trip": {
     "tabs": {

@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trip cover layout — lo-fi wireframes</title>
+<style>
+  :root{
+    --ink:#15181d; --ink-2:#5b6472; --ink-3:#8b94a3;
+    --line:#c9ced8; --line-soft:#e3e7ee; --page:#fbfcfe; --card:#fff;
+    --art:#d5d9e1; --art-2:#bcc2cd; --note:#b4530a; --note-bg:#fdf3e7; --note-line:#e8b482;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);
+    font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);margin:0 0 4px;font-size:14px}
+  .row{margin:44px 0 0}
+  .row h2{font-size:17px;margin:0 0 6px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}
+  .row>p{margin:0 0 18px;color:var(--ink-2);font-size:13.5px;max-width:78ch}
+  .strip{display:flex;flex-wrap:wrap;gap:30px 28px;align-items:flex-start}
+  .board{margin:0}
+  .label{display:flex;justify-content:space-between;gap:10px;margin:0 0 8px;width:100%}
+  .label .name{font-size:13px;font-weight:600}
+  .label .dims{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .stage{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+  .note{margin-top:12px;border-left:3px solid var(--note-line);background:var(--note-bg);border-radius:0 8px 8px 0;padding:11px 13px}
+  .note h3{margin:0 0 6px;font-size:10.5px;letter-spacing:.07em;color:var(--note);font-weight:700}
+  .note p{margin:0 0 6px;font-size:12.5px;line-height:1.5;color:#5a4330}
+  .note p:last-child{margin-bottom:0}
+
+  /* ---- frame parts (drawn at real pixel size; boards scale them with zoom) ---- */
+  .f{background:#f3f4f7;color:#1a1a1a;font-size:14px;line-height:1.35;padding-bottom:12px}
+  .appbar{height:54px;border-bottom:1px solid var(--line);background:#e9ebf0;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-weight:700}
+  .appbar i{font-style:normal;font-weight:400;font-size:12px;color:var(--ink-2)}
+  .pad{padding:0 16px}
+  .back{height:40px;display:flex;align-items:center;font-size:13px;color:var(--ink-2)}
+  .band{position:relative;overflow:hidden;border-radius:12px 12px 0 0;background:var(--art-2)}
+  .band .art{position:absolute;left:0;right:0}
+  .art .t,.art .d{position:absolute;left:0;right:0;text-align:center;font-weight:700;letter-spacing:.2em;color:#6b7280;font-size:13px}
+  .art .heads{position:absolute;left:6%;right:6%;display:flex;justify-content:space-between}
+  .art .heads b{display:block;border-radius:50%;background:#8c93a1}
+  .art .sky{position:absolute;left:0;right:0;border-top:1px dashed #9aa1af}
+  .ctrl{position:absolute;display:flex;gap:6px}
+  .btn{background:#fff;border:1px solid #aeb5c2;border-radius:8px;padding:0 11px;font-size:12px;font-weight:600;display:flex;align-items:center;height:36px;white-space:nowrap}
+  .btn.ghost{background:#f3f4f7;border-style:dashed;font-weight:500;color:var(--ink-2)}
+  .card{position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+  .card h4{margin:0;font-size:22px}
+  .card p{margin:3px 0 0;font-size:12.5px;color:var(--ink-2)}
+  .aside{display:flex;gap:10px;align-items:center;flex-shrink:0}
+  .dot{width:30px;height:30px;border-radius:50%;border:2px solid #9aa1af;display:grid;place-items:center;font-size:11px;font-weight:700}
+  .tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:14px}
+  .tabs span{flex:1;text-align:center;padding:9px 0;font-size:13px;color:var(--ink-2);border-radius:8px}
+  .tabs span.on{background:#cfd4de;color:#111;font-weight:600}
+  .bar{height:10px;border-radius:5px;background:#dfe2e8;margin:10px 0 0}
+  .block{border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px;margin-top:14px}
+  .fold{position:relative;border-top:2px dashed #d9534f;margin-top:0}
+  .fold b{position:absolute;right:6px;top:-10px;background:#fff;color:#d9534f;font-size:10px;padding:0 4px}
+  .hero{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+  .hero .scrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,.62))}
+  .hero .over{position:absolute;left:0;right:0;bottom:0;padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-end;color:#fff}
+  .hero .over h4{margin:0;font-size:22px}
+  .hero .over p{margin:2px 0 0;font-size:12.5px;opacity:.9}
+  .tile{width:200px;height:133px;border-radius:10px;overflow:hidden;position:relative;flex-shrink:0;background:var(--art-2)}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:14px 16px 18px;box-shadow:0 -8px 20px rgba(0,0,0,.12)}
+  .sheet .it{height:44px;display:flex;align-items:center;border-bottom:1px solid var(--line-soft);font-size:14px}
+  .sheet .it:last-child{border:0;color:#a33}
+  .scrimfull{position:absolute;inset:0;background:rgba(0,0,0,.28)}
+  .ann{position:absolute;font-size:10.5px;color:var(--note);background:var(--note-bg);border:1px solid var(--note-line);padding:1px 6px;border-radius:4px;white-space:nowrap}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin-top:14px}
+  th,td{border:1px solid var(--line-soft);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#f1f3f7;font-size:12px}
+  .cropwrap{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Trip cover layout — lo-fi wireframes</h1>
+  <p class="sub">For <a href="../../docs/specs/009-trip-cover-layout.md">spec 009</a>. Stage 2 of 3. Greyscale on purpose: this is about shape, height and what the cover hides. Frames are drawn at real pixel sizes (desktop boards are scaled down). The artwork stand-in is 2000 × 833, like <code>art-pod-gathering</code>, with its title at the top edge, heads in the middle and date at the bottom edge.</p>
+  <p class="sub">Dashed red line = bottom of a 812 px phone screen or 900 px desktop window. The orange tags are measured or proposed numbers.</p>
+
+  <div id="app"></div>
+</div>
+
+<script>
+// ---------- tiny frame builders ----------
+const ART_RATIO = 2000/833;
+
+/* the artwork scaled to fill the band width, centred (object-fit: cover), cropped by the band height */
+function art(w, h, focal=50){
+  const full = w/ART_RATIO;
+  const top = -(full-h)*focal/100;
+  const head = Math.max(10, full*0.085);
+  return `<div class="art" style="height:${full}px;top:${top}px">
+    <div class="t" style="top:${full*.05}px">POD GATHERING</div>
+    <div class="sky" style="top:${full*.62}px"></div>
+    <div class="heads" style="top:${full*.3}px">${Array.from({length:10},()=>`<b style="width:${head}px;height:${head*1.2}px"></b>`).join('')}</div>
+    <div class="sky" style="top:${full*.84}px"></div>
+    <div class="d" style="top:${full*.9}px">24 – 25 NOVEMBER 2026</div></div>`;
+}
+const header = (name='Madrid Gathering') => `<div class="card"><div><h4>${name}</h4><p>Barcelona → Madrid · Nov 23 – TBD</p></div><div class="aside"><span class="dot">A</span><span class="btn" style="height:34px">Ask the assistant</span></div></div>`;
+const tabs = `<div class="tabs"><span class="on">Overview</span><span>Plan</span><span>Money</span><span>Group</span></div>`;
+const content = `<div class="block"><b>Get the trip started</b><div class="bar" style="width:70%"></div><div class="bar" style="width:45%"></div></div><div class="block"><b>The facts</b><div class="bar"></div><div class="bar" style="width:60%"></div></div>`;
+const phoneTabs = `<div class="tabs" style="margin:14px -16px -12px;border-radius:0;border-width:1px 0 0"><span class="on">Overview</span><span>Plan</span><span>Money</span><span>Group</span></div>`;
+
+function bandHTML(w,h,{ctrl='hover',focal=50}={}){
+  let c='';
+  if(ctrl==='hover') c=`<div class="ctrl" style="right:14px;bottom:${OV+14}px"><span class="btn">Change cover</span><span class="btn">Reposition</span></div>`;
+  if(ctrl==='today-phone') c=`<div class="ctrl" style="right:14px;bottom:42px"><span class="btn" style="height:44px">Change cover</span><span class="btn" style="height:44px">Reposition</span></div>`;
+  if(ctrl==='edit') c=`<div class="ctrl" style="right:10px;top:10px"><span class="btn">Edit cover</span></div>`;
+  return `<div class="band" style="height:${h}px">${art(w,h,focal)}${c}</div>`;
+}
+let OV=16;
+
+/* a whole page frame. kind: today | A | B | C */
+function page({w, phone=false, bandH, overlap, ctrl, foldY, kind='A'}){
+  OV=overlap;
+  const pad = 16;
+  let top='';
+  if(kind==='B'){
+    const hh = phone? 170 : 220;
+    top = `<div class="hero" style="height:${hh}px"><div class="band" style="position:absolute;inset:0;height:${hh}px;border-radius:0">${art(w-pad*2,hh)}</div><div class="scrim"></div>
+      <div class="over"><div><h4 style="${phone?'font-size:18px':''}">Madrid Gathering</h4><p>Barcelona → Madrid · Nov 23 – TBD</p></div>${phone?'<span class="dot" style="border-color:#fff;color:#fff">A</span>':'<div class="aside"><span class="dot" style="border-color:#fff;color:#fff">A</span><span class="btn" style="height:34px">Ask the assistant</span></div>'}</div>
+      <div class="ctrl" style="right:10px;top:10px"><span class="btn">${phone?'Edit cover':'Change cover'}</span>${phone?'':'<span class="btn">Reposition</span>'}</div></div>`;
+  } else if(kind==='C'){
+    const t = phone ? `<div class="tile" style="width:72px;height:72px">${art(72*ART_RATIO,72)}</div>` : `<div class="tile">${art(200*ART_RATIO*0.75,133)}</div>`;
+    top = `<div class="card" style="gap:16px;align-items:center;padding:${phone?12:16}px">${t}<div style="flex:1"><h4 style="${phone?'font-size:18px':''}">Madrid Gathering</h4><p>Barcelona → Madrid · Nov 23 – TBD</p></div><div class="aside"><span class="dot">A</span>${phone?'':'<span class="btn" style="height:34px">Ask the assistant</span>'}</div></div>`;
+  } else {
+    top = `<div class="${''}" style="display:flex;flex-direction:column">${bandHTML(w-pad*2,bandH,{ctrl})}<div style="margin-top:-${overlap}px;position:relative">${phone?header().replace('<span class="btn" style="height:34px">Ask the assistant</span>',''):header()}</div></div>`;
+  }
+  const bottom = phone ? phoneTabs : tabs;
+  const body = phone ? (kind==='A'||kind==='today'?'':'')+content : content;
+  const tabsTop = phone ? '' : tabs;
+  const fold = foldY ? `<div class="fold" style="position:absolute;left:0;right:0;top:${foldY}px"><b>bottom of screen</b></div>` : '';
+  return `<div class="f" style="width:${w}px;position:relative;min-height:${foldY? foldY+40 : 0}px">
+    <div class="appbar">Trip Planner<i>Logout · English</i></div>
+    <div class="pad"><div class="back">← Back to Trips</div>${top}${phone?'':tabsTop}${body}</div>${phone?bottom:''}${fold}</div>`;
+}
+
+function board({id,name,dims,w,zoom=1,html,note,hAdjust}){
+  const sw = Math.round(w*zoom);
+  return `<figure class="board" id="${id}" style="width:${sw}px">
+    <div class="label"><span class="name">${name}</span><span class="dims">${dims}</span></div>
+    <div class="stage"><div style="zoom:${zoom}">${html}</div></div>
+    ${note?`<div class="note"><h3>NOTE</h3>${note}</div>`:''}</figure>`;
+}
+
+const D=1100, DZ=.56;   // desktop frame width 1100 -> content 1068 (app uses 1060)
+const P=375;
+
+const rows=[];
+
+rows.push(`<section class="row"><h2>1. Today — what the user is seeing</h2>
+<p>Banner box 110 px, header card overlaps it by 28 px. After the overlap the visible strip is 82 px on desktop and 70 px on a phone. Same artwork as below, so the crop is honest.</p>
+<div class="strip">
+${board({id:'today-desktop',name:'Today · desktop',dims:'1060 × 82 visible · 12.9 : 1 · 19% of art',w:D,zoom:DZ,
+ html:page({w:D,bandH:110,overlap:28,ctrl:'hover',foldY:900,kind:'today'}),
+ note:'<p>Heads only. The sunset, the title and the date are cropped away. Reposition can move the slice, but there is almost nothing to move.</p>'})}
+${board({id:'today-phone',name:'Today · phone',dims:'375 × 70 visible · 5.4 : 1',w:P,
+ html:page({w:P,phone:true,bandH:86,overlap:16,ctrl:'today-phone',foldY:700,kind:'today'}),
+ note:'<p><b>Q2.</b> The two 44 px buttons hide about 58% of a 70 px strip. Nothing of the picture is left to see while they are visible.</p>'})}
+</div></section>`);
+
+rows.push(`<section class="row"><h2>2. Option A — taller banner (recommended)</h2>
+<p>Same structure as today. Height follows width: 4 : 1 capped at 260 px on desktop, 3 : 1 on tablet, 5 : 2 capped at 140 px on phones. Overlap drops to 16 px (12 px on phones). One variable drives overlap and control offset.</p>
+<div class="strip">
+${board({id:'a-desktop',name:'A · desktop',dims:'1060 × 244 visible · 4.3 : 1 · 55% of art',w:D,zoom:DZ,
+ html:page({w:D,bandH:260,overlap:16,ctrl:'hover',foldY:900,kind:'A'}),
+ note:'<p>The skyline and the heads show. The title and date still sit near the top and bottom edges, so the art needs a 4 : 1 crop with its text in the middle 60% (F6).</p><p>Costs 162 px of height on Overview. The tabs are sticky, so it scrolls away.</p>'})}
+${board({id:'a-phone',name:'A · phone',dims:'375 × 128 visible · 2.9 : 1 · 82% of art',w:P,
+ html:page({w:P,phone:true,bandH:140,overlap:12,ctrl:'edit',foldY:700,kind:'A'}),
+ note:'<p>One <b>Edit cover</b> button, top right, 36 px. It sits clear of the overlap and hides under 10% of the banner (F3). Costs 58 px (N2 limit is 60).</p>'})}
+${board({id:'a-tablet',name:'A · tablet',dims:'768 · 3 : 1',w:768,zoom:.6,
+ html:page({w:768,bandH:Math.round((768-32)/3),overlap:16,ctrl:'hover',foldY:1024,kind:'A'}),
+ note:'<p>Tablet keeps the desktop controls (hover) and gets a middle ratio.</p>'})}
+</div></section>`);
+
+rows.push(`<section class="row"><h2>3. Option B — hero header</h2>
+<p>The cover is the background of the header card. Title, route, avatars and <i>Ask the assistant</i> sit on a scrim at the bottom. One object, less chrome, better look. Costs: contrast on every cover, and it changes the "banner above a card" shape that was signed off in spec 001.</p>
+<div class="strip">
+${board({id:'b-desktop',name:'B · desktop',dims:'about 220 px in total',w:D,zoom:DZ,html:page({w:D,kind:'B',foldY:900}),
+ note:'<p>The lower fifth of the art is behind the scrim and the text. White text on a pale upload fails contrast without a stronger scrim.</p>'})}
+${board({id:'b-phone',name:'B · phone',dims:'about 170 px in total',w:P,html:page({w:P,phone:true,kind:'B',foldY:700}),
+ note:'<p>Keeps one <i>Edit cover</i> button.</p>'})}
+</div></section>`);
+
+rows.push(`<section class="row"><h2>4. Option C — side tile</h2>
+<p>The Luma pattern: a small cover beside the title. Shortest header. The picture is a 3 : 2 crop on desktop and a 72 px square on phones, so every cover needs a second crop and reposition no longer works. It also drops the banner that spec 001 signed off.</p>
+<div class="strip">
+${board({id:'c-desktop',name:'C · desktop',dims:'200 × 133 tile',w:D,zoom:DZ,html:page({w:D,kind:'C',foldY:900})})}
+${board({id:'c-phone',name:'C · phone',dims:'72 × 72 tile',w:P,html:page({w:P,phone:true,kind:'C',foldY:700}),
+ note:'<p>At 72 px, a group photo is a few grey dots. Recognition (spec 001 job 1) is weak here.</p>'})}
+</div></section>`);
+
+/* row 5: phone edit-cover sheet and states */
+function sheetFrame(){
+  return `<div class="f" style="width:${P}px;height:520px;position:relative;overflow:hidden">
+    <div class="appbar">Trip Planner<i>Logout · English</i></div>
+    <div class="pad"><div class="back">← Back to Trips</div>
+    <div style="display:flex;flex-direction:column">${bandHTML(P-32,140,{ctrl:'edit'})}<div style="margin-top:-12px;position:relative">${header().replace('<span class="btn" style="height:34px">Ask the assistant</span>','')}</div></div>${content}</div>
+    <div class="scrimfull"></div>
+    <div class="sheet"><b style="display:block;margin-bottom:6px">Cover</b><div class="it">Change cover…</div><div class="it">Reposition</div><div class="it">Remove cover</div></div></div>`;
+}
+function emptyFrame(w,phone){
+  return `<div class="f" style="width:${w}px"><div class="appbar">Trip Planner<i>Logout · English</i></div>
+  <div class="pad"><div class="back">← Back to Trips</div>
+  <div class="card" style="flex-direction:column;gap:10px"><span class="btn ghost" style="width:fit-content;height:34px">🖼 Add cover</span><div style="display:flex;justify-content:space-between;width:100%"><div><h4>Madrid Gathering</h4><p>Barcelona → Madrid · Nov 23 – TBD</p></div><div class="aside"><span class="dot">A</span>${phone?'':'<span class="btn" style="height:34px">Ask the assistant</span>'}</div></div></div>${phone?'':tabs}${content}</div></div>`;
+}
+rows.push(`<section class="row"><h2>5. Cover actions and the no-cover state (Option A)</h2>
+<p>Phones get one button and a sheet instead of two large buttons. Desktop keeps hover controls. A trip with no cover is unchanged.</p>
+<div class="strip">
+${board({id:'sheet-phone',name:'Phone · Edit cover sheet',dims:'375',w:P,html:sheetFrame(),
+ note:'<p>Closes spec 001 O2. Focus returns to <i>Edit cover</i> on close. The sheet needs a visible close and works with Escape on a keyboard.</p>'})}
+${board({id:'empty-phone',name:'Phone · no cover',dims:'375',w:P,html:emptyFrame(P,true),note:'<p>Unchanged. No banner space is reserved.</p>'})}
+${board({id:'empty-desk',name:'Desktop · no cover',dims:'1100 scaled',w:D,zoom:.4,html:emptyFrame(D,false)})}
+</div></section>`);
+
+/* row 6: art safe zone */
+function cropBox(label,w,h,sub){
+  return `<figure class="board"><div class="label"><span class="name">${label}</span><span class="dims">${sub}</span></div><div class="stage"><div class="band" style="width:${w}px;height:${h}px;border-radius:0">${art(w,h)}</div></div></figure>`;
+}
+rows.push(`<section class="row"><h2>6. The artwork — one image, three crops</h2>
+<p>All three use the same 2000 × 833 image at the same width (480 px here). Only the height differs. The reposition slider picks the slice vertically, so the art needs a safe zone: title and date inside the middle 60% for the 4 : 1 crop.</p>
+<div class="cropwrap">
+${cropBox('Today (desktop)',480,Math.round(480/12.9),'12.9 : 1')}
+${cropBox('Option A (desktop)',480,Math.round(480/4.3),'4.3 : 1')}
+${cropBox('Option A (phone)',480,Math.round(480/2.9),'2.9 : 1')}
+${cropBox('Full artwork',480,Math.round(480/ART_RATIO),'2.4 : 1')}
+</div>
+<div class="note" style="max-width:640px"><h3>NOTE</h3><p><b>Uploads.</b> A 4 : 3 photo at 4 : 1 shows about a third of its height (Q6). The picker should preview the banner crop and say wide pictures work best. A tall picture still works, because the reposition step lets the user choose the slice.</p></div>
+</section>`);
+
+rows.push(`<section class="row"><h2>7. Reserved for the rename work</h2>
+<p>Renaming a trip is a separate analysis (spec 009 §7). Nothing here blocks it. The title row keeps its right-hand slot for presence, <i>Ask the assistant</i> and the overflow menu from spec 004 F3. A rename control can go there, or in the trips list, without moving the cover.</p></section>`);
+
+document.getElementById('app').innerHTML = rows.join('');
+</script>
+</body>
+</html>

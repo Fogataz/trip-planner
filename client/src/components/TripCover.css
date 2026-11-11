@@ -1,5 +1,31 @@
 /* ---------- Cover banner ---------- */
 
+/* One definition of the banner shape (spec 009). The height follows the width, within a cap.
+   The header card overlaps the banner by --cover-overlap; controls and the reposition bar use the
+   same variable, so they cannot drift from it. The picker preview reads the same ratio. */
+:root {
+  --cover-ratio: 4 / 1;
+  --cover-max: 260px;
+  --cover-overlap: 16px;
+  /* A trip with no cover keeps its plain gradient strip */
+  --cover-empty-h: 110px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --cover-ratio: 3 / 1;
+    --cover-empty-h: 86px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --cover-ratio: 5 / 2;
+    --cover-max: 140px;
+    --cover-overlap: 12px;
+  }
+}
+
 .trip-cover-head {
   display: flex;
   flex-direction: column;
@@ -10,19 +36,22 @@
 .trip-cover-head.has-cover .trip-header {
   position: relative;
   z-index: 2;
-  margin-top: -28px;
+  margin-top: calc(var(--cover-overlap) * -1);
 }
 
 .cover-band {
   position: relative;
-  height: 280px;
+  aspect-ratio: var(--cover-ratio);
+  max-height: var(--cover-max);
   border-radius: var(--radius) var(--radius) 0 0;
   overflow: hidden;
   isolation: isolate;
 }
 
 .cover-band--empty {
-  height: 150px;
+  aspect-ratio: auto;
+  max-height: none;
+  height: var(--cover-empty-h);
 }
 
 .cover-band__paint {
@@ -66,9 +95,9 @@
   transition: opacity 0.15s ease;
 }
 
-/* The trip card overlaps the banner's bottom 28px, so lift the controls clear of it */
+/* The trip card overlaps the banner's bottom edge, so lift the controls clear of it */
 .trip-cover-head.has-cover .cover-band__controls {
-  bottom: 42px;
+  bottom: calc(var(--cover-overlap) + 14px);
 }
 
 .cover-band:hover .cover-band__controls,
@@ -158,8 +187,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  /* Stay above the 28px the trip card overlaps */
-  bottom: 28px;
+  /* Stay above the part of the banner the trip card overlaps */
+  bottom: var(--cover-overlap);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,6 +217,34 @@
   color: #ffffff;
   background: transparent;
   border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Phones: one compact row (slider, Cancel, Save) so most of the banner stays visible to drag */
+@media (max-width: 600px) {
+  .cover-reposition-bar {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 6px 10px;
+  }
+
+  .cover-reposition-bar label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cover-reposition-bar input[type='range'] {
+    width: 100%;
+  }
+
+  /* Still read by screen readers, just not drawn */
+  .cover-reposition-bar__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
 /* ---------- Picker ---------- */
@@ -412,14 +469,9 @@
 
 @media (max-width: 768px) {
   .cover-band {
-    height: 200px;
     border-radius: 0;
     margin-left: calc(var(--page-gutter, 16px) * -1);
     margin-right: calc(var(--page-gutter, 16px) * -1);
-  }
-
-  .cover-band--empty {
-    height: 120px;
   }
 
   .cover-picker__backdrop {
@@ -447,6 +499,108 @@
   .cover-add-btn {
     opacity: 1;
   }
+}
+
+/* ---------- Edit cover button and sheet (phones and touch, spec 009) ---------- */
+
+.cover-edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: none;
+  min-height: var(--tap);
+}
+
+/* Phones and touch screens: one small button replaces the two large ones that hid the art */
+@media (max-width: 600px), (hover: none) {
+  .cover-band__controls {
+    display: none;
+  }
+
+  .cover-edit-btn {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+.cover-sheet__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(10, 12, 20, 0.55);
+}
+
+.cover-sheet {
+  width: min(480px, 100%);
+  padding: 8px 16px calc(14px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: var(--shadow-hover);
+}
+
+.cover-sheet h2 {
+  padding: 10px 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cover-sheet__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 4px;
+  font-size: 15px;
+  text-align: left;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.cover-sheet__item--danger {
+  color: var(--danger);
+}
+
+.cover-sheet__item:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- Picker preview of the banner crop ---------- */
+
+.cover-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--cover-ratio);
+  max-height: var(--cover-max);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.cover-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cover-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {

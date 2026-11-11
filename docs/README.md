@@ -48,6 +48,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 007 | [Profiles and display names](specs/007-profiles-and-display-names.md) | draft | — | — |
 | 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
 
+| 009 | [Trip cover layout](specs/009-trip-cover-layout.md) | shipped | 2026-11-10 | [#78](https://github.com/Fogataz/trip-planner/pull/78) |
 ## How a feature goes from idea to shipped
 
 Adopted 2026-11-09. Any Claude account working in this repo follows the same stages. In Claude Code, run `/feature <name or spec number>`. To create or check the GitHub epic for a feature, run `/epic <brief, spec or issue number>` (rules in [process/tracker.md](process/tracker.md), "Writing an epic"). At a milestone gate (M0, M1, M2), run `/milestone <M0|M1|M2>` to assemble the evidence (rules in [process/pipeline.md](process/pipeline.md) §6.3).

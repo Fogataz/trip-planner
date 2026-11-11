@@ -248,7 +248,13 @@
       "removeFailed": "No se pudo quitar la portada. Inténtalo de nuevo.",
       "cannotOpen": "No se pudo abrir esa imagen.",
       "cannotProcess": "No se pudo procesar esa imagen en este navegador."
-    }
+    },
+    "edit": "Editar portada",
+    "sheetTitle": "Portada",
+    "previewTitle": "Así se verá en la página del viaje",
+    "previewTall": "Esta imagen es alta, así que solo se verá una franja. Puedes elegir la franja después de guardar.",
+    "usePicture": "Usar esta imagen",
+    "chooseAnother": "Elegir otra"
   },
   "trip": {
     "tabs": {

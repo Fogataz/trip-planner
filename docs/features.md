@@ -26,7 +26,7 @@ This page describes what the product does today, based on the code in `server/` 
   - **Group:** members, invite by email and link, and push notifications for this device. A trip with only you says so and points to Invite
   - **Map:** live location opens as a full-screen mode from Overview or Plan, and closes with Esc. Closing it stops sharing
   - **Trip assistant:** one sheet for all AI, opened from "Ask the assistant" (a floating button on phones) or from Plan and Overview. Three parts: **Ask** (the Q&A), **Draft a plan** (AI proposes stops; each arrives as a draft with Add to plan or Dismiss, and nothing reaches the shared plan until someone adds it), and **Ideas** (the AI travel suggestions, split into cards). The accuracy disclaimer appears once, on the assistant. Drafts are private to the person who asked and are kept until they leave the trip page
-  - The trip header is compact (110px cover on desktop, 86px on phones) so each destination starts on the first screen. On desktop the tabs stay pinned under the app header
+  - The trip header stays compact so each destination starts on the first screen. The cover banner is sized by aspect ratio (see Trip covers). On desktop the tabs stay pinned under the app header
   - The trip is fetched once and shared by all four destinations, which stay current through the trip's socket. AI travel suggestions arrive by the `trip:suggestionsUpdated` socket event, with a short backed-off re-fetch as a fallback
 - Each trip has a name, destination, origin, start date, accommodation, and either an end date or an approximate length in days (for example 8 to 10). Without an end date, the trip is treated as lasting the longer estimate
 - The trips list is grouped into Live now, Upcoming and Past, nearest first
@@ -36,7 +36,10 @@ This page describes what the product does today, based on the code in `server/` 
 
 - Each trip can have a cover image: a banner at the top of the trip page and a thumbnail on the trip card
 - Pick from a built-in gallery of 9 covers, or upload your own image (resized in the browser to WebP, 2 MB limit)
-- Reposition the cover vertically, or remove it. A trip without a cover shows the default gradient
+- Reposition the cover vertically, or remove it. A trip without a cover shows the default gradient strip (110px desktop, 86px phone) and an Add cover button
+- The banner height follows the width, in one place (`TripCover.css`): 4:1 up to 260px on desktop, 3:1 on tablets, 5:2 up to 140px on phones. The header card overlaps it by 16px (12px on phones). The skeleton uses the same sizes
+- On phones and touch screens one Edit cover button opens a sheet with Change cover, Reposition and Remove. On desktop, Change cover and Reposition appear on hover or focus
+- Uploading shows a preview at the banner crop first, and nothing is sent until you choose Use this picture. A tall picture gets a note that only a slice will show
 - Cover changes sync live to everyone viewing the trip and are recorded in the activity log
 - Gallery entries live in `client/src/covers.ts` and `server/config/coverGallery.js`; endpoints in `server/routes/trips.js` and `server/routes/covers.js`
 - Spec and open items: [specs/001-trip-covers.md](specs/001-trip-covers.md)
