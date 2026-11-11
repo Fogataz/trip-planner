@@ -74,6 +74,11 @@ All three belong to epic [#20](https://github.com/Fogataz/trip-planner/issues/20
 build-order part 1. They are small and conventional, but they are screens, and they are the
 product owner's call rather than something to invent here.
 
+**Drawn 2026-11-11** in [`wireframes/010-joining-and-naming/`](../010-joining-and-naming/)
+as frames 6, 8 and 9, together with a QA pass (Q1–Q12) over the thirteen frames here.
+**Frames 1 and 4 of this set have corrected versions there** — frame 1 shows no Organization
+at all, and frame 4 is a dead end for the whole approval wait.
+
 **Added 2026-11-11.** What screen 3 has to show now depends on two open decisions in
 [spec 009](../../docs/specs/009-roles-and-permissions.md) §13: **R1** (can an Organization
 owner claim a trip they hold no role on?) and **R2** (what happens to trip roles when

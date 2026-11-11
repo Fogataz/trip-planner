@@ -75,6 +75,8 @@ The second sentence is what makes R1 possible without weakening the first. An or
 
 Roles are stored. Capabilities are derived. **Never store the resolved capability set on the member** — it goes stale the moment a preset changes, and then two members with the same role behave differently for reasons nobody can see.
 
+**The role names below are the stored values, not necessarily the words a user sees.** [Spec 010](010-joining-naming-and-the-first-trip.md) §5.3 labels them per trip kind — organizer/member on a personal trip, host/co-host/guest on a hosted event — so the F7 migration does not rename existing friend trips. The capability presets are identical either way.
+
 | Layer | Role | One line |
 |---|---|---|
 | Organization | `owner` | The Organization exists because of them. Can transfer ownership, add and remove admins, delete the Organization. |
@@ -213,7 +215,7 @@ The register. Each is a decision the build will otherwise make by accident.
 | 7 | **A declined person opens the link again** | Spec 002 has no position. They currently see the same "request sent" screen forever (wireframe frame 4). Silence is deliberate for the decline itself (F16) but a permanent lie is not. → R6 |
 | 8 | **The same human, two accounts** | Work Google and personal email are two users unless the verified email matches (F9). Combined with F17 — an email invitee skips approval with *any* account — one person can hold two TripMembers on one trip, one `invited` forever and one `active`. Counts, splits and analytics all drift. The invitation should be marked consumed when it is accepted, whatever account accepts it. |
 | 9 | **An org admin opens a trip in their own Organization** | 403, sees nothing (spec 002 AC 2). Stricter than all six benchmarked products. → R1 |
-| 10 | **A personal trip that should become an Organization's** | A wedding planner starts personal and formalizes. Needs `Trip.orgId` to be settable after creation, by the host only, and only into an Organization they belong to. Reserve the move; do not build the screen. |
+| 10 | **A personal trip that should become an Organization's** | A wedding planner starts personal and formalizes. Needs `Trip.orgId` to be settable after creation, by the host only, and only into an Organization they belong to. Reserve the move; do not build the screen. **Upgraded 2026-11-11:** if [spec 010](010-joining-naming-and-the-first-trip.md) O1 lands on "an Organization is never required", this path becomes **required rather than reserved** — Figma deferred the container correctly and then had to move every draft one file at a time. See 010 §5.7 and Q7. |
 | 11 | **Removing someone who owes money** | Spec 005 territory. Position for now: removal is blocked while they are part of an unsettled expense, or their share is reassigned first. Named here so 005 inherits it rather than inventing it. |
 | 12 | **A guest is removed and re-added** | Their old polls, expenses and questions stay and keep their name. Re-adding restores `active` on the same record; it does not create a second one. |
 | 13 | **A new feature ships with no capability decided** | The governance case, and the one most likely to actually happen. Rule: **a feature PR that adds a write path adds a row to §5.1 in the same PR, defaulting to host-only.** Reviewable in a diff. |

@@ -59,7 +59,7 @@ Five products that solve parts of this today.
 ### 5.1 Organizer: set up the event
 
 1. Sign in with Google or an email link.
-2. **Create an Organization** (name only), or pick one you belong to. The pilot Organization is created by the product owner, who adds the organizers as admins.
+2. **Create an Organization** (name only), or pick one you belong to. The pilot Organization is created by the product owner, who adds the organizers as admins. — **⚠ Challenged 2026-11-11 ([spec 010](010-joining-naming-and-the-first-trip.md) Q2, O1):** this makes an administrative decision step 2 of 6, before the trip exists or anyone has seen anything. Spec 010 recommends an Organization is **never required**, and offered only when continuity or billing makes it useful. It costs the pilot nothing either way, since the pilot Organization is created by hand.
 3. **Create a hosted event** in the Organization: name, place, dates, time zone (defaults to the destination's), accommodation.
 4. **Import the agenda** (5.3). Review and publish.
 5. **Share the invite link** in the team's chat. Optionally add co-hosts.
@@ -111,9 +111,11 @@ The draft keeps the source language. We do not translate content.
 
 The frames assume the §9 recommendations as the working default (D27). Overriding S1, S2, S6, S7 or S8 changes the frame it is drawn against.
 
-**Three screens this spec requires that the table below does not list, and which are therefore not drawn:** create an Organization (F1), the Organization member list (F2 — §10 keeps it in scope), and trip people and roles where a host moves someone between host, co-host and guest (F4). All three belong to build-order part 1. They are the product owner's call, not something to invent in the wireframe pass. **TBD.**
+**Three screens this spec requires that the table below does not list:** create an Organization (F1), the Organization member list (F2 — §10 keeps it in scope), and trip people and roles where a host moves someone between host, co-host and guest (F4). All three belong to build-order part 1.
 
-**What the third one has to show depends on [spec 009](009-roles-and-permissions.md) open decisions R1 and R2** (can an Organization owner claim a trip they have no role on; what happens to trip roles when someone leaves the Organization). Answer those before drawing it.
+**Drawn 2026-11-11 in [`wireframes/010-joining-and-naming/`](../../wireframes/010-joining-and-naming/)** (frames 6, 8 and 9), because what they show is decided by [spec 010](010-joining-naming-and-the-first-trip.md) rather than by this spec — in particular O1 (is an Organization ever required?) and O3 (role labels per trip kind), and by [spec 009](009-roles-and-permissions.md) R1 and R2.
+
+**A QA pass over the 13 frames below is [spec 010](010-joining-naming-and-the-first-trip.md) §4 (Q1–Q12).** Two findings are regressions this spec would ship as written: **Q1**, the F7 migration renames existing friend trips into "a host and four guests"; and **Q4**, the approval queue in frame 5 can show a bare email address on the email-link path, so a host cannot tell who is asking. Frames 1, 2, 3 and 4 of the 010 set are the corrected versions of frames 1 and 4 here.
 
 Mobile first; desktop is the same layout, wider.
 
@@ -147,7 +149,7 @@ Mobile first; desktop is the same layout, wider.
 | F4 | Trip roles are host, co-host and guest. Hosts and co-hosts can edit the event, publish drafts, approve requests, post announcements and manage roles. |
 | F5 | Organization membership alone gives no access to a trip (D19). Only an active trip role does. |
 | F6 | Each trip has guest permissions. Personal trips: guests can add schedule items, polls and expenses (today's behavior). Hosted trips: guests can vote, ask questions and share location, but not edit the schedule. These two are **presets over `Trip.guestPermissions`**, not a branch on `trip.kind` — see [spec 009](009-roles-and-permissions.md) §5.2. |
-| F7 | Existing trips become personal trips. The creator becomes host, other organizers co-hosts, members guests. No user loses access they have today. |
+| F7 | Existing trips become personal trips. The creator becomes host, other organizers co-hosts, members guests. No user loses access they have today. **The stored roles are these; the words shown are per trip kind** — organizer/member on a personal trip — so the migration is invisible to existing users ([spec 010](010-joining-naming-and-the-first-trip.md) §5.3, Q1, O3). |
 
 **Sign-in**
 
@@ -162,9 +164,9 @@ Mobile first; desktop is the same layout, wider.
 | # | Requirement |
 |---|---|
 | F11 | A host or co-host can create one active invite link per trip, copy it, and revoke it. Revoking creates a new link on request; the old one stops working at once. |
-| F12 | Opening a link shows only the event name, dates, host name and cover. |
+| F12 | Opening a link shows only the event name, dates, **who is hosting** and cover. The attribution rule — Organization above the event name for legitimacy, the host's name and face below for trust, personal-trip wording on a personal trip — is [spec 010](010-joining-naming-and-the-first-trip.md) §5.4 (Q3, Q8, O4). |
 | F13 | A signed-in user who opens a valid link can send a join request. Duplicate requests from the same user are ignored. |
-| F14 | Hosts and co-hosts see pending requests and can approve or decline each, or approve all. |
+| F14 | Hosts and co-hosts see pending requests and can approve or decline each, or approve all. **The queue always shows a human-readable name, never a bare email** — on the email-link path there is no name unless we ask for one ([spec 010](010-joining-naming-and-the-first-trip.md) Q4, §5.5, O5). |
 | F15 | A requester cannot see members, schedule, polls, expenses, questions, announcements or locations, and cannot join the trip's real-time room, until approved. |
 | F16 | Approval sends the requester a push (if registered) and makes the event available. Decline sends nothing. |
 | F17 | People invited by email skip approval when they accept with any signed-in account (the exact-email match is removed). |
