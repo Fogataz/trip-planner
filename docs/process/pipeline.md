@@ -10,10 +10,10 @@
    strategy (owner, at a milestone)
          |
          v
-    /roadmap --> /epic --> /feature --> ships
-         ^                                |
-         |                                v
-    /milestone <-------------------- /audit
+    /roadmap --> /epic --> /feature --> /pr --> ships
+         ^                                        |
+         |                                        v
+    /milestone <------------------------------ /audit
 ```
 
 | Command | Owns | State |
@@ -21,6 +21,7 @@
 | `/roadmap` | What we do next, and the Now / Next / Later cut | Proposed |
 | `/epic` | The GitHub epic: outcome, hypothesis, measures, stories | Built |
 | `/feature` | The spec and the build, one stage at a time | Built |
+| `/pr` | The verdict on one pull request, before it is merged | Built |
 | `/audit` | What is wrong with what is already live | Proposed |
 | `/milestone` | Whether the bets paid off, at M0, M1 and M2 | Built |
 
@@ -32,7 +33,8 @@ Each name is the thing the command owns. Nothing is named after a job that two c
 |---|---|---|---|---|
 | `/roadmap` | Monday, and after a strategy change | strategy, venture-analysis §11, roadmap, the board, spec-backlog | recommended Horizon moves, the next brief | `/epic` |
 | `/epic` | Per bet | a brief, a spec or an issue | the epic, its fields, story sub-issues | `/feature` |
-| `/feature` | Per feature | the stages in docs/README.md, the spec | spec, wireframes, branch, PR, docs | `/epic`, then `/audit` |
+| `/feature` | Per feature | the stages in docs/README.md, the spec | spec, wireframes, branch, PR, docs | `/pr`, then `/audit` |
+| `/pr` | Per pull request | the spec, the diff, the lenses, the four principles | a verdict, and on an OK one PR comment | the owner, who merges |
 | `/audit` | After a ship, and monthly | shipped acceptance criteria, the seven UX tests, the four principles | Bug issues under I3, rows in spec-backlog | `/roadmap` |
 | `/milestone` | At M0, M1, M2 | each epic's own measures, analytics, the board | verdicts and an evidence pack | the owner, then `/roadmap` |
 
@@ -57,6 +59,8 @@ Each command ends by naming the next one. Added to `feature.md`, `epic.md` and `
 | `/epic` creates an epic with no spec | `/feature` | "Next: `/feature <title>`, stage 1 benchmark" |
 | `/feature` drafts the spec (stage 4) | `/epic` | "Next: `/epic <spec>` to link the spec and set fields" |
 | `/feature` passes the approval gate | `/epic` | "Next: `/epic <spec>` to create one story per build-order row" |
+| `/feature` opens a pull request | `/pr` | "Next: `/pr <number>` from a session that did not build this" |
+| `/pr` returns a verdict | the owner | "Next: your call. Nothing auto-merges" |
 | `/feature` ships | `/audit` | "Next: `/audit <spec>` once it is live" |
 | `/audit` finds something | the board or the backlog | A Bug issue under I3, or a row in [spec-backlog.md](../product/spec-backlog.md) |
 | `/milestone` records verdicts | `/roadmap` | "Next: `/roadmap` to re-cut Now / Next / Later" |
@@ -75,7 +79,7 @@ A command only runs when a person remembers to run it, and board hygiene fails e
 
 Decided in pipe-D1: no Action and no token. The built-in workflows cover adding items and Shipped; In review is moved by hand; `/epic check` reports any drift.
 
-## 6. The three proposed commands
+## 6. The commands in detail
 
 ### 6.1 `/roadmap` — what we do next
 
@@ -118,13 +122,26 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 
 **Why there is no `/strategy` command.** Strategy changes three or four times a year, on evidence from interviews and milestones rather than on repo state, and the call is the owner's. `/milestone` prepares that conversation. A command would manufacture it from stale documents.
 
+### 6.4 `/pr` — the verdict on one pull request
+
+**When:** after a pull request is opened, before it is merged. **Input:** the pull request number. Built 2026-11-11 (pipe-D5). The command is [`.claude/commands/pr.md`](../../.claude/commands/pr.md).
+
+1. Read the pull request, its diff, and the spec it names. If no spec can be found, say so and stop rather than inventing acceptance criteria.
+2. Hand the spec and the diff to a **subagent**, and nothing else. [ways-of-working.md](ways-of-working.md) §3 requires a reviewer that did not build the thing; running the review in a subagent makes that true even when `/pr` is typed in the session that wrote the code.
+3. The verdict has four parts: every acceptance criterion (met, not met, can't tell — "can't tell" counts as not met); the four product principles in [CLAUDE.md](../../CLAUDE.md); the fourteen lenses in [design-lenses.md](design-lenses.md) against what the diff actually does; and anything in the diff the spec did not ask for.
+4. Show the verdict. Offer to post it as one pull-request comment, and post only on an OK.
+5. Never merge, push, approve on GitHub, enable auto-merge, or edit code.
+
+**Output:** a verdict the owner reads instead of the whole diff. The merge stays the owner's, as it is today.
+
 ## 7. Build order
 
 | When | What | Why |
 |---|---|---|
 | Before 20 Nov | The handoff lines in §4. CI (ww-D1). Rollback (ww-D3) | **Done 2026-11-11.** The pilot is the deadline; new commands are not on the critical path |
 | By 27 Nov | `/milestone` | **Built 2026-11-11.** M0 Pilot retro falls on 27 Nov and nothing checked a measure before |
-| December | `/audit`, `/roadmap check` (the read-only half), and the board automation in §5 | Before the host-layer work piles up. `/roadmap check` replaces reconstructing the state by hand |
+| Before 20 Nov | The design lenses, `/pr`, and the three checks that run by themselves (spec lint, docs-only branches, session staleness) | **Built 2026-11-11.** The lenses apply to specs 005 onwards, so they have to exist before the next spec is written, not after |
+| December | `/audit` and `/roadmap check` (the read-only half) | Before the host-layer work piles up. `/roadmap check` replaces reconstructing the state by hand. Board automation is settled: built-in workflows only (pipe-D1, §5) |
 | January | The writing half of `/roadmap`: briefs and Horizon moves | It earns its keep once there are more candidate epics than weeks |
 
 ## 8. Open decisions
@@ -135,6 +152,7 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 | pipe-D2 | The names `/roadmap`, `/audit`, `/milestone` | Product owner | **Decided 2026-11-11** |
 | pipe-D3 | The build order in §7 | Product owner | **Decided 2026-11-11.** Amended the same day: `/roadmap check` moves to December with `/audit`; its writing half stays in January |
 | pipe-D4 | Whether `/audit ux` may drive a browser, or only read code and report | Engineering | **TBD** |
+| pipe-D5 | `/pr` as a command, and where the reviewer runs | Engineering | **Decided 2026-11-11: built, reviewer in a subagent** (§6.4). Options were: a skill that loads itself (rejected — it would load into the session that wrote the code, which is the one thing §3 forbids); a command reviewing in the same session (rejected — self-review with extra steps); a command that hands spec and diff to a subagent (taken) |
 
 ## Appendix A. Proposed `.claude/commands/roadmap.md`
 

@@ -65,12 +65,14 @@ else
   git commit -m "$message"
 fi
 
-# 3. Everything this branch adds on top of main must be docs/ only.
+# 3. Everything this branch adds on top of main must be docs/ only. One rule in
+#    one place: scripts/docs-only-check.sh, which CI runs on every docs/… pull
+#    request too (ww-D11).
 git fetch --quiet origin main || true
-base="$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main)"
-outside="$(git diff --name-only "$base" HEAD | grep -v '^docs/' || true)"
-if [ -n "$outside" ]; then
-  printf 'Refusing to push: %s changes files outside docs/:\n%s\nAsk Claude Code to handle this branch.\n' "$branch" "$outside" >&2
+base_ref="origin/main"
+git rev-parse --verify --quiet "$base_ref" >/dev/null || base_ref="main"
+if ! scripts/docs-only-check.sh "$base_ref"; then
+  printf 'Refusing to push %s. Ask Claude Code to handle this branch.\n' "$branch" >&2
   exit 1
 fi
 

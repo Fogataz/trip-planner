@@ -2,7 +2,7 @@
 
 > **Living reference.** Updated whenever a way of working changes, so it stays true. Written 2026-11-11.
 >
-> The front door to `docs/process/`: four documents, each owning one thing, plus the two outside this folder that they all defer to. This file says what is where, and why we chose it.
+> The front door to `docs/process/`: one document per thing, plus the two outside this folder that they all defer to. This file says what is where, and why we chose it.
 
 ## The map
 
@@ -11,12 +11,13 @@
 | [tracker.md](tracker.md) | The board: three levels, fields, views, milestones, and how an epic is written | You are creating or grooming an issue |
 | [pipeline.md](pipeline.md) | The commands, and where each hands over | You are about to run a command, or build a new one |
 | [ways-of-working.md](ways-of-working.md) | The quality bar and the weekly rhythm | Before merging, and on Friday |
+| [design-lenses.md](design-lenses.md) | The fourteen lenses every new spec is checked against | Stage 2 (Define) and stage 4 (Spec), and when reviewing a pull request |
 | [naming.md](naming.md) | Codes, names, and the register that resolves them | You meet a code you cannot read |
 | [device-setup.md](device-setup.md) | The one-time steps to get a product session pushing directly on a new device (ww-D9) | A Cowork session on a device that has never had it needs direct push |
 | [../README.md](../README.md) | The stages a feature passes through, and the docs conventions | Any new feature |
 | [../../CLAUDE.md](../../CLAUDE.md) | The four product principles, the layout, who does what | Every session, automatically |
 
-Rule of thumb: `docs/README.md` owns **what happens**, `tracker.md` owns **where it is recorded**, `pipeline.md` owns **who runs it**, `ways-of-working.md` owns **how good it has to be**.
+Rule of thumb: `docs/README.md` owns **what happens**, `tracker.md` owns **where it is recorded**, `pipeline.md` owns **who runs it**, `ways-of-working.md` owns **how good it has to be**, `design-lenses.md` owns **what a spec must have thought about**.
 
 ## How one piece of work travels
 
@@ -45,6 +46,8 @@ Everything else is a recommendation, not a blocker (D27).
 | Living and point-in-time documents are different kinds | A reference that is edited stays true. An analysis that is edited becomes a lie about what we knew at the time | Folders organised by status | [docs/README.md](../README.md) |
 | Rules live in documents; commands point at them | A command that copies a rule drifts from it silently | Self-contained commands | [pipeline.md](pipeline.md) §3 |
 | The reviewer never built the thing | The session that just built a feature already believes it works | Self-review | [ways-of-working.md](ways-of-working.md) §3 |
+| One standard every new spec is checked against | A premium bar reached on the first pass costs less than a second design round. Fourteen lines in a spec is cheaper than rework | Judging each spec on its merits | [design-lenses.md](design-lenses.md) |
+| A rule gets a script or a hook, or it is goodwill | The checks we skip are the ones that depend on two people remembering while busy | Checklists nobody runs | [ways-of-working.md](ways-of-working.md) §2, §7 |
 | A code never travels without its name | "M0 epic target dates" is unreadable a week later | Bare codes | [naming.md](naming.md) |
 | Premium hosts are the lead segment | Sized bottom-up and scored on two lenses; offsites stay as a benchmark | An offsite-platform pivot | D33, [venture-analysis.md](../product/venture-analysis.md) |
 
