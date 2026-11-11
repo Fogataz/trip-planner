@@ -94,7 +94,7 @@ Two sessions share one repository and no other state. Every extra trip between t
 
 | Change | Committed by | How |
 |---|---|---|
-| Anything under `docs/` only | The product session | `scripts/docs-commit.sh <branch-suffix> <message>` (ww-D6) |
+| Anything under `docs/` only | The product session | `scripts/docs-commit.sh <branch-suffix> "<message>" [docs/path ...]` (§7.5, ww-D6) |
 | Code, config, lockfiles, `.claude/`, `.github/` | Claude Code | Branch, pull request, review, as today |
 | A mix of docs and code | Claude Code | One pull request, so the docs land with the code that made them true |
 
@@ -104,7 +104,7 @@ The script stages `docs/` and nothing else, and refuses if anything outside `doc
 
 | What | How it failed | Fix, and whose |
 |---|---|---|
-| A git identity | The Cowork shell has no `user.email` or `user.name`, and no session may set git config | **Done 2026-11-11** on this computer: `Calvur-Labs` with the GitHub noreply address, in `.git/config`. `.git/config` is not committed, so the other computer needs the same two lines set once |
+| A git identity | The Cowork shell has no `user.email` or `user.name`, and no session may set git config | **Done 2026-11-11** on Alberto's computer: `Calvur-Labs` with the GitHub noreply address, in that clone's `.git/config`. It is not committed and applies to that clone only. Each person sets their own identity in their own clone; Barry's clone is untouched |
 | Network to GitHub | `git push` is refused by the proxy, HTTP 403 after CONNECT: github.com is not on this account's egress allowlist for the Cowork shell | Product owner allows github.com for the Cowork workspace in the account's network settings |
 | `gh` | Not installed in the Cowork shell, so the script cannot open the pull request | Install it there, or open the pull request from the compare URL that `git push` prints |
 
@@ -122,34 +122,23 @@ A product session ends with one work order: what changed, what to do, and what n
 
 Edit code, config or lockfiles. Merge anything. Rewrite a shipped spec. Answer a TBD.
 
-### 7.5 `scripts/docs-commit.sh`, for engineering to create
+### 7.5 `scripts/docs-commit.sh`
 
-It runs in Claude Code today, and from a product session once §7.1's prerequisites are met.
+The script is [scripts/docs-commit.sh](../../scripts/docs-commit.sh); its header is the reference. It runs in Claude Code today, and from a product session once §7.1's prerequisites are met.
 
 ```bash
-#!/usr/bin/env bash
-# Commit and push documentation changes from a product session (ww-D6).
-# Stages docs/ and nothing else, and refuses if anything else reaches the index.
-set -euo pipefail
-
-suffix="${1:?usage: docs-commit.sh branch-suffix commit-message}"
-message="${2:?usage: docs-commit.sh branch-suffix commit-message}"
-branch="docs/${suffix}"
-
-git rev-parse --abbrev-ref HEAD | grep -qx "$branch" || git checkout -b "$branch"
-git add -- docs/
-
-outside="$(git diff --cached --name-only | grep -v '^docs/' || true)"
-if [ -n "$outside" ]; then
-  printf 'Refusing: these staged files are outside docs/:\n%s\n' "$outside" >&2
-  exit 1
-fi
-
-git diff --cached --quiet && { echo "Nothing to commit under docs/."; exit 0; }
-git commit -m "$message"
-git push -u origin "$branch"
-gh pr create --base main --fill
+scripts/docs-commit.sh <branch-suffix> "<commit message>" [docs/path ...]
 ```
+
+Start on `main`. The script updates it, creates `docs/<branch-suffix>`, commits, pushes and opens the pull request. Run it again from that branch to add to the same pull request. Name paths to commit only those files; with no paths it commits everything changed under `docs/`.
+
+It refuses, before it changes anything, when:
+
+- a path given, or a file already staged, is outside `docs/`;
+- you are on any branch other than `main` or `docs/<branch-suffix>`, so another branch's commits cannot ride along;
+- the branch already carries commits that touch files outside `docs/`.
+
+Without `gh` it pushes and leaves the pull request to the link `git push` prints.
 
 ## 8. Open decisions
 
