@@ -119,5 +119,6 @@ Rules:
 ## How to update
 
 - Keep documents short and factual. Link to code or issues instead of copying them.
+- **Every code carries a short name after a `·`**, so a reference reads without a lookup: `D27 · Recommendations are working defaults`, `R1 · Org owner reach`, `Q13 · Invited people must request`. Codes are scoped per document — **D** product-owner decisions in the [working doc](product/working-doc.md), **S / R / O** open decisions in specs 002 / 011 / 012, **G** guarantees, **Q** QA findings. A bare code with no name is a defect: fix it when you touch the line.
 - Change a document through a pull request so it can be reviewed.
 - When `features.md` gets too long, split it into one page per feature under `features/`. Specs stay where they are.

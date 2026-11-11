@@ -6,7 +6,7 @@ Current behavior: [features.md](../features.md) (nothing from this spec is built
 Planning list (why now, why later, risks and fallbacks per feature): [product/pilot-event-feature-list.md](../product/pilot-event-feature-list.md)
 
 > Benchmark (2026-11-09) → spec draft (2026-11-09) → lo-fi wireframes → build.
-> **Updated 2026-11-09 (evening).** The localization base shipped separately in [spec 003](003-localization.md) (PR #5). The localization parts of this spec (§5.5, F33–F37, §7.2, §12) now cover only what spec 003 did not. Open decisions in §9 are **not blockers**: each recommendation is the working default until the product owner overrides it (D27).
+> **Updated 2026-11-09 (evening).** The localization base shipped separately in [spec 003](003-localization.md) (PR #5). The localization parts of this spec (§5.5, F33–F37, §7.2, §12) now cover only what spec 003 did not. Open decisions in §9 are **not blockers**: each recommendation is the working default until the product owner overrides it (D27 · Recommendations are working defaults).
 >
 > This spec is a record of what was decided and why. It is not updated as the features change; see [features.md](../features.md) once they ship. Strategy context lives in the [product working doc](../product/working-doc.md) (decisions D2, D4, D17–D19).
 
@@ -22,7 +22,7 @@ Make Trip Planner run a **real hosted event**: an Organization creates the event
 
 | Piece | Why it outlives the pilot |
 |---|---|
-| Organizations and trip roles | Hosted trips, billing and payouts later attach to an Organization (D18). |
+| Organizations and trip roles | Hosted trips, billing and payouts later attach to an Organization (D18 · Account model). |
 | One-tap sign-in and invite links | Every model needs low-friction joining. |
 | AI as a reviewable draft | Fixes a principle 4 conflict for all AI features. Agenda import is the host's main time-saver in models C, D, G and H. |
 | Announcements and mute | Hosts need one channel that is not a chat and not noise. |
@@ -59,7 +59,7 @@ Five products that solve parts of this today.
 ### 5.1 Organizer: set up the event
 
 1. Sign in with Google or an email link.
-2. **Create an Organization** (name only), or pick one you belong to. The pilot Organization is created by the product owner, who adds the organizers as admins. — **⚠ Challenged 2026-11-11 ([spec 012](012-joining-naming-and-the-first-trip.md) Q2, O1):** this makes an administrative decision step 2 of 6, before the trip exists or anyone has seen anything. Spec 012 recommends an Organization is **never required**, and offered only when continuity or billing makes it useful. It costs the pilot nothing either way, since the pilot Organization is created by hand.
+2. ~~**Create an Organization** (name only), or pick one you belong to.~~ **✅ Removed 2026-11-12 by O1 · Organization never required** ([spec 012](012-joining-naming-and-the-first-trip.md) §5.2, §5.8A). **No Organization is required to host a trip.** It is offered when continuity or billing makes it useful, never as a step before the trip exists. `Trip.orgId` is nullable; a trip without one is personally owned. The pilot Organization is still created by the product owner, who adds the organizers as admins — so the pilot is unaffected. **For product:** D18 · Account model now reads "Organizations **may** own hosted trips".
 3. **Create a hosted event** in the Organization: name, place, dates, time zone (defaults to the destination's), accommodation.
 4. **Import the agenda** (5.3). Review and publish.
 5. **Share the invite link** in the team's chat. Optionally add co-hosts.
@@ -109,7 +109,7 @@ The draft keeps the source language. We do not translate content.
 
 **Drawn 2026-11-11:** [`wireframes/002-hosted-event-pilot/`](../../wireframes/002-hosted-event-pilot/) — open [`index.html`](../../wireframes/002-hosted-event-pilot/index.html) for all 13 frames on one page, each annotated with the requirements it satisfies. Reading conventions and the gaps below are in that folder's [README](../../wireframes/002-hosted-event-pilot/README.md).
 
-The frames assume the §9 recommendations as the working default (D27). Overriding S1, S2, S6, S7 or S8 changes the frame it is drawn against.
+The frames assume the §9 recommendations as the working default (D27 · Recommendations are working defaults). Overriding S1, S2, S6, S7 or S8 changes the frame it is drawn against.
 
 **Three screens this spec requires that the table below does not list:** create an Organization (F1), the Organization member list (F2 — §10 keeps it in scope), and trip people and roles where a host moves someone between host, co-host and guest (F4). All three belong to build-order part 1.
 
@@ -147,7 +147,7 @@ Mobile first; desktop is the same layout, wider.
 | F2 | An owner or admin can add people to the Organization by email as admin or member, and remove them. **Added 2026-11-11 ([spec 012](012-joining-naming-and-the-first-trip.md) Q15, §5.9.2):** adding people — to an Organization and to a trip — takes a **paste of many addresses**, reporting valid, malformed and already-invited counts before sending. There is no way to invite 38 people one at a time on 20 Nov. |
 | F3 | Organization owners, admins and members can create hosted trips in that Organization. The creator becomes the trip's host. |
 | F4 | Trip roles are host, co-host and guest. Hosts and co-hosts can edit the event, publish drafts, approve requests, post announcements and manage roles. |
-| F5 | Organization membership alone gives no access to a trip (D19). Only an active trip role does. |
+| F5 | Organization membership alone gives no access to a trip (D19 · Org membership grants no trip access). Only an active trip role does. |
 | F6 | Each trip has guest permissions. Personal trips: guests can add schedule items, polls and expenses (today's behavior). Hosted trips: guests can vote, ask questions and share location, but not edit the schedule. These two are **presets over `Trip.guestPermissions`**, not a branch on `trip.kind` — see [spec 011](011-roles-and-permissions.md) §5.2. |
 | F7 | Existing trips become personal trips. The creator becomes host, other organizers co-hosts, members guests. No user loses access they have today. **The stored roles are these; the words shown are per trip kind** — organizer/member on a personal trip — so the migration is invisible to existing users ([spec 012](012-joining-naming-and-the-first-trip.md) §5.3, Q1, O3). |
 
@@ -293,18 +293,18 @@ Proposed; engineering confirms or adjusts in the PR.
 
 **Status 2026-11-09:** S1 to S8 each have a recommendation below, proposed as the working default. They are **pending the product owner's OK**. S5 is settled: pt-BR.
 
-None of these block the build. The recommendation is the working default until the product owner overrides it (D27).
+None of these block the build. The recommendation is the working default until the product owner overrides it (D27 · Recommendations are working defaults).
 
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
-| S1 | What the join page shows before approval | Name, dates, host, cover / also agenda summary / nothing but a request button | **Name, dates, host, cover.** Enough to know what you are asking to join; nothing about other people. |
-| S2 | Agenda file types | Paste, `.md`, `.txt`, `.csv` / also `.docx` and `.pdf` | **Paste plus `.md`, `.txt`, `.csv` now.** Organizers can copy from Google Docs. Add `.docx` and `.pdf` once we see what organizers try to upload. |
-| S3 | Where analytics live | First-party in MongoDB / PostHog (EU cloud) | **First-party now.** No new vendor or data processor, no cookie banner question, and we control what is stored. Move to a product analytics tool when we need funnels across many events. |
-| S4 | Analytics retention | 90 days / 180 days / 12 months | **180 days.** Covers the pilot and Phase 1 comparisons. Pseudonymous, so the risk is low; shorter is easy later. |
-| S5 | Portuguese variant | Portugal (pt-PT) / Brazil (pt-BR) | **Shipped as pt-BR in spec 003.** Keep pt-BR for the pilot; switching is one file. Revisit if Portugal becomes a target market. |
-| S6 | Announcement reach on iPhone | Manifest and Add to Home Screen only / plus email for announcements | **Manifest and in-app only for the pilot.** Email needs a sending provider and templates in 3 languages. Measure announcement_opened by platform, then decide. |
-| S7 | Who can create an Organization | Anyone / invite only for now | **Anyone, but not promoted in the UI yet.** No billing exists, so there is nothing to protect. |
-| S8 | Can guests reply to announcements? | No / yes, as comments | **No.** One-way, like WhatsApp announcement groups. Questions go to the existing Q&A. |
+| S1 · Join page contents | What the join page shows before approval | Name, dates, host, cover / also agenda summary / nothing but a request button | **Name, dates, host, cover.** Enough to know what you are asking to join; nothing about other people. |
+| S2 · Agenda file types | Which formats the agenda import accepts | Paste, `.md`, `.txt`, `.csv` / also `.docx` and `.pdf` | **Paste plus `.md`, `.txt`, `.csv` now.** Organizers can copy from Google Docs. Add `.docx` and `.pdf` once we see what organizers try to upload. |
+| S3 · Analytics store | Where analytics live | First-party in MongoDB / PostHog (EU cloud) | **First-party now.** No new vendor or data processor, no cookie banner question, and we control what is stored. Move to a product analytics tool when we need funnels across many events. |
+| S4 · Analytics retention | How long analytics events are kept | 90 days / 180 days / 12 months | **180 days.** Covers the pilot and Phase 1 comparisons. Pseudonymous, so the risk is low; shorter is easy later. |
+| S5 · Portuguese variant | Which Portuguese we ship | Portugal (pt-PT) / Brazil (pt-BR) | **Shipped as pt-BR in spec 003.** Keep pt-BR for the pilot; switching is one file. Revisit if Portugal becomes a target market. |
+| S6 · iPhone announcement reach | How announcements reach iPhone users | Manifest and Add to Home Screen only / plus email for announcements | **Manifest and in-app only for the pilot.** Email needs a sending provider and templates in 3 languages. Measure announcement_opened by platform, then decide. |
+| S7 · Who can create an Organization | Who may create one | Anyone / invite only for now | **Anyone, but not promoted in the UI yet.** No billing exists, so there is nothing to protect. |
+| S8 · Replies to announcements | Can guests reply to announcements? | No / yes, as comments | **No.** One-way, like WhatsApp announcement groups. Questions go to the existing Q&A. |
 
 ## 10. Out of scope for this spec
 
@@ -312,14 +312,14 @@ None of these block the build. The recommendation is the working default until t
 - An Organization home page beyond the switcher and member list (Phase 1).
 - Public event pages and discovery.
 - Payments.
-- Interests onboarding (D2).
+- Interests onboarding (D2 · Gathering scope).
 - Activity feed UI.
 - People-to-people chat or comments.
 - Apple sign-in.
 - Email delivery of announcements (S6).
 - Machine translation of content.
-- Free-tier limits and the Trip Pass (D20).
-- What happens to trips when someone leaves an Organization (D21). Until decided, removing an org member does not change their trip roles. **⚠ Contradiction, found 2026-11-11:** the [working doc §4.2](../product/working-doc.md) proposes the opposite — that leaving an Organization drops host and co-host roles on its trips. The two documents must stop disagreeing; resolved by open decision **R2** in [spec 011](011-roles-and-permissions.md) §13.
+- Free-tier limits and the Trip Pass (D20 · Free personal limits).
+- ~~What happens to trips when someone leaves an Organization (D21 · Leaving an Organization). Until decided, removing an org member does not change their trip roles.~~ **✅ Resolved 2026-11-12 by R2 · Leaving an Organization** ([spec 011](011-roles-and-permissions.md) §13). The contradiction with the [working doc §4.2](../product/working-doc.md) is settled in the working doc's favour: **leaving an Organization drops host and co-host roles on that Organization's trips; the trips stay; if that empties the hosts, an org owner is asked to take over** (**G1 · Last host**). No longer out of scope — it is behaviour the removal path must implement. **For product:** D21 · Leaving an Organization can move from *proposed* to *decided* in the working doc.
 
 ## 11. How we will know it worked
 
