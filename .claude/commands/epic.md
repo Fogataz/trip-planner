@@ -23,4 +23,10 @@ do not copy them here. Strategy and order come from docs/product/venture-analysi
 8. Show the gh commands and the issue body, and wait for OK before running them.
 9. After creating an issue, replace its brief in epic-briefs.md with "Created as #<n>".
 10. "check" mode: report epics missing an outcome title, hypothesis, measure, stories,
-    initiative or fields. Change nothing without OK.
+    initiative or fields. Then compare each epic's board Status with its spec's `Status:`
+    header and its open PRs (`gh pr list --search "<spec number or issue>"`), and flag
+    every mismatch: Spec draft vs draft, Spec approved vs approved, In build vs approved
+    or building with a branch, In review vs an open PR to main, Shipped vs shipped and
+    merged. Report only; change nothing without OK (pipeline.md §5).
+11. Hand over (docs/process/pipeline.md §4). If the epic has no spec yet, end with:
+    "Next: `/feature <title>`, stage 1 benchmark".
