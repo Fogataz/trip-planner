@@ -8,7 +8,7 @@ This file is read by both Claude Code (engineering) and the Claude Cowork projec
 
 - `server/`: Node.js + Express API, Socket.io (optional Redis adapter), MongoDB via Mongoose. Sign-in is our own JWT (`services/auth.js`); Firebase Admin is used only for push notifications. Entry point is `server/index.js`. Code is split into `config/`, `middleware/`, `models/`, `routes/` and `services/`.
 - `client/`: React 18 + TypeScript, built with Vite. Uses React Router, Leaflet maps and socket.io-client.
-- `docs/`: product docs and feature specs. See [docs/README.md](docs/README.md).
+- `docs/`: product docs and feature specs. See [docs/README.md](docs/README.md). How the objects, documents and tooling fit together is [docs/process/system.md](docs/process/system.md).
 
 ## Commands
 

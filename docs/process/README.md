@@ -8,6 +8,7 @@
 
 | Document | Owns | Read it when |
 |---|---|---|
+| [system.md](system.md) | **Start here.** The whole thing on one page: the objects, the documents, the tooling with its status, and the fronts beyond product and engineering | You want to know what we have, or whether a tool exists |
 | [tracker.md](tracker.md) | The board: three levels, fields, views, milestones, and how an epic is written | You are creating or grooming an issue |
 | [pipeline.md](pipeline.md) | The commands, and where each hands over | You are about to run a command, or build a new one |
 | [ways-of-working.md](ways-of-working.md) | The quality bar and the weekly rhythm | Before merging, and on Friday |
@@ -17,7 +18,7 @@
 | [../README.md](../README.md) | The stages a feature passes through, and the docs conventions | Any new feature |
 | [../../CLAUDE.md](../../CLAUDE.md) | The four product principles, the layout, who does what | Every session, automatically |
 
-Rule of thumb: `docs/README.md` owns **what happens**, `tracker.md` owns **where it is recorded**, `pipeline.md` owns **who runs it**, `ways-of-working.md` owns **how good it has to be**, `design-lenses.md` owns **what a spec must have thought about**.
+Rule of thumb: `docs/README.md` owns **what happens**, `tracker.md` owns **where it is recorded**, `pipeline.md` owns **who runs it**, `ways-of-working.md` owns **how good it has to be**, `design-lenses.md` owns **what a spec must have thought about**, and `system.md` owns **what exists and how it connects**.
 
 ## How one piece of work travels
 
@@ -46,6 +47,7 @@ Everything else is a recommendation, not a blocker (D27).
 | Living and point-in-time documents are different kinds | A reference that is edited stays true. An analysis that is edited becomes a lie about what we knew at the time | Folders organised by status | [docs/README.md](../README.md) |
 | Rules live in documents; commands point at them | A command that copies a rule drifts from it silently | Self-contained commands | [pipeline.md](pipeline.md) §3 |
 | The reviewer never built the thing | The session that just built a feature already believes it works | Self-review | [ways-of-working.md](ways-of-working.md) §3 |
+| One page that lists every tool and its status | Three partial maps existed and none of them said what tooling we had. A tool nobody knows about is a tool nobody runs | A fourth partial map, or a wiki | [system.md](system.md) |
 | One standard every new spec is checked against | A premium bar reached on the first pass costs less than a second design round. Fourteen lines in a spec is cheaper than rework | Judging each spec on its merits | [design-lenses.md](design-lenses.md) |
 | A rule gets a script or a hook, or it is goodwill | The checks we skip are the ones that depend on two people remembering while busy | Checklists nobody runs | [ways-of-working.md](ways-of-working.md) §2, §7 |
 | A code never travels without its name | "M0 epic target dates" is unreadable a week later | Bare codes | [naming.md](naming.md) |

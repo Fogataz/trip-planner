@@ -65,6 +65,102 @@ Three gate milestones in `Fogataz/trip-planner`. The criteria are from [venture-
 | **M1 Phase 1 gate** | 2027-02-26 | At least 2 hosts paid or committed a departure with a deposit; 8 of 15 interviewed hosts describe the pain unprompted; setup under 2 hours per departure |
 | **M2 Phase 2 gate** | 2027-06-30 | 10+ paying hosts; first host collecting deposits in the app; second departure run without our help |
 
+## Writing an initiative
+
+Written by the `/initiative` command (`.claude/commands/initiative.md`), which follows this section.
+
+An initiative is a one-to-three-month bet. It is the most expensive commitment we make and, until
+2026-11-11, it carried the least written thinking: one sentence of outcome and a list of epics. The
+cost of *building* fell when Claude Code arrived, so the cost of building the wrong thing is now the
+larger risk, and the cheapest thing to throw away is a page of text.
+
+**Where it lives.** One file per initiative, `docs/product/initiatives/I<n>-<slug>.md`, linked from
+the GitHub issue. The issue body keeps the outcome, the key result, the fields and the link; the file
+holds the long form. A product session cannot write to a GitHub issue (ww-D8) and the repo is the
+only thing that syncs between accounts (D26), so the thinking has to live in a file. It is living
+while the initiative is open and frozen when it closes, like a spec.
+
+### Rules
+
+| Rule | Why |
+|---|---|
+| **The press release is under one page**, future-dated, and written in the host's or traveller's words — not ours | Amazon's own rule for the format we are borrowing: a few paragraphs, always less than a page. If it needs two pages it is two initiatives. If it is boring, the initiative is boring, and that is cheap to find out on paper |
+| **A sceptic's FAQ of five to seven questions**, one of which is the kill condition | The format exists to kill ideas before code. Most PR/FAQs at Amazon never launch, and that is the point |
+| **The strategy block is six lines, not six paragraphs**, and every line is read back by a command | A field nobody reads back is decoration. See the table below: each line names the command that reads it |
+| **No customer-facing FAQ, and no impact score** | The customer FAQ is written for a launch audience we do not have until public pages exist. An impact number invented by two people is worse than no number: the key result carries the target, and "next bottleneck" carries the magnitude honestly |
+| **Owner questions are listed, never answered** | D27: each carries a recommendation that is the working default |
+| **Size: one to three months.** Bigger is a strategy change | A strategy change is the owner's call at a milestone ([pipeline.md](pipeline.md) §6.3), not an initiative |
+| **Written before its epics** | An initiative whose epics are already written is a summary, not a bet |
+
+### The strategy block
+
+Six lines that keep the work pointed at the bet in [working-doc.md](../product/working-doc.md) §2
+and stop it drifting. The right-hand column is the rule that keeps them honest: a line goes in only
+because something reads it back.
+
+| Line | What it says | Read back by |
+|---|---|---|
+| **Layer** | Core, Host, Money, Public or Content (working-doc §2) | `/roadmap`, `/milestone` |
+| **Validates** | The revenue model by name (name-D2) and the **one claim** we are testing — "host tool: a host will pay before payments exist", not just "host tool" | `/milestone`, against the measure |
+| **Unblocks** | What becomes possible once this lands, and what stays blocked until it does | `/roadmap`, for ordering |
+| **Next bottleneck** | If this works perfectly, the next thing that stops us | `/roadmap`. This is the honest version of "magnitude": it says what the win is worth without inventing a number |
+| **Instead of** | What we are not doing this quarter because we chose this | `/roadmap`. Drift is rarely building something off-strategy; it is starting five things and finishing no bet |
+| **Kill condition** | What we would see that makes us stop, and by when | `/roadmap` every week, `/milestone` at the gate. Without it, the only stop-early mechanism is a gate three months wide |
+
+**Note on strategic pillars.** The pillars in [strategy.md](../product/strategy.md) describe the
+product's capability areas and predate D33 premium hosts lead, so an initiative that cited one would
+record the old shape of the business rather than the current bet. Layer plus the revenue-model claim
+are the live anchors. Realigning `strategy.md` is the product owner's (trk-D3).
+
+### Initiative file template
+
+```markdown
+# I<n> <outcome in plain words>
+
+Status: open | closed   ·   Issue: [#<n>](link)   ·   Opened: YYYY-MM-DD   ·   Closes: M<n>
+
+**Outcome:** <one sentence: what changes for whom>
+**Key result:** <measure and target> by <date>
+
+## Strategy
+
+- **Layer:** Core | Host | Money | Public | Content
+- **Validates:** <model by name> — <the one claim>
+- **Unblocks:** <what becomes possible> · Blocked until then: <what waits>
+- **Next bottleneck:** <if this works, what stops us next>
+- **Instead of:** <what we are not doing this quarter>
+- **Kill condition:** <what we would see> by <date>
+
+## Press release
+
+<Dated in the future. Under one page. A headline a host would read, a subhead naming who it
+is for, then: the problem in their words, what they can now do, one quote from a host, one
+from us, and how to get started. No internal language, no feature list.>
+
+## Sceptic's FAQ
+
+Five to seven. Always these four, plus what this initiative makes someone ask:
+
+1. **Who pays, and how much?**
+2. **Why now, and why us?**
+3. **What are we deliberately not building here?**
+4. **What is the riskiest assumption, and what is the cheapest test of it?**
+
+## Epics and spikes
+
+| # | Epic or spike (outcome) | Horizon | Brief |
+|---|---|---|---|
+
+## Open questions for the owner (with recommendation)
+```
+
+**Where the format comes from.** The press release and FAQ pair is Amazon's "working backwards",
+popularised by Colin Bryar and Bill Carr. Amazon's own account of it: the press release is always
+less than one page, the FAQ five pages or less, teams write ten or more drafts, and most PR/FAQs are
+abandoned on paper — which is the saving.
+[Amazon on its own process](https://www.aboutamazon.com/news/workplace/an-insider-look-at-amazons-culture-and-processes).
+We take the press release, trim the FAQ to the sceptic's half, and drop the rest (trk-D1).
+
 ## Writing an epic
 
 Epics are written by the `/epic` command (`.claude/commands/epic.md`), which follows this section.
@@ -79,6 +175,9 @@ Epics are written by the `/epic` command (`.claude/commands/epic.md`), which fol
 | **Before a spec:** the issue body is the full brief. **After a spec:** the body keeps outcome, hypothesis, measures and stories, and links the spec for requirements and acceptance criteria | Keeps one source of truth: the brief, then the spec. The board never restates a spec (tracker.md). |
 | **Principles check in every brief** | CLAUDE.md asks us to flag conflicts early. |
 | **Owner questions are listed, never answered** | D27: each has a recommendation that is the working default. |
+| **The leading measure names an analytics event**, not a description of one | ways-of-working §1 check 7 is the check that gets skipped, and L6 measurability asks the same thing at spec time. "Hosts reuse a departure" cannot be read; `departure_duplicated` can (trk-D2). |
+| **Every epic carries a stop condition with a date** | An epic is a bet, and a bet with no exit is a feature list that cannot be cancelled. The initiative's kill condition covers the bet; this covers the epic (trk-D2). |
+| **Name the payer** | The [premium buyer lens](../product/premium-buyer-lens.md) says travellers never pay. An epic that serves only travellers has to say what it buys us (trk-D2). |
 | **Size:** 2–8 weeks. Bigger means two epics | tracker.md level 2. |
 
 ### Issue body template
@@ -87,6 +186,7 @@ Epics are written by the `/epic` command (`.claude/commands/epic.md`), which fol
 **Outcome:** <one sentence: what changes for whom>
 **Initiative:** I<n> <name> (#<issue>) · **Horizon:** Now | Next | Later · **Milestone:** M0 | M1 | M2
 **Models:** <by name, e.g. host tool> · **Layer:** Core | Host | Money | Public | Content
+**Payer:** host | organisation | nobody — <if nobody, what it buys us>
 **Spec:** none yet (next step: /feature benchmark) | [NNN](link)
 
 ### Problem
@@ -97,8 +197,12 @@ We believe <capability> for <persona> will <outcome>.
 We'll know when <measure and target>.
 
 ### Measures
-- Leading (during build or the first departure): …
+- Leading (during build or the first departure): `<analytics_event_name>` — <how it is counted>.
+  Name the event, not a description of it. If no event exists, adding it is a build-order row.
 - Lagging (by the milestone): …
+
+### Stop if
+<what we would see that means we stop this epic> by <date>.
 
 ### Main user stories
 - As a <persona>, I want <goal>, so that <reason>.
@@ -246,3 +350,12 @@ Added 2026-11-10 after D33 (premium hosts lead). Outcome titles; epics come from
 | I6 | Premium hosts run a repeat departure without our help | Now | M1 |
 | I7 | We know which premium hosts will pay, and for what | Now | M1 |
 | I8 | Hosts collect guest money inside the trip | Next | M2 |
+
+## Open decisions
+
+| # | Decision | Owner | Status |
+|---|---|---|---|
+| trk-D1 | Does an initiative carry a press release, and how much of Amazon's PR/FAQ do we take? | Product owner | **Decided 2026-11-11:** the one-page press release and a sceptic's FAQ of five to seven questions. Options were: nothing (today's one-line outcome); the full PR/FAQ including a customer FAQ and five pages; or the press release plus the sceptic's half. Taken: the third. The customer FAQ waits for public pages, and the epic template already carries the structured version of the rest |
+| trk-D2 | The three additions to the epic template: a named analytics event, a stop condition, and the payer | Engineering | **Decided 2026-11-11.** Each closes a check that already exists somewhere and is skipped: ways-of-working §1 check 7, the bet-with-no-exit problem, and the premium buyer lens |
+| trk-D3 | The strategic pillars in `strategy.md` predate D33 premium hosts lead. Realign them, retire them, or leave them | Product owner | **TBD.** Options: rewrite the pillars around the layers in working-doc §2 (one edit, keeps one taxonomy); retire them and let Layer plus the revenue model be the only anchors (less to maintain, loses the capability view); leave them and accept that they describe the old shape. Recommendation: **retire them into a history section**, as name-D4 did for the roadmap phases, since Layer already does the job and two taxonomies drift apart. Initiatives cite Layer and the revenue-model claim either way, so nothing is blocked |
+| trk-D4 | Where an initiative's long form lives | Engineering | **Decided 2026-11-11:** `docs/product/initiatives/I<n>-<slug>.md`, linked from the issue. A product session cannot write an issue body (ww-D8) and the repo is the only thing that syncs (D26) |

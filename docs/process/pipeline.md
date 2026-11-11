@@ -10,19 +10,20 @@
    strategy (owner, at a milestone)
          |
          v
-    /roadmap --> /epic --> /feature --> /pr --> ships
-         ^                                        |
-         |                                        v
-    /milestone <------------------------------ /audit
+  /initiative --> /roadmap --> /epic --> /feature --> /pr --> ships
+         ^                                                      |
+         |                                                      v
+    /milestone <------------------------------------------- /audit
 ```
 
 | Command | Owns | State |
 |---|---|---|
-| `/roadmap` | What we do next, and the Now / Next / Later cut | Proposed |
+| `/initiative` | The bet itself: press release, sceptic's FAQ, strategy block | Built |
+| `/roadmap` | What we do next, and the Now / Next / Later cut | Built |
 | `/epic` | The GitHub epic: outcome, hypothesis, measures, stories | Built |
 | `/feature` | The spec and the build, one stage at a time | Built |
 | `/pr` | The verdict on one pull request, before it is merged | Built |
-| `/audit` | What is wrong with what is already live | Proposed |
+| `/audit` | What is wrong with what is already live | Built |
 | `/milestone` | Whether the bets paid off, at M0, M1 and M2 | Built |
 
 Each name is the thing the command owns. Nothing is named after a job that two commands share.
@@ -31,11 +32,12 @@ Each name is the thing the command owns. Nothing is named after a job that two c
 
 | Command | Cadence | Reads | Writes | Hands to |
 |---|---|---|---|---|
-| `/roadmap` | Monday, and after a strategy change | strategy, venture-analysis §11, roadmap, the board, spec-backlog | recommended Horizon moves, the next brief | `/epic` |
+| `/initiative` | Per bet, before its epics | working-doc §2–3, venture-analysis, epic-briefs §2, early-testers | the initiative file and the issue body | `/epic` |
+| `/roadmap` | Monday, and after a strategy change | the initiatives and their key results and kill conditions, the board, venture-analysis §11 as a dated reference, spec-backlog | recommended Horizon moves with a reason on the issue, the next brief | `/epic` |
 | `/epic` | Per bet | a brief, a spec or an issue | the epic, its fields, story sub-issues | `/feature` |
 | `/feature` | Per feature | the stages in docs/README.md, the spec | spec, wireframes, branch, PR, docs | `/pr`, then `/audit` |
 | `/pr` | Per pull request | the spec, the diff, the lenses, the four principles | a verdict, and on an OK one PR comment | the owner, who merges |
-| `/audit` | After a ship, and monthly | shipped acceptance criteria, the seven UX tests, the four principles | Bug issues under I3, rows in spec-backlog | `/roadmap` |
+| `/audit` | After a ship, and before a gate | `scripts/audit-checks.sh`, shipped acceptance criteria, the seven UX tests, the fourteen lenses, the four principles | Bug issues under I3, rows in spec-backlog, `features.md` corrections | `/roadmap` |
 | `/milestone` | At M0, M1, M2 | each epic's own measures, analytics, the board | verdicts and an evidence pack | the owner, then `/roadmap` |
 
 ## 3. Rules every command follows
@@ -55,6 +57,7 @@ Each command ends by naming the next one. Added to `feature.md`, `epic.md` and `
 
 | After | Hand to | Line to add |
 |---|---|---|
+| `/initiative` writes a press release | `/epic` | "Next: `/epic <brief>` for the first epic under this initiative" |
 | `/roadmap` writes a brief | `/epic` | "Next: `/epic <brief>`" |
 | `/epic` creates an epic with no spec | `/feature` | "Next: `/feature <title>`, stage 1 benchmark" |
 | `/feature` drafts the spec (stage 4) | `/epic` | "Next: `/epic <spec>` to link the spec and set fields" |
@@ -83,29 +86,63 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 
 ### 6.1 `/roadmap` — what we do next
 
-**When:** Monday, and after any strategy change. **Input:** nothing, or an initiative. **Built in two halves (pipe-D3):** `check`, steps 1 to 3 and read-only, in December; the writing half, steps 4 and 5, in January.
+**When:** Monday, and after any strategy change. **Input:** nothing, an initiative, or `check`.
+Built 2026-11-11 (pipe-D6), both halves at once: pipe-D3 split it into December and January, and the
+five changes below made the writing half cheap enough to build with the rest.
 
-1. Report state: open epics by Horizon and milestone, what is in the sprint, what is blocked, what has no spec yet.
-2. For each open epic, check it still serves its initiative's key result. Flag the ones that do not.
-3. Compare the order on the board with [venture-analysis.md](../product/venture-analysis.md) §11 and the briefs in [epic-briefs.md](../product/epic-briefs.md). List every difference as a recommendation with a reason.
-4. Recommend the next one or two things to start, against real capacity: two people, one week.
-5. Write or update the top brief in `epic-briefs.md` so `/epic` can take it.
-6. Never rewrite [strategy.md](../product/strategy.md). Strategy changes at a milestone, by the owner.
+1. **State.** Open epics by Horizon and milestone, what is in the sprint, what is blocked, what has
+   no spec yet.
+2. **Work in progress, first.** Two or more epics `In build` or `In review` and it recommends
+   nothing new: it reports what is in flight and stops. Two people cannot carry three open epics,
+   and a roadmap that keeps starting work is how a quarter ends with nothing finished.
+3. **Measures.** Print each open epic's leading measure and say whether it can be read today — is
+   the analytics event named, and does it exist in the code? Flagged here, not at the gate
+   (ways-of-working §1 check 7, lens L6 measurability).
+4. **Kill conditions.** For every open initiative, read its kill condition and say whether what it
+   describes has already happened. This is the weekly version of the milestone gate.
+5. **Alignment and drift.** Name the initiative and key result each epic serves. Then compare the
+   board's order with [venture-analysis.md](../product/venture-analysis.md) §11 and the briefs in
+   [epic-briefs.md](../product/epic-briefs.md) — **printing that document's date**, because a
+   difference from a three-month-old analysis is the document ageing, not drift.
+6. **Next.** One or two things to start, sized against two people for one week. Skipped entirely if
+   step 2 stopped it.
+7. **Brief.** Write or update the top brief in `epic-briefs.md` so `/epic` can take it.
+8. Never rewrite [strategy.md](../product/strategy.md), and never answer a TBD. A Horizon move, a
+   re-parenting or a milestone change is recorded as a comment on the issue with its reason, not
+   only in a chat (ww-D7).
 
-**Output:** a status report, recommended Horizon moves, and one brief ready for `/epic`.
+**Output:** a status report, recommended Horizon moves, and one brief ready for `/epic`. `check` mode
+runs steps 1 to 5 and writes nothing.
 
 ### 6.2 `/audit` — what is wrong with what we shipped
 
-**When:** after a spec ships, and monthly. **Input:** `qa`, `ux`, a spec number, or `all`.
+**When:** after a spec ships, and before a gate. **Input:** `checks`, `qa`, `ux`, a spec number, or
+`all`. Built 2026-11-11 (pipe-D7).
 
-1. `qa`: walk the acceptance criteria of shipped specs against the running app. Met, not met, or can't tell.
-2. `ux`: apply the seven tests in [brand-foundations.md](../brand/brand-foundations.md) §5. Each principle already carries a one-line test an engineer can apply.
-3. Check the four principles in [CLAUDE.md](../../CLAUDE.md) against current behaviour, not against the spec.
-4. Rank each finding: broken, confusing, slower than it should be, cosmetic.
-5. Route every one. Broken against a spec becomes a Bug issue under **I3**. An improvement becomes a row in [spec-backlog.md](../product/spec-backlog.md). Nothing stays only in the report.
-6. Change no code.
+1. **The mechanical half first:** [`scripts/audit-checks.sh`](../../scripts/audit-checks.sh) finds
+   socket events emitted with no listener (L5), locale keys missing from a language and hard-coded
+   user-visible strings (L1), and API routers mounted without the auth middleware (L12). `checks`
+   runs only this. It is **not** a CI check: it reports on code that already exists, and a required
+   check that fails on day one gets bypassed (sys-D3).
+2. `qa`: the acceptance criteria of shipped specs against the running app. Met, not met, or can't
+   tell — and can't tell counts as not met.
+3. `ux`: the seven tests in [brand-foundations.md](../brand/brand-foundations.md) §5 **and** the
+   fourteen lenses in [design-lenses.md](design-lenses.md) applied to what is live. The lenses did
+   not exist when this command was first drafted; they are what make the judgment half concrete.
+4. Check the four principles in [CLAUDE.md](../../CLAUDE.md) against current behaviour, not against
+   the spec.
+5. Rank each finding: broken, confusing, slower than it should be, cosmetic.
+6. **Route every one, after checking for a duplicate** (`gh issue list --state open --search …`).
+   Broken against a spec becomes a Bug issue under **I3 what we have built works as documented**, or
+   a comment on the issue that already exists. An improvement becomes a row in
+   [spec-backlog.md](../product/spec-backlog.md). **A contradiction with `features.md` is fixed in
+   `features.md`**, so documentation rot has a route like anything else. Nothing stays only in the
+   report.
+7. Change no application code, and open no pull request except the `features.md` correction.
 
-**Output:** a findings table, plus the issues and backlog rows it would create, shown for an OK first.
+**Output:** a findings table, plus the issues and backlog rows it would create, shown for an OK
+first. "Monthly" was dropped on purpose: a calendar ritual for two people is a ritual that gets
+skipped, so it runs on ships and gates instead.
 
 ### 6.3 `/milestone` — did the bets pay off
 
@@ -134,6 +171,24 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 
 **Output:** a verdict the owner reads instead of the whole diff. The merge stays the owner's, as it is today.
 
+### 6.5 `/initiative` — the bet itself
+
+**When:** before an initiative's epics are written, and whenever an open initiative has no press
+release. **Input:** an initiative number, a name, or `check`. Built 2026-11-11 (pipe-D8). The rules
+and both templates are in [tracker.md](tracker.md), "Writing an initiative".
+
+1. Report what the initiative already has — file, press release, sceptic's FAQ, six strategy lines —
+   and write only what is missing.
+2. The press release is the work: under one page, future-dated, in the host's words, and it carries
+   the "so what?" test. If the release is not meaningfully better, easier or cheaper for the host,
+   the command says so and recommends not doing the initiative.
+3. It never invents a customer quote and presents it as real: draft wording is marked as the owner's
+   to confirm.
+4. `check` mode reports what is missing across every open initiative, **plus whether any kill
+   condition has already happened**. It is the same read `/roadmap` step 4 does, available on its own.
+
+**Output:** the initiative file, the issue body, and nothing restated between them.
+
 ## 7. Build order
 
 | When | What | Why |
@@ -141,8 +196,8 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 | Before 20 Nov | The handoff lines in §4. CI (ww-D1). Rollback (ww-D3) | **Done 2026-11-11.** The pilot is the deadline; new commands are not on the critical path |
 | By 27 Nov | `/milestone` | **Built 2026-11-11.** M0 Pilot retro falls on 27 Nov and nothing checked a measure before |
 | Before 20 Nov | The design lenses, `/pr`, and the three checks that run by themselves (spec lint, docs-only branches, session staleness) | **Built 2026-11-11.** The lenses apply to specs 005 onwards, so they have to exist before the next spec is written, not after |
-| December | `/audit` and `/roadmap check` (the read-only half) | Before the host-layer work piles up. `/roadmap check` replaces reconstructing the state by hand. Board automation is settled: built-in workflows only (pipe-D1, §5) |
-| January | The writing half of `/roadmap`: briefs and Horizon moves | It earns its keep once there are more candidate epics than weeks |
+| Before 20 Nov | `/initiative`, `/roadmap`, `/audit` and `scripts/audit-checks.sh` | **Built 2026-11-11**, ahead of pipe-D3's December and January dates. The five changes to each (§6.1, §6.2) made them cheap enough to finish in one pass, and `/initiative` has to exist before the next initiative is written rather than after |
+| December | The Friday digest, if the audit script has earned it (sys-D4) | Board automation is settled: built-in workflows only (pipe-D1, §5) |
 
 ## 8. Open decisions
 
@@ -150,60 +205,25 @@ Decided in pipe-D1: no Action and no token. The built-in workflows cover adding 
 |---|---|---|---|
 | pipe-D1 | Board automation and the extended `/epic check` (§5) | Engineering | **Decided 2026-11-11:** built-in Projects workflows only (auto-add open issues; item closed → Shipped). No Action, so no personal token to create or renew. In review is set by hand. `/epic check` compares board Status with spec headers and open PRs |
 | pipe-D2 | The names `/roadmap`, `/audit`, `/milestone` | Product owner | **Decided 2026-11-11** |
-| pipe-D3 | The build order in §7 | Product owner | **Decided 2026-11-11.** Amended the same day: `/roadmap check` moves to December with `/audit`; its writing half stays in January |
+| pipe-D3 | The build order in §7 | Product owner | **Decided 2026-11-11.** Amended twice the same day: `/roadmap check` moved to December with `/audit`; then both, plus `/initiative`, were built on 2026-11-11 (pipe-D6 to pipe-D8). December now holds only the Friday digest |
 | pipe-D4 | Whether `/audit ux` may drive a browser, or only read code and report | Engineering | **TBD** |
 | pipe-D5 | `/pr` as a command, and where the reviewer runs | Engineering | **Decided 2026-11-11: built, reviewer in a subagent** (§6.4). Options were: a skill that loads itself (rejected — it would load into the session that wrote the code, which is the one thing §3 forbids); a command reviewing in the same session (rejected — self-review with extra steps); a command that hands spec and diff to a subagent (taken) |
+| pipe-D6 | The five changes to `/roadmap` before building it | Engineering | **Decided 2026-11-11** (§6.1): a work-in-progress limit that refuses, measures printed and checked for readability, kill conditions read weekly, the drift baseline moved from a point-in-time analysis to the initiatives' key results with the analysis's date printed, and Horizon moves recorded on the issue. Options considered and rejected: build it as originally drafted (it would recommend work while three epics were in flight, and report drift that was really a stale document) |
+| pipe-D7 | The five changes to `/audit` before building it | Engineering | **Decided 2026-11-11** (§6.2): the lenses added, the mechanical half split into a script, the script kept out of CI, a duplicate check before filing, and `features.md` given a route. "Monthly" dropped for ships and gates. Options rejected: build it as drafted (no lenses, no script, and one near-duplicate issue already proved the filing gap) |
+| pipe-D8 | Is `/initiative` its own command, or a mode on `/epic`? | Engineering | **Decided 2026-11-11: its own command.** Options were: a mode on `/epic` (rejected — writing a press release is a different conversation from setting fields, and §1 says a command is named after the object it owns); a skill that loads itself (rejected — initiatives are written a handful of times a year, and a skill would have to guess the moment); its own command (taken) |
 
-## Appendix A. Proposed `.claude/commands/roadmap.md`
+## Appendix A. `/roadmap` and `/audit`
 
-```markdown
----
-description: Report where the product stands and recommend what to build next, following docs/process/pipeline.md
-argument-hint: <nothing, an initiative number, or "check">
----
+Built on 2026-11-11 with the changes in §6.1 and §6.2 (pipe-D6, pipe-D7). The commands are
+[`.claude/commands/roadmap.md`](../../.claude/commands/roadmap.md) and
+[`.claude/commands/audit.md`](../../.claude/commands/audit.md); the earlier drafts of both are in git
+history. A command is never copied into this file: the rule lives here, the command reads it (§3).
 
-Work on the roadmap: $ARGUMENTS
+## Appendix B. `/initiative`
 
-The rules are in docs/process/pipeline.md §6.1. Read them first; do not copy them here.
-Strategy comes from docs/product/strategy.md and docs/product/venture-analysis.md §11.
-
-1. State. Open epics by Horizon and milestone, what is in the sprint, what is blocked,
-   what has no spec. Use gh for the board.
-2. Alignment. For each open epic, name the initiative it serves and its key result. Flag
-   any epic that no longer serves one.
-3. Drift. Compare the board's order with venture-analysis.md §11 and the briefs in
-   epic-briefs.md. List each difference with a reason and a recommendation.
-4. Next. Recommend one or two things to start, sized against two people for one week.
-5. Brief. Write or update the top brief in docs/product/epic-briefs.md §4, following
-   docs/process/tracker.md, "Writing an epic".
-6. Never edit strategy.md, and never answer a TBD. Recommendations are defaults (D27).
-7. Show every proposed change and wait for an OK. Then: "Next: /epic <brief>".
-8. "check" mode: report state and drift only. Change nothing.
-```
-
-## Appendix B. Proposed `.claude/commands/audit.md`
-
-```markdown
----
-description: Audit what is live against the specs, the UX tests and the product principles
-argument-hint: <qa | ux | all | a spec number>
----
-
-Audit: $ARGUMENTS
-
-The rules are in docs/process/pipeline.md §6.2. Read them first; do not copy them here.
-
-1. Scope. "qa": acceptance criteria of every shipped spec. "ux": the seven tests in
-   docs/brand/brand-foundations.md §5. A spec number: that spec only. "all": both.
-2. Check each item against what the app actually does. Read the code; run the client if
-   it is already running. Verdict per item: met, not met, can't tell. "Can't tell" is not met.
-3. Check the four product principles in CLAUDE.md against current behaviour.
-4. Rank each finding: broken, confusing, slower than it should be, cosmetic.
-5. Route each one. Broken against a spec: a Bug issue under initiative I3. An improvement:
-   a row in docs/product/spec-backlog.md. Never leave a finding only in the report.
-6. Change no code and open no PR. Show the findings table and the issues or rows you would
-   create, and wait for an OK.
-```
+Built on 2026-11-11 (pipe-D8). The command is
+[`.claude/commands/initiative.md`](../../.claude/commands/initiative.md); its rules and both
+templates are in [tracker.md](tracker.md), "Writing an initiative".
 
 ## Appendix C. `/milestone`
 
