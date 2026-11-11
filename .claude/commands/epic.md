@@ -24,3 +24,5 @@ do not copy them here. Strategy and order come from docs/product/venture-analysi
 9. After creating an issue, replace its brief in epic-briefs.md with "Created as #<n>".
 10. "check" mode: report epics missing an outcome title, hypothesis, measure, stories,
     initiative or fields. Change nothing without OK.
+11. Hand over (docs/process/pipeline.md §4). If the epic has no spec yet, end with:
+    "Next: `/feature <title>`, stage 1 benchmark".
