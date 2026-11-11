@@ -100,6 +100,16 @@ Two sessions share one repository and no other state. Every extra trip between t
 
 The script stages `docs/` and nothing else, and refuses if anything outside `docs/` reaches the index. That is the whole safety model: a product session cannot commit code, because the script will not let it.
 
+**Which git a product session may run (ww-D8).**
+
+| May run | Why it is safe |
+|---|---|
+| `git fetch`, `git pull --ff-only`, `git status`, `git log`, `git diff` | Read-only or fast-forward. None of them can lose work or write to the remote |
+| `scripts/docs-commit.sh` | Stages `docs/` only and refuses anything else (§7.5) |
+| Nothing else — committing by hand, `merge`, `rebase`, `reset`, `push`, checking out code, any `git config` | Engineering's, every time |
+
+**Pull before you edit.** It is the step most likely to be skipped, and the only thing that keeps a product session and Claude Code in sync. If the pull is refused, say so and name the commit you are working from, rather than editing from an unknown base.
+
 **Prerequisites.** Rechecked 2026-11-11 against Alberto's own laptop clone through the device bridge — the path the script actually runs on, never a separate cloud-sandbox clone:
 
 | What | How it stood | Fix, and whose |
@@ -123,11 +133,11 @@ A product session ends with one work order: what changed, what to do, and what n
 
 ### 7.4 What a product session still never does
 
-Edit code, config or lockfiles. Merge anything. Rewrite a shipped spec. Answer a TBD.
+Edit code, config or lockfiles. Commit by hand, merge, rebase, reset, push, or change git config (ww-D8). Rewrite a shipped spec. Answer a TBD.
 
 ### 7.5 `scripts/docs-commit.sh`
 
-The script is [scripts/docs-commit.sh](../../scripts/docs-commit.sh); its header is the reference. It runs in Claude Code today, and from a product session once §7.1's prerequisites are met.
+The script is [scripts/docs-commit.sh](../../scripts/docs-commit.sh); its header is the reference. It runs end to end in Claude Code. From a product session it branches and commits, and the push is run from macOS (§7.1).
 
 ```bash
 scripts/docs-commit.sh <branch-suffix> "<commit message>" [docs/path ...]
@@ -141,7 +151,7 @@ It refuses, before it changes anything, when:
 - you are on any branch other than `main` or `docs/<branch-suffix>`, so another branch's commits cannot ride along;
 - the branch already carries commits that touch files outside `docs/`.
 
-Without `gh` it pushes and leaves the pull request to the link `git push` prints.
+`gh` is not optional here. This clone sets `credential.https://github.com.helper` to `!gh auth git-credential`, so without `gh` git cannot authenticate the push at all — separate from `gh` being the thing that opens the pull request. The device-bridge VM has no `gh`, so from a product session the script stops at the push and hands over the branch.
 
 ## 8. Open decisions
 
@@ -154,3 +164,4 @@ Without `gh` it pushes and leaves the pull request to the link `git push` prints
 | ww-D5 | May product sessions edit `docs/process/`? | Product owner | **Decided 2026-11-11: yes.** Engineering updates the "Who does what" list in CLAUDE.md |
 | ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Unblocked 2026-11-11:** identity, commit and push all work from Alberto's own clone; the push itself is run from macOS, not from the product session (§7.1). Engineering created the script, set the git identity and updated CLAUDE.md |
 | ww-D7 | Claude Code reports its outcome into the repo or the board, not only into its chat | Product owner | **Decided 2026-11-11** (§7.2) |
+| ww-D8 | Which git commands a product session may run | Product owner | **Decided 2026-11-11:** read-only and fast-forward commands, plus `scripts/docs-commit.sh` (§7.1). Engineering replaces the "its only git is the script" wording in CLAUDE.md, which as written forbids the `git pull` every session is told to run first |
