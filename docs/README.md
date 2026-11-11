@@ -50,6 +50,8 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
 | 009 | [Trip cover layout](specs/009-trip-cover-layout.md) | shipped | 2026-11-10 | [#78](https://github.com/Fogataz/trip-planner/pull/78) |
 | 010 | [Host edits their trip](specs/010-host-trip-edit.md) | draft | — | — |
+| 011 | [Organizations, roles and permissions](specs/011-roles-and-permissions.md) | draft | — | — |
+| 012 | [Joining, naming and the first trip](specs/012-joining-naming-and-the-first-trip.md) | draft | — | — |
 
 ## How a feature goes from idea to shipped
 
