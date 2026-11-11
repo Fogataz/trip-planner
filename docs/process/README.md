@@ -12,6 +12,7 @@
 | [pipeline.md](pipeline.md) | The commands, and where each hands over | You are about to run a command, or build a new one |
 | [ways-of-working.md](ways-of-working.md) | The quality bar and the weekly rhythm | Before merging, and on Friday |
 | [naming.md](naming.md) | Codes, names, and the register that resolves them | You meet a code you cannot read |
+| [device-setup.md](device-setup.md) | The one-time steps to get a product session pushing directly on a new device (ww-D9) | A Cowork session on a device that has never had it needs direct push |
 | [../README.md](../README.md) | The stages a feature passes through, and the docs conventions | Any new feature |
 | [../../CLAUDE.md](../../CLAUDE.md) | The four product principles, the layout, who does what | Every session, automatically |
 
