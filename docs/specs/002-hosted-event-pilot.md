@@ -113,6 +113,8 @@ The frames assume the §9 recommendations as the working default (D27). Overridi
 
 **Three screens this spec requires that the table below does not list, and which are therefore not drawn:** create an Organization (F1), the Organization member list (F2 — §10 keeps it in scope), and trip people and roles where a host moves someone between host, co-host and guest (F4). All three belong to build-order part 1. They are the product owner's call, not something to invent in the wireframe pass. **TBD.**
 
+**What the third one has to show depends on [spec 009](009-roles-and-permissions.md) open decisions R1 and R2** (can an Organization owner claim a trip they have no role on; what happens to trip roles when someone leaves the Organization). Answer those before drawing it.
+
 Mobile first; desktop is the same layout, wider.
 
 | # | Frame | What it must show |
@@ -144,7 +146,7 @@ Mobile first; desktop is the same layout, wider.
 | F3 | Organization owners, admins and members can create hosted trips in that Organization. The creator becomes the trip's host. |
 | F4 | Trip roles are host, co-host and guest. Hosts and co-hosts can edit the event, publish drafts, approve requests, post announcements and manage roles. |
 | F5 | Organization membership alone gives no access to a trip (D19). Only an active trip role does. |
-| F6 | Each trip has guest permissions. Personal trips: guests can add schedule items, polls and expenses (today's behavior). Hosted trips: guests can vote, ask questions and share location, but not edit the schedule. |
+| F6 | Each trip has guest permissions. Personal trips: guests can add schedule items, polls and expenses (today's behavior). Hosted trips: guests can vote, ask questions and share location, but not edit the schedule. These two are **presets over `Trip.guestPermissions`**, not a branch on `trip.kind` — see [spec 009](009-roles-and-permissions.md) §5.2. |
 | F7 | Existing trips become personal trips. The creator becomes host, other organizers co-hosts, members guests. No user loses access they have today. |
 
 **Sign-in**
@@ -212,8 +214,9 @@ Mobile first; desktop is the same layout, wider.
 Proposed; engineering confirms or adjusts in the PR.
 
 - **New models** (see the working doc, section 4.2): `Organization`, `OrgMember`, `TripMember`, `InviteLink`, `JoinRequest` (or a `requested` status on TripMember), `Draft`, `Announcement`, `AnalyticsEvent`. Trip gains `ownerType`, `orgId`, `kind`, `status`, `timeZone`, `guestPermissions`. User gains `displayName`, `locale`, `authProviders`; `password` becomes optional.
-- **Membership:** move from the embedded `Trip.members` array to `TripMember`. Replace every `role === 'organizer'` check with one capability helper (for example `can(trip, uid, 'publishDrafts')`). The socket `join-trip` check reads `TripMember` and rejects `requested` and `removed`.
-- **Migration:** a one-off, idempotent script with a backup first. Map creator → host, other organizers → co-host, members → guest. Copy invitations as they are.
+- **Membership:** move from the embedded `Trip.members` array to `TripMember`. Replace every `role === 'organizer'` check with one capability helper (for example `can(trip, uid, 'publishDrafts')`). The socket `join-trip` check reads `TripMember` and rejects `requested` and `removed`. **The capability vocabulary, the role × capability matrix and the helper's signature are [spec 009](009-roles-and-permissions.md) §5; part 1 of the build order below is block 1 of that spec.**
+- **Revocation (added 2026-11-11, spec 009 G4):** `join-trip` authorizes once and nothing removes a socket from the room afterwards (`server/index.js:127`), so a removed member keeps receiving trip events and keeps broadcasting live location until they disconnect. This spec makes removal a real workflow, so the fix belongs in part 1, not after the pilot. See [spec 009](009-roles-and-permissions.md) §2 and §10.2.
+- **Migration:** a one-off, idempotent script with a backup first. Map creator → host, other organizers → co-host, members → guest. Copy invitations as they are. **Add a `--dry-run` that prints the mapping, and write the reverse script before the forward one runs** (spec 009 risk 3).
 - **Sign-in:** the client uses Firebase Auth (Google provider and email link; the `firebase` package is already a client dependency). A new `POST /api/auth/firebase` takes the Firebase ID token, verifies it with `verifyIdToken` (already in `server/config/firebase.js`), finds or creates the user by verified email, and returns our existing JWT. Existing auth middleware stays. Set the Firebase `languageCode` so the sign-in email uses the user's language.
 - **Invite links:** token of 128 random bits. Public `GET /api/invite-links/:token` returns only name, dates, host name and cover. `POST /api/invite-links/:token/requests` creates a request (rate limited per user and per IP). Host endpoints to list, approve, decline and approve all.
 - **Drafts:** `POST /api/trips/:groupId/drafts` (source text or file), `GET`, `PATCH` items, `POST …/publish`, `DELETE`. The AI prompt gets the event dates, time zone and accommodation, and returns JSON with a confidence flag per item. Limit: 50 sessions per import, 3 imports per trip per hour. Schedule items gain `endTime`, `location`, `description` and `source`.
@@ -314,7 +317,7 @@ None of these block the build. The recommendation is the working default until t
 - Email delivery of announcements (S6).
 - Machine translation of content.
 - Free-tier limits and the Trip Pass (D20).
-- What happens to trips when someone leaves an Organization (D21). Until decided, removing an org member does not change their trip roles.
+- What happens to trips when someone leaves an Organization (D21). Until decided, removing an org member does not change their trip roles. **⚠ Contradiction, found 2026-11-11:** the [working doc §4.2](../product/working-doc.md) proposes the opposite — that leaving an Organization drops host and co-host roles on its trips. The two documents must stop disagreeing; resolved by open decision **R2** in [spec 009](009-roles-and-permissions.md) §13.
 
 ## 11. How we will know it worked
 

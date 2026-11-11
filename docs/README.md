@@ -47,6 +47,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 006 | [Transport updates](specs/006-transport-updates.md) | draft | — | — |
 | 007 | [Profiles and display names](specs/007-profiles-and-display-names.md) | draft | — | — |
 | 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
+| 009 | [Organizations, roles and permissions](specs/009-roles-and-permissions.md) | draft | — | — |
 
 ## How a feature goes from idea to shipped
 

@@ -74,6 +74,13 @@ All three belong to epic [#20](https://github.com/Fogataz/trip-planner/issues/20
 build-order part 1. They are small and conventional, but they are screens, and they are the
 product owner's call rather than something to invent here.
 
+**Added 2026-11-11.** What screen 3 has to show now depends on two open decisions in
+[spec 009](../../docs/specs/009-roles-and-permissions.md) §13: **R1** (can an Organization
+owner claim a trip they hold no role on?) and **R2** (what happens to trip roles when
+someone leaves the Organization?). Frame 13's dashed note — "belonging to an Organization
+does not open its events" — is drawn on R1 option (a), the strictest reading. If R1 lands
+on (b) Claim, that note gains a second line and the Organization row gains an action.
+
 ## Not drawn
 
 Spec 002 §10, out of scope: RSVP, capacity, check-in and guest forms; an Organization home
