@@ -171,7 +171,7 @@ It refuses, before it changes anything, when:
 | ww-D1 | Add the CI workflow and make it a required check | Engineering | **Done 2026-11-11:** `.github/workflows/ci.yml`, check `ci` required on `main` |
 | ww-D2 | Who is on call during the pilot, each day | Product owner | **Decided 2026-11-11:** both of us, together, both days |
 | ww-D3 | Rollback steps, and where errors are visible during the event | Engineering | **Written 2026-11-11** in §4. The redeploy step and log location are **TBD** until hosting is chosen. Tried once in the dry run |
-| ww-D4 | Retro day and length | Product owner | **Decided 2026-11-11:** Friday, 15 minutes. Clock time **TBD** |
+| ww-D4 | Retro day and length | Product owner | **Decided 2026-11-11:** Friday, 15 minutes, **17:00 CET as the working default** (D27) — moved by whoever cannot make it, rather than left open. First one: Friday 14 Nov |
 | ww-D5 | May product sessions edit `docs/process/`? | Product owner | **Decided 2026-11-11: yes.** Engineering updates the "Who does what" list in CLAUDE.md |
 | ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Unblocked 2026-11-11:** identity, commit and push all work from Alberto's own clone; the push itself is run from macOS, not from the product session (§7.1). Engineering created the script, set the git identity and updated CLAUDE.md |
 | ww-D7 | Claude Code reports its outcome into the repo or the board, not only into its chat | Product owner | **Decided 2026-11-11** (§7.2) |

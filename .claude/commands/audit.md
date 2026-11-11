@@ -17,8 +17,11 @@ The rules are in `docs/process/pipeline.md` §6.2. Read them first; do not copy 
    tests in `docs/brand/brand-foundations.md` §5 **and** the fourteen lenses in
    `docs/process/design-lenses.md` applied to what is live. A spec number: that spec only. "all":
    everything.
-3. Check each item against what the app actually does. Read the code; use the running client if it is
-   already running. Verdict per item: met, not met, can't tell. **"Can't tell" is not met.**
+3. Check each item against what the app actually does. Read the code. You **may** use a browser on a
+   client that is already running, read-only: navigate, screenshot, read the accessibility tree. No
+   sign-in, no form submission, no writes of any kind — a signed-in client holds real trip data, and
+   this command changes nothing (pipe-D4). With no client running, say so and fall back to the
+   checks plus a code read. Verdict per item: met, not met, can't tell. **"Can't tell" is not met.**
 4. Check the four product principles in `CLAUDE.md` against current behaviour, not against the spec.
 5. Rank each finding: broken, confusing, slower than it should be, cosmetic.
 6. **Route every finding, and check for a duplicate before filing anything.**
