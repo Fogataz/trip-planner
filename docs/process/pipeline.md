@@ -131,7 +131,7 @@ A command only runs when a person remembers to run it, and board hygiene fails e
 
 | # | Decision | Owner | Status |
 |---|---|---|---|
-| pipe-D1 | Board automation and the extended `/epic check` (§5) | Engineering | **TBD** |
+| pipe-D1 | Board automation and the extended `/epic check` (§5) | Engineering | **In progress 2026-11-11:** `.github/workflows/board-status.yml` and the extended `/epic check` are in the repo. Still to do: the `PROJECT_TOKEN` secret, and the Projects workflows (auto-add, item closed → Shipped), which are set in the project's UI |
 | pipe-D2 | The names `/roadmap`, `/audit`, `/milestone` | Product owner | **Decided 2026-11-11** |
 | pipe-D3 | The build order in §7 | Product owner | **Decided 2026-11-11** |
 | pipe-D4 | Whether `/audit ux` may drive a browser, or only read code and report | Engineering | **TBD** |
