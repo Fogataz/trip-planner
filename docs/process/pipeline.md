@@ -68,12 +68,12 @@ A command only runs when a person remembers to run it, and board hygiene fails e
 | Change | Handled by | Why |
 |---|---|---|
 | Item added to the project; issue closed becomes Shipped | GitHub Projects built-in workflows | No human memory needed |
-| In build becomes In review when a PR opens; Shipped when it merges | One small Action on the pull request | It is already a git event |
+| In build becomes In review when a PR opens | By hand, on the board | Two seconds of work. An Action would need a personal token to renew, for this one move |
 | Fields on a new epic: Layer, Revenue Model, Horizon, Priority, milestone | `/epic` | Judgment |
 | Horizon moves, re-parenting, milestone changes | `/roadmap` | Judgment |
 | "The board says In build, the spec says draft" | `/epic check`, extended | A report, not a write |
 
-**TBD (pipe-D1, engineering):** add the Projects workflows and the merge Action, and extend `/epic check` to compare board Status against each spec's header and its open PRs.
+Decided in pipe-D1: no Action and no token. The built-in workflows cover adding items and Shipped; In review is moved by hand; `/epic check` reports any drift.
 
 ## 6. The three proposed commands
 
@@ -131,7 +131,7 @@ A command only runs when a person remembers to run it, and board hygiene fails e
 
 | # | Decision | Owner | Status |
 |---|---|---|---|
-| pipe-D1 | Board automation and the extended `/epic check` (§5) | Engineering | **In progress 2026-11-11:** `.github/workflows/board-status.yml` and the extended `/epic check` are in the repo. Still to do: the `PROJECT_TOKEN` secret, and the Projects workflows (auto-add, item closed → Shipped), which are set in the project's UI |
+| pipe-D1 | Board automation and the extended `/epic check` (§5) | Engineering | **Decided 2026-11-11:** built-in Projects workflows only (auto-add open issues; item closed → Shipped). No Action, so no personal token to create or renew. In review is set by hand. `/epic check` compares board Status with spec headers and open PRs |
 | pipe-D2 | The names `/roadmap`, `/audit`, `/milestone` | Product owner | **Decided 2026-11-11** |
 | pipe-D3 | The build order in §7 | Product owner | **Decided 2026-11-11** |
 | pipe-D4 | Whether `/audit ux` may drive a browser, or only read code and report | Engineering | **TBD** |

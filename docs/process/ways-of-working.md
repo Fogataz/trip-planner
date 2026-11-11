@@ -45,58 +45,23 @@ Most of this code is written by Claude Code, so the review has to come from outs
 
 This is the cheapest insurance a two-person team has. The session that just built something is the worst judge of it, because it already believes it works.
 
-## 4. If it breaks during an event
+## 4. If it breaks during the pilot
 
-The pilot runs on 24–25 November with real colleagues in the room.
+The pilot runs on 24–25 November. We are both there, together, and both on call. Keep it simple.
 
-| | |
-|---|---|
-| Known-good commit | Tag `pilot-2026-11-24` on `main` once the pilot build is ready, so there is one place to go back to |
-| Who is on call | **TBD (ww-D2, owner):** who watches it on each of the two days |
-| How to roll back | The steps below. Tested in the 20 Nov dry run |
-| What attendees are told | Hosts post an announcement in the app. If the app itself is down, the organizers' existing group chat is the fallback |
-| Errors | The hosting platform's live log stream for the server (below). Where exactly is **TBD** until hosting is chosen |
+1. **Before the event:** tag the pilot build once it is deployed and the dry run passed, so there is one known-good commit to go back to.
 
-The dry run on 20 Nov tests the rollback, not only the features.
+   ```bash
+   git checkout main && git pull
+   git tag -a pilot-2026-11-24 -m "Pilot build, known good"
+   git push origin pilot-2026-11-24
+   ```
 
-### 4.1 Tag the pilot build
+2. **If something breaks:** if a fix is not obviously minutes away, redeploy the `pilot-2026-11-24` tag on the hosting platform (server and client) and fix it after the session. Code only: never touch the database. **TBD (ww-D3):** the exact redeploy step, once hosting is chosen.
+3. **Errors:** the server logs errors to standard output. Keep the hosting platform's live log open on one laptop. **TBD (ww-D3):** where that log is, once hosting is chosen.
+4. **Attendees:** a host posts an announcement in the app. If the app is down, the organizers' group chat.
 
-When the pilot build is merged and deployed, and the dry run has passed on it:
-
-```bash
-git checkout main && git pull
-git tag -a pilot-2026-11-24 -m "Pilot build, known good"
-git push origin pilot-2026-11-24
-```
-
-A tag is never moved. If a fix ships after tagging, tag the new known-good commit `pilot-2026-11-24.1`, and so on, and note it here.
-
-### 4.2 Roll back
-
-Hosting is not chosen yet (working-doc, "unknown hosting"), so the platform step is generic. **TBD (ww-D3):** replace step 3 with the exact clicks or CLI command once the host is picked, before 20 Nov.
-
-1. **Decide.** Roll back if sign-in, joining the event, the agenda or announcements are broken and a fix is not obviously minutes away. Do not debug on the live build during a session.
-2. **Tell people.** A host posts in the organizers' group chat that the app is being restored.
-3. **Redeploy the tag.** On the hosting platform, deploy the commit tagged `pilot-2026-11-24` (or the latest `.N` tag) for both the server and the client. Do not change environment variables at the same time.
-4. **Do not touch the database.** A rollback is code only. MongoDB data stays as it is. If the pilot build changed a schema, check the old code still reads the new data during the dry run.
-5. **Check it is back.**
-   - `GET /api/locale` on the server returns 200 (it needs no sign-in).
-   - The client loads, a test account signs in, opens the event and sees the agenda.
-   - A second device receives an announcement in real time.
-6. **Record it.** What broke, the time, and which tag is live, as a line in this section or the sprint item.
-
-### 4.3 Where server errors can be read
-
-The server writes errors with `console.error` to standard output. It has no error tracker, no error middleware and no health route. During the event:
-
-- Keep the hosting platform's **live log stream** for the server open on the on-call laptop, filtered for `error`.
-- Browser-side errors show only in each person's browser console. Ask an affected person for a screenshot.
-
-Before 20 Nov, worth doing if time allows (engineering, not blocking): a `GET /api/health` route that also reports the MongoDB connection, and a final Express error handler that logs the route and the error before replying 500.
-
-### 4.4 Test it in the 20 Nov dry run
-
-Deploy any newer commit, then roll back to the tag with §4.2 while 3–5 people are signed in. Time it. It passes if the step 5 checks pass and nobody has to sign in again.
+In the 20 Nov dry run, try one redeploy of the tag so we know it works.
 
 ## 5. Weekly rhythm
 
@@ -126,7 +91,7 @@ Run this before the gate decision, not after it.
 | # | Decision | Owner | Status |
 |---|---|---|---|
 | ww-D1 | Add the CI workflow and make it a required check | Engineering | **Done 2026-11-11:** `.github/workflows/ci.yml`, check `ci` required on `main` |
-| ww-D2 | Who is on call during the pilot, each day | Product owner | **TBD** |
-| ww-D3 | Rollback steps, and where errors are visible during the event | Engineering | **Written 2026-11-11** in §4, host-agnostic. The platform step and log location are **TBD** until hosting is chosen. Tested in the 20 Nov dry run |
+| ww-D2 | Who is on call during the pilot, each day | Product owner | **Decided 2026-11-11:** both of us, together, both days |
+| ww-D3 | Rollback steps, and where errors are visible during the event | Engineering | **Written 2026-11-11** in §4. The redeploy step and log location are **TBD** until hosting is chosen. Tried once in the dry run |
 | ww-D4 | Retro day and length | Product owner | **Decided 2026-11-11:** Friday, 15 minutes. Clock time **TBD** |
 | ww-D5 | May product sessions edit `docs/process/`? | Product owner | **Decided 2026-11-11: yes.** Engineering updates the "Who does what" list in CLAUDE.md |
