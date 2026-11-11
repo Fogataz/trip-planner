@@ -15,7 +15,7 @@
     },
     {
       "name": "wireframes",
-      "runtimeExecutable": "python",
+      "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "4178", "--directory", "wireframes"],
       "port": 4178
     }

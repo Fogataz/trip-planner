@@ -27,7 +27,7 @@ own measure. Everything else is a recommendation, not a blocker (D27).
 | **Strategy** | Vision, the bet, the layers, the revenue models, the principles | [strategy.md](../product/strategy.md), [working-doc.md](../product/working-doc.md) §2–3 | The owner, at a gate | — |
 | **Initiative** `I#` | Outcome, key result, press release, sceptic's FAQ, the six-line strategy block | `docs/product/initiatives/I<n>-<slug>.md` + the GitHub issue | `/initiative` ([tracker.md](tracker.md), "Writing an initiative") | — |
 | **Epic** `#<issue>` | Outcome title, problem, hypothesis, measures, stories, payer, stop condition | The GitHub issue | `/epic` ([tracker.md](tracker.md), "Writing an epic") | — |
-| **Spec** `spec ###` | Benchmark, experience, requirements, acceptance criteria, build order, the fourteen lenses, open decisions | `docs/specs/NNN-*.md` | `/feature` ([README.md](../README.md)) | **Approval. No code before it** |
+| **Spec** `spec ###` | Audit of what exists, benchmark, experience, requirements, acceptance criteria, build order, the fourteen lenses, open decisions | `docs/specs/NNN-*.md` | `/feature` ([README.md](../README.md)) | **Approval. No code before it** |
 | **Story / Task / Bug / Spike** | One build-order row, or one defect | A GitHub sub-issue | `/epic` after approval, `/audit` for defects | — |
 | **Shipped feature** | What the product does today | [features.md](../features.md) | Engineering, in the same pull request | — |
 

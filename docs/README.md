@@ -48,23 +48,35 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 006 | [Transport updates](specs/006-transport-updates.md) | draft | — | — |
 | 007 | [Profiles and display names](specs/007-profiles-and-display-names.md) | draft | — | — |
 | 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
-
 | 009 | [Trip cover layout](specs/009-trip-cover-layout.md) | shipped | 2026-11-10 | [#78](https://github.com/Fogataz/trip-planner/pull/78) |
+| 010 | [Host edits their trip](specs/010-host-trip-edit.md) | draft | — | — |
+
 ## How a feature goes from idea to shipped
 
 Adopted 2026-11-09. Any Claude account working in this repo follows the same stages. In Claude Code, run `/feature <name or spec number>`. To create or check the GitHub epic for a feature, run `/epic <brief, spec or issue number>` (rules in [process/tracker.md](process/tracker.md), "Writing an epic"). At a milestone gate (M0, M1, M2), run `/milestone <M0|M1|M2>` to assemble the evidence (rules in [process/pipeline.md](process/pipeline.md) §6.3). The full set of commands, skills, hooks and scripts, with what each one is for and whether it is built, is the tooling table in [process/system.md](process/system.md) §4.
 
 | Stage | What | Output |
 |---|---|---|
-| 1. Benchmark | 3–5 comparable products (event apps, retreat tools, group planners): what they do, what we take, what we avoid, with source links | Benchmark section in the spec |
+| 0. Audit | What exists today for this feature: screenshots of the current screens, the code paths (UI, API, data model), the docs and backlog entries, plus any gaps, bugs and risks found — kept apart from the requested scope | Audit section in the spec; screenshots in `wireframes/NNN-short-name/current/` |
+| 1. Benchmark | 3–5 comparable products, 2–3 for a medium feature (event apps, retreat tools, group planners): what they do, what we take, what we avoid, with source links. Never cite what you have not checked | Benchmark section in the spec |
 | 2. Define | What works for us: options, trade-offs and a recommendation. Check the four product principles in [CLAUDE.md](../CLAUDE.md) and flag conflicts. Apply the fourteen lenses in [process/design-lenses.md](process/design-lenses.md) as questions: each one you cannot answer is either an option for the owner or something not designed yet. | Experience and requirements in the spec |
-| 3. Wireframes | Lo-fi frames, one per screen, annotated. In Lucid if connected, otherwise HTML files in `wireframes/NNN-short-name/`. | Frames linked from the spec |
+| 3. Wireframes | Lo-fi frames, one per screen or state, annotated and tied to requirement IDs, with the current screen beside the proposed one. Cover empty, loading, error and no-permission states. In Lucid if connected, otherwise HTML files in `wireframes/NNN-short-name/`. | Frames linked from the spec |
 | 4. Spec | Written from the template below, `Status: draft`, added to the specs table. Every product-owner decision is listed as an open decision with options and a recommendation, never answered for them. The lenses come back as answers: one line each in a `## Design lenses` section. | `specs/NNN-short-name.md` |
 | **Gate** | **The product owner approves the spec. Status becomes `approved`. No code before this.** Open decisions do not block approval: each carries a recommendation that is the working default until the owner overrides it (D27). | Approved spec |
 | 5. Build | On a branch, in the spec's build order, checked against its acceptance criteria | Pull request |
 | 6. Docs | In the same pull request: see "When a spec ships" below | Updated docs |
 
-Small fixes with no new screen can skip stages 1 and 3.
+### Size decides the stages
+
+State the size and the reason at the start. The product owner can override it.
+
+| Size | Typical case | Stages |
+|---|---|---|
+| Small | Fix or tweak, no new screen | 0, then build |
+| Medium | New UI or behaviour on an existing screen | 0, 1 (light), 2, 3, 4 |
+| Large | New area, new model, or a new kind of user | All |
+
+The stages are written in general terms in [`.claude/commands/feature.md`](../.claude/commands/feature.md), so the same command works in another product. This file holds what is specific to Trip Planner: the folders, the spec template, the lens standard and the status values.
 
 ## How to write a spec
 
