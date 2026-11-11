@@ -100,15 +100,16 @@ Two sessions share one repository and no other state. Every extra trip between t
 
 The script stages `docs/` and nothing else, and refuses if anything outside `docs/` reaches the index. That is the whole safety model: a product session cannot commit code, because the script will not let it.
 
-**Prerequisites.** The git identity is set on one computer; the other two were outstanding on 2026-11-11. Tried from a product session that day and refused:
+**Prerequisites.** Rechecked 2026-11-11 against Alberto's own laptop clone through the device bridge — the path the script actually runs on, never a separate cloud-sandbox clone:
 
-| What | How it failed | Fix, and whose |
+| What | How it stood | Fix, and whose |
 |---|---|---|
-| A git identity | The Cowork shell has no `user.email` or `user.name`, and no session may set git config | **Done 2026-11-11** on Alberto's computer: `Calvur-Labs` with the GitHub noreply address, in that clone's `.git/config`. It is not committed and applies to that clone only. Each person sets their own identity in their own clone; Barry's clone is untouched |
-| Network to GitHub | `git push` is refused by the proxy, HTTP 403 after CONNECT: github.com is not on this account's egress allowlist for the Cowork shell | Product owner allows github.com for the Cowork workspace in the account's network settings |
-| `gh` | Not installed in the Cowork shell, so the script cannot open the pull request | Install it there, or open the pull request from the compare URL that `git push` prints |
+| A git identity | No clone had `user.email` or `user.name` set | **Done 2026-11-11** on Alberto's computer: `Calvur-Labs` with the GitHub noreply address, in that clone's `.git/config`. Applies to that clone only. Each person sets their own identity in their own clone; Barry's clone is still untouched |
+| Network to GitHub | An earlier check from a cloud-sandbox shell was refused by its proxy — but that shell is not where the script runs, so it was never a real blocker for this path | **Confirmed working 2026-11-11** from Alberto's laptop clone via the device bridge: `git ls-remote origin HEAD` reached `Fogataz/trip-planner` cleanly |
 
-**Until then:** the product session writes the files and stages them on a `docs/…` branch, and Claude Code runs the script. The handoff shrinks from explaining what changed to one command, which is most of the saving.
+`gh` is not a prerequisite: §7.5 already covers its absence, pushing and leaving the pull request to the compare link `git push` prints.
+
+**Resolved, for Alberto's own clone:** the product session now runs the script directly through the device bridge, against that same clone, rather than staging for Claude Code to run it. Barry's clone still needs its own git identity before he can do the same from his side.
 
 ### 7.2 Claude Code reports into the repo, never only into its chat
 
@@ -149,5 +150,5 @@ Without `gh` it pushes and leaves the pull request to the link `git push` prints
 | ww-D3 | Rollback steps, and where errors are visible during the event | Engineering | **Written 2026-11-11** in §4. The redeploy step and log location are **TBD** until hosting is chosen. Tried once in the dry run |
 | ww-D4 | Retro day and length | Product owner | **Decided 2026-11-11:** Friday, 15 minutes. Clock time **TBD** |
 | ww-D5 | May product sessions edit `docs/process/`? | Product owner | **Decided 2026-11-11: yes.** Engineering updates the "Who does what" list in CLAUDE.md |
-| ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Blocked** on the three prerequisites in §7.1; until they are met the product session stages and Claude Code runs the script. Engineering creates the script, sets the git identity and updates CLAUDE.md |
+| ww-D6 | May product sessions commit documentation themselves? | Product owner | **Decided 2026-11-11: yes**, docs-only, through `scripts/docs-commit.sh` (§7.1). **Unblocked for Alberto's own clone, 2026-11-11** (§7.1); Barry's clone still needs its own git identity before he can run it from his side. Engineering created the script, set the git identity and updated CLAUDE.md |
 | ww-D7 | Claude Code reports its outcome into the repo or the board, not only into its chat | Product owner | **Decided 2026-11-11** (§7.2) |
