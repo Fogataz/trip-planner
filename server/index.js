@@ -16,6 +16,7 @@ const User = require('./models/User');
 const { can } = require('./services/permissions');
 const { setRevoker } = require('./services/realtime');
 const { makeRevokeTripAccess } = require('./services/revokeAccess');
+const { assertMigrated } = require('./services/migrationGuard');
 
 getSecret(); // fail fast if JWT_SECRET is missing
 
@@ -39,7 +40,10 @@ app.use(express.json());
 
 // Initialize Firebase and MongoDB
 initFirebase();
-connectDB();
+// Connect, then refuse to serve if the data is older than the code. Deploying
+// this build before scripts/migrate-tripmembers.js has run would make every
+// existing trip inaccessible to every member, silently (services/migrationGuard.js).
+connectDB().then(() => assertMigrated());
 
 // Redis adapter for Socket.io scaling (optional - use if REDIS_URL is set)
 if (process.env.REDIS_URL && process.env.REDIS_URL.trim() !== '') {
