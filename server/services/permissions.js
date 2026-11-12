@@ -124,6 +124,21 @@ const ROLE_LABEL_KEYS = {
   },
 };
 
+// Until the 18 keys above exist, the client falls back to the role strings
+// that spec 003 already shipped in all three languages. Without this a
+// Spanish member list would read "Organizer" and "Member" in English, which
+// is what happens if the server's English label is rendered directly — a
+// localization regression, and one that spec 002 F33 and AC 27 forbid.
+//
+// The pair is resolved by i18next as an ordered key list, so the moment O8
+// lands and `roles.*` is written, these stop being reached. Nothing has to
+// change in a component for that to happen.
+const ROLE_LABEL_FALLBACK_KEYS = {
+  host: 'detail.organizer',
+  'co-host': 'detail.organizer',
+  guest: 'detail.member',
+};
+
 // English, for the server (push text, the CSV export, a log line). The client
 // resolves the keys above through i18next instead.
 const ROLE_LABELS_EN = {
@@ -141,6 +156,10 @@ function roleLabelKey(role, trip) {
 
 function roleLabel(role, trip) {
   return ROLE_LABELS_EN[tripKind(trip)]?.[role] || null;
+}
+
+function roleLabelFallbackKey(role) {
+  return ROLE_LABEL_FALLBACK_KEYS[role] || null;
 }
 
 // ---------------------------------------------------------------------------
@@ -353,6 +372,7 @@ module.exports = {
   entitlements,
   roleLabel,
   roleLabelKey,
+  roleLabelFallbackKey,
   changeRoleRefusal,
   wouldLeaveNoHost,
   LAST_HOST_REFUSAL,

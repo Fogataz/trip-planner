@@ -123,10 +123,14 @@ export default function Group() {
             <li key={member.userId || member.email} className="member-row">
               <strong>{member.email || t('common.unknown')}</strong>
               <span className="member-meta">
-                {/* The word for the role on THIS trip, resolved by the server
-                    from the trip's kind (spec 012 §5.3). An existing trip is
-                    personal, so it still reads Organizer and Member. */}
-                {member.roleLabel || t('detail.member')}
+                {/* The word for the role on this trip, as an ORDERED KEY LIST:
+                    the 18-key name first (spec 012 §6.2), then the string
+                    spec 003 already ships in all three languages. Rendering
+                    the server's English label here instead would read
+                    "Organizer" on a Spanish screen (F33, AC 27). When O8 lands
+                    and `roles.*` is written, the first key wins and nothing
+                    here changes. */}
+                {t([member.roleLabelKey, member.roleLabelFallbackKey, 'detail.member'].filter(Boolean) as string[])}
               </span>
               <span className={`badge ${member.status === 'active' ? 'badge-success' : 'badge-muted'}`}>
                 {member.status === 'invited' ? t('detail.invited') : t('detail.activeBadge')}

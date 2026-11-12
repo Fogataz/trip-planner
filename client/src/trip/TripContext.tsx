@@ -23,8 +23,12 @@ export interface TripMember {
   email?: string
   /** The stored role: host, co-host or guest. Never compared in a component. */
   role: string
-  /** The word to show for that role on THIS trip (spec 012 §5.3). Display only. */
+  /** The English word for that role on THIS trip. Server-side use; prefer the keys below. */
   roleLabel?: string
+  /** i18n key for the role word on this trip kind — one of the 18 flat keys (spec 012 §6.2). */
+  roleLabelKey?: string
+  /** The spec 003 key to fall back to until O8 lands and `roles.*` is written. */
+  roleLabelFallbackKey?: string
   status?: string
   invitedBy?: string
   invitedAt?: string

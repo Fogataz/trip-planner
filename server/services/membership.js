@@ -4,7 +4,7 @@
 
 const Trip = require('../models/Trip');
 const TripMember = require('../models/TripMember');
-const { capabilitiesFor, roleLabel } = require('./permissions');
+const { capabilitiesFor, roleLabel, roleLabelKey, roleLabelFallbackKey } = require('./permissions');
 
 // The one member document a capability check needs. Never the member list:
 // that is spec 011 lens L13's point about hundreds of attendees.
@@ -45,7 +45,11 @@ function presentMember(member, trip) {
     userId: member.userId,
     email: member.email,
     role: member.role,
+    // The English word, for the server's own use. The client renders from
+    // the two keys below so the pill is localized (spec 002 F33, AC 27).
     roleLabel: roleLabel(member.role, trip),
+    roleLabelKey: roleLabelKey(member.role, trip),
+    roleLabelFallbackKey: roleLabelFallbackKey(member.role),
     status: member.status,
     joinedAt: member.joinedAt,
     invitedBy: member.invitedBy,

@@ -12,11 +12,13 @@ const assert = require('node:assert');
 const {
   CAPABILITIES,
   ALL_CAPABILITIES,
+  ROLE_LABEL_KEYS,
   can,
   capabilitiesFor,
   entitlements,
   roleLabel,
   roleLabelKey,
+  roleLabelFallbackKey,
   changeRoleRefusal,
   wouldLeaveNoHost,
 } = require('../services/permissions');
@@ -348,4 +350,44 @@ test('can() is pure — it never mutates what it is given', () => {
   can(actor, trip, 'schedule.edit');
   assert.strictEqual(JSON.stringify(actor), actorBefore);
   assert.strictEqual(JSON.stringify(trip), tripBefore);
+});
+
+// ---------------------------------------------------------------------------
+// The role pill must be localized — spec 002 F33 and AC 27
+// ---------------------------------------------------------------------------
+
+test('every role falls back to a key spec 003 already ships', () => {
+  // Rendering the server's English label in the client is the regression this
+  // guards: a Spanish member list would read "Organizer" and "Member".
+  assert.strictEqual(roleLabelFallbackKey('host'), 'detail.organizer');
+  assert.strictEqual(roleLabelFallbackKey('co-host'), 'detail.organizer');
+  assert.strictEqual(roleLabelFallbackKey('guest'), 'detail.member');
+});
+
+test('those fallback keys resolve in en, es and pt', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const dir = path.join(__dirname, '..', '..', 'client', 'src', 'locales');
+
+  for (const file of ['en.json', 'es.json', 'pt.json']) {
+    const json = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'));
+    for (const role of ['host', 'co-host', 'guest']) {
+      const key = roleLabelFallbackKey(role);
+      const value = key.split('.').reduce((node, part) => node?.[part], json);
+      assert.ok(
+        typeof value === 'string' && value.length > 0,
+        `${file} has no string at ${key} — the role pill would render the raw key`
+      );
+    }
+  }
+});
+
+test('the 18 key names are stable, so O8 lands as a value change', () => {
+  // The structure is the expensive half. Keeping personal and hosted as
+  // SEPARATE keys — even where a language ends up using the same word for
+  // both — means a reviewer's answer is an edit to locale files and never a
+  // change at a call site (spec 012 §6.2, O8 · Ungendered role labels).
+  const names = Object.values(ROLE_LABEL_KEYS).flatMap((kind) => Object.values(kind));
+  assert.strictEqual(new Set(names).size, 6, 'six key names per language, 18 across three');
+  assert.ok(names.every((n) => n.startsWith('roles.')), 'all under `roles.`, which locale-lint checks');
 });
