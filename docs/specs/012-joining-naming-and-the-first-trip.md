@@ -1,6 +1,6 @@
 # Spec 012: Joining, naming and the first trip
 
-Status: draft
+Status: approved
 Owner: Alberto (product)   Shipped: —   PR: —
 
 > **Renumbered before merge (2026-11-11).** Drafted as spec 010 in pull request #102, which was opened before specs 009 trip cover layout (#78) and 010 host edits their trip (#110) took those numbers. Nothing published was renumbered — this one had not merged yet ([naming.md](../process/naming.md) §2).
@@ -455,4 +455,16 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 
 ## 16. Build status
 
-Not started. Draft, pending the gate.
+**Approved 2026-11-12.** Not started.
+
+This spec has no epic of its own: its work lands inside the spec 002 epics it corrects. Where each slice is tracked:
+
+| Slice | Epic |
+|---|---|
+| S1 role labels, `Trip.orgId`, `Trip.entitlement` | [#20](https://github.com/Fogataz/trip-planner/issues/20) |
+| S2 three doors, token-as-credential, bulk invite, host nudge, attribution | [#29](https://github.com/Fogataz/trip-planner/issues/29), [#25](https://github.com/Fogataz/trip-planner/issues/25), [#52](https://github.com/Fogataz/trip-planner/issues/52) |
+| S3 localization mechanics (§6) | [#36](https://github.com/Fogataz/trip-planner/issues/36), [#53](https://github.com/Fogataz/trip-planner/issues/53) |
+| S4 the four invitation events and two funnels | [#40](https://github.com/Fogataz/trip-planner/issues/40) — **before the dry run on 20 Nov** |
+| S8 move screen, Organization member list, contextual create | No epic yet. Phase 1. |
+
+All under **I1** ([#19](https://github.com/Fogataz/trip-planner/issues/19)), milestone **M0**. Wireframes: [`wireframes/012-joining-and-naming/`](../../wireframes/012-joining-and-naming/index.html), 13 frames.

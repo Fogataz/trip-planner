@@ -1,6 +1,6 @@
 # Spec 011: Organizations, roles and permissions
 
-Status: draft
+Status: approved
 Owner: Alberto (product)   Shipped: —   PR: —
 
 > **Renumbered before merge (2026-11-11).** Drafted as spec 009 in pull request #102, which was opened before specs 009 trip cover layout (#78) and 010 host edits their trip (#110) took those numbers. Nothing published was renumbered — this one had not merged yet ([naming.md](../process/naming.md) §2).
@@ -411,4 +411,13 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 
 ## 16. Build status
 
-Not started. Draft, pending the gate. Block 1 is epic [#20](https://github.com/Fogataz/trip-planner/issues/20) under milestone M0.
+**Approved 2026-11-12.** Not started.
+
+| Block | Epic |
+|---|---|
+| 1 — the foundation | [#20 Organizations, trip roles and TripMember migration](https://github.com/Fogataz/trip-planner/issues/20) |
+| 2 — G1 · Last host and G2 · Last owner | [#115 A trip and an Organization always have someone in charge](https://github.com/Fogataz/trip-planner/issues/115) |
+| 2 — G4 · Immediate revocation | [#20](https://github.com/Fogataz/trip-planner/issues/20), because it closes a live principle-3 defect |
+| 3–5 | No epic yet. Phase 1, after the pilot. |
+
+Both epics sit under **I1 Run the hosted event pilot** ([#19](https://github.com/Fogataz/trip-planner/issues/19)), milestone **M0**. Wireframes for this model are [012 frames 6, 7 and 9](../../wireframes/012-joining-and-naming/index.html).

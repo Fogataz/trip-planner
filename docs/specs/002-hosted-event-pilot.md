@@ -1,6 +1,6 @@
 # Spec 002: Hosted Event Pilot
 
-Status: draft
+Status: approved
 Owner: Alberto (product)   Shipped: —   PR: —
 Current behavior: [features.md](../features.md) (nothing from this spec is built yet)
 Planning list (why now, why later, risks and fallbacks per feature): [product/pilot-event-feature-list.md](../product/pilot-event-feature-list.md)
@@ -384,4 +384,10 @@ Added 2026-11-12, per [design-lenses.md](../process/design-lenses.md) (lens-D1 �
 
 ## 14. Build status
 
-Not started — the spec is `draft`, and the gate in [docs/README.md](../README.md) allows no code before `approved`. The localization base was delivered separately by [spec 003](003-localization.md). Lo-fi wireframes for the 13 frames in §6 were drawn on 2026-11-11.
+**Approved 2026-11-12**, together with [011](011-roles-and-permissions.md) and [012](012-joining-naming-and-the-first-trip.md). Not started.
+
+The eleven parts in §12 are eleven epics under **I1 Run the hosted event pilot** ([#19](https://github.com/Fogataz/trip-planner/issues/19)), milestone **M0** — the one deliberate deviation from one-epic-per-spec ([tracker.md](../process/tracker.md), "Three levels"). Spec 012 §12 groups them into eight slices; **[#20](https://github.com/Fogataz/trip-planner/issues/20) is slice 1 and everything else depends on it**, and **[#40](https://github.com/Fogataz/trip-planner/issues/40) must land before the dry run on 20 Nov** or the pilot produces no numbers.
+
+The localization base was delivered separately by [spec 003](003-localization.md). Lo-fi wireframes for the 13 frames in §6 were drawn on 2026-11-11 in [`wireframes/002-hosted-event-pilot/`](../../wireframes/002-hosted-event-pilot/index.html); frames 1, 4, 5 and 13 are superseded by the [012 set](../../wireframes/012-joining-and-naming/index.html).
+
+Starting the build on another computer or Claude account: [build-handover.md](../process/build-handover.md).
