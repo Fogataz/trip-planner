@@ -37,13 +37,16 @@ Then read, in this order. It is about 90 minutes and it replaces every conversat
 ## 2. Check you are looking at the right thing
 
 ```bash
-bash scripts/spec-lint.sh          # expect: spec-lint: ok (12 checked)
+bash scripts/spec-lint.sh                   # expect: spec-lint: ok (12 checked)
+bash scripts/claude-md-mirror-check.sh      # expect: claude-md-mirror: ok (<hash>)
 grep -m1 '^Status:' docs/specs/002-hosted-event-pilot.md \
   docs/specs/011-roles-and-permissions.md \
   docs/specs/012-joining-naming-and-the-first-trip.md
 ```
 
 All three must say `Status: approved`. **If any says `draft`, stop** — the gate in docs/README.md allows no code before approval, and you are on a stale commit or the wrong branch.
+
+Both scripts also run in CI on every pull request, along with the client build, the client tests, a server syntax check and `npm audit` on both package trees. Run them locally before pushing and you will not find out from a red check.
 
 ## 3. Get it running
 
@@ -86,7 +89,8 @@ Each epic body carries the brief, the measure, the stop condition and the scope.
 | **Role labels are not role names.** The stored role is `host`/`co-host`/`guest` always; the words shown depend on `trip.kind`. | Spec 012 §5.3. Get this wrong and the migration renames every existing user's friends into "guests". |
 | **Localization is blocked on a human.** The Spanish and Portuguese role labels need the native reviewers in [spec 003](../specs/003-localization.md) §6. | **Write no locale file for role labels until that lands.** Everything else in S3 can proceed. |
 | **Every code carries a short name.** `R1 · Org owner reach`, not `R1`. | docs/README.md "How to update". A bare code is a defect to fix when you touch the line. |
-| **Two GitHub accounts may be configured.** Pushing from the wrong one fails with a 403 even though `gh auth status` looks fine. | `gh api repos/Fogataz/trip-planner --jq .permissions` — if `push` is `false`, switch: `gh auth switch -u <the account with write access>`. |
+| **Two GitHub accounts may be configured.** Pushing from the wrong one fails with a 403 even though `gh auth status` looks fine. | `gh api repos/Fogataz/trip-planner --jq .permissions` — if `push` is `false`, switch: `gh auth switch -u <the account with write access>`. Restore the original active account afterwards. |
+| **Touching `.github/workflows/` needs the `workflow` scope**, which the account with write access may not have. The push is rejected by the server, not by git. | `gh auth switch -u <that account>` **first**, then `gh auth refresh -h github.com -s workflow`. `refresh` acts on the *active* account — run it in the wrong order and it fails with "received credentials for &lt;other account&gt;", which looks like an SSO problem and is not. On Windows PowerShell there is no `&&`; use two lines. |
 
 ## 6. What is already decided, so you do not reopen it
 
