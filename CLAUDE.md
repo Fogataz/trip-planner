@@ -30,7 +30,7 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 
 [docs/README.md](docs/README.md) is the source of truth. In short:
 
-<!-- conventions-pin: 5ffbcf9f85aac38b719222fa5dc3696e55d12e53ebae811c0822b9a2274d883e -->
+<!-- conventions-pin: bd2fa025cc8fc8b2a7cbbe4a7de863044e08b35b1a445d3ea5834f8676c839f4 -->
 <!-- Summary of docs/README.md "How to write a spec", "When a spec ships" and "How to update".
      Change those and CI fails until someone re-reads this list and runs
      scripts/claude-md-mirror-check.sh --update. CLAUDE.md is loaded into every session,
@@ -43,7 +43,7 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 - Every spec from 005 on answers the fourteen design lenses in [docs/process/design-lenses.md](docs/process/design-lenses.md), one line each, in a `## Design lenses` section. `scripts/spec-lint.sh` checks it from `approved` onwards.
 - When a spec ships, update the spec, `features.md`, `roadmap.md` and the specs table in the same PR as the feature.
 - Write plainly: short sentences, tables where they help, no marketing tone. Items waiting on the product owner are marked **TBD**.
-- Every decision or finding code carries a short name after a `·` (`D27 · Recommendations are working defaults`, `R1 · Org owner reach`). Never write a bare code.
+- A decision or finding code carries a short name after a `·` wherever a reader could meet it cold — the first mention in a section, every table row and heading, and every pull request or chat message (`D27 · Recommendations are working defaults`, `R1 · Org owner reach`). Not every occurrence: a range or a repeat in the same breath is already clear. [docs/process/naming.md](docs/process/naming.md) §5 resolves any code.
 
 ## Working across computers
 

@@ -84,14 +84,14 @@ Each epic body carries the brief, the measure, the stop condition and the scope.
 
 | Trap | What to do |
 |---|---|
-| **Branch naming is enforced by CI.** A `docs/…` branch may only touch `docs/` and `wireframes/` (ww-D11). Touch anything else and the docs-only check fails. | Code goes on `feat/…`, `fix/…` or `chore/…`. Never work on `main`. |
+| **Branch naming is enforced by CI.** A `docs/…` branch may only touch `docs/` and `wireframes/` (ww-D11 · Docs-only guard in CI). Touch anything else and the docs-only check fails. | Code goes on `feat/…`, `fix/…` or `chore/…`. Never work on `main`. |
 | **`role === 'organizer'` appears 11 times across 5 files.** Replacing them is the job, not a side effect. | One helper, `can(actor, trip, capability)`. The **G5 · One helper** test fails if any route, socket handler or client component compares a role string. Write that test early — it is the measure for #20. |
 | **Socket authorization happens once, at join** (`server/index.js:127`). Nothing removes a socket from `trip:<id>` afterwards. | **G4 · Immediate revocation** is in slice 1, not after the pilot. A removed member currently keeps receiving everything until they disconnect. |
 | **The migration runs once against live data.** | Backup first, idempotent, `--dry-run` that prints the mapping, and **write the reverse script before running the forward one**. Spec 002 AC 4: no user loses access they have today. |
 | **The one-tap invited path mostly already exists.** `TripInvitation` carries a per-invitation token and `POST /:groupId/invitations/:token/accept` already activates the member with no approval (`server/routes/groups.js:371`). | Do not build a queue on top of it. Spec 012 §5.8 is three doors; the exact-email match at `:395` is what changes. |
 | **Role labels are not role names.** The stored role is `host`/`co-host`/`guest` always; the words shown depend on `trip.kind`. | Spec 012 §5.3. Get this wrong and the migration renames every existing user's friends into "guests". |
 | **Localization is blocked on a human.** The Spanish and Portuguese role labels need the native reviewers in [spec 003](../specs/003-localization.md) §6. | **Write no locale file for role labels until that lands.** Everything else in S3 can proceed. |
-| **Every code carries a short name.** `R1 · Org owner reach`, not `R1`. | docs/README.md "How to update". A bare code is a defect to fix when you touch the line. |
+| **A code carries a short name where a reader meets it cold** — first mention in a section, every table row and heading, every PR or chat message. `R1 · Org owner reach`, not `R1`. | docs/README.md "How to update". Not every occurrence: a range or an immediate repeat is already clear. [naming.md](naming.md) §5 resolves any code you meet bare. |
 | **Two GitHub accounts may be configured.** Pushing from the wrong one fails with a 403 even though `gh auth status` looks fine. | `gh api repos/Fogataz/trip-planner --jq .permissions` — if `push` is `false`, switch: `gh auth switch -u <the account with write access>`. Restore the original active account afterwards. |
 | **Touching `.github/workflows/` needs the `workflow` scope**, which the account with write access may not have. The push is rejected by the server, not by git. | `gh auth switch -u <that account>` **first**, then `gh auth refresh -h github.com -s workflow`. `refresh` acts on the *active* account — run it in the wrong order and it fails with "received credentials for &lt;other account&gt;", which looks like an SSO problem and is not. On Windows PowerShell there is no `&&`; use two lines. |
 
@@ -112,7 +112,7 @@ Everything else runs on the recommendation written next to it, per **D27 · Reco
 
 ## 7. Reporting back
 
-Engineering reports its outcome **into the repo or the board — never only into a chat** (ww-D7). Concretely:
+Engineering reports its outcome **into the repo or the board — never only into a chat** (ww-D7 · Engineering reports into the repo). Concretely:
 
 1. Branch, commit, open a PR to `main`. Never merge without the product owner's OK.
 2. In the **same PR as the feature**, update: the spec's status and PR number, [features.md](../features.md), [roadmap.md](../product/roadmap.md), and the specs table in [docs/README.md](../README.md). That is docs/README.md "When a spec ships", and it is not optional.

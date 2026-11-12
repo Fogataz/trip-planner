@@ -119,6 +119,10 @@ Rules:
 ## How to update
 
 - Keep documents short and factual. Link to code or issues instead of copying them.
-- **Every code carries a short name after a `·`**, so a reference reads without a lookup: `D27 · Recommendations are working defaults`, `R1 · Org owner reach`, `Q13 · Invited people must request`. Codes are scoped per document — **D** product-owner decisions in the [working doc](product/working-doc.md), **S / R / O** open decisions in specs 002 / 011 / 012, **G** guarantees, **Q** QA findings. A bare code with no name is a defect: fix it when you touch the line.
+- **A code carries a short name after a `·` wherever a reader could land on it cold**: `D27 · Recommendations are working defaults`, `R1 · Org owner reach`, `Q13 · Invited people must request`. That means the first mention in a section, every table row, every heading, and every pull request or chat message — the places someone arrives without the paragraph above.
+
+  It does **not** mean every occurrence. A range (`R3–R7 run on their recommendations`) and a repeat in the same breath (`R1 is why R1 works`) are already resolvable, and naming them again makes the sentence worse. The test is "could someone meet this here and not know what it is?", not a find-and-replace.
+
+  Codes are scoped per document — **D** product-owner decisions in the [working doc](product/working-doc.md), **S / R / O** open decisions in specs 002 / 011 / 012, **G** guarantees, **Q** QA findings, **ww-D / trk-D / lens-D** the process docs' own. [process/naming.md](process/naming.md) §5 is the register that resolves any of them, and it is the fallback when a name will not fit.
 - Change a document through a pull request so it can be reviewed.
 - When `features.md` gets too long, split it into one page per feature under `features/`. Specs stay where they are.
