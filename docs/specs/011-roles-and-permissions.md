@@ -350,7 +350,7 @@ One conflict to flag, inherited from spec 002 and not created here: **F17** remo
 | Block | What | In the pilot? | Depends on |
 |---|---|---|---|
 | **1** | Capability vocabulary, `can()`, `TripMember` + `OrgMember` with `grants`/`revokes` reserved, the three presets, `guestPermissions`, the migration, **G3 · No self-demotion** and **G5 · One helper**, plus `Trip.entitlement` reserved (§5.4, **R8 · Entitlement axis**) | **Yes — this is epic [#20](https://github.com/Fogataz/trip-planner/issues/20)** | — |
-| **2** | G1, G2, G4: last host, last owner, revocation across socket and live location | **Partly.** G4 is a principle-3 gap in today's code and should not wait; G1 and G2 are one service check each | 1 |
+| **2** | G1, G2, G4: last host, last owner, revocation across socket and live location | **Partly.** G4 is a principle-3 gap in today's code and should not wait; G1 and G2 are one service check each. **Amended 2026-11-12 (§17, Q23):** G4 and G1's pure predicate shipped in block 1 — block 1 is what removes the only last-host guard there is, so leaving the replacement here would have left the pilot unprotected in between. G2 · Last owner is still block 2 | 1 |
 | **3** | `schedule.propose`: guest suggestions as drafts with `source: 'guest_suggestion'`, reviewed in the existing draft screen | No | 1, and spec 002 part 6 |
 | **4** | Per-member overrides: `grants` and `revokes` filled, the "collaborator who can do one extra thing" case | No | 1 |
 | **5** | Organization reach: R1's claim path, moving a trip into an Organization (case 10), partner-style sharing between Organizations | No | 1, 2 |
@@ -427,6 +427,8 @@ Both epics sit under **I1 Run the hosted event pilot** ([#19](https://github.com
 Added by engineering while building epic [#20](https://github.com/Fogataz/trip-planner/issues/20), per [build-handover.md](../process/build-handover.md) §8: a shipped spec is never rewritten, and these three specs are `approved` rather than shipped, so corrections land here as a dated amendment. Nothing below changes a decision; each is a place where the spec as written would have produced the wrong code, and says what was built instead.
 
 Three were found by building, and **two of those only by running the migration against a seeded database rather than by reading it.** They are registered as **Q21–Q24** in [spec 012](012-joining-naming-and-the-first-trip.md) §4, which is where QA findings live.
+
+> **✅ Q23's scope change accepted 2026-11-12 by the product owner.** Fixing **Q23 · Block 1 removes the only last-host guard** meant pulling the pure predicate `wouldLeaveNoHost()` into block 1, which §12 assigns to block 2. That is scope the slice was not given, so it was put to the product owner rather than taken: accepted. **§12 now reads: the pure last-host predicate is block 1; G1 · Last host's service-layer enforcement and G2 · Last owner remain block 2 ([#115](https://github.com/Fogataz/trip-planner/issues/115)).** The boundary moved by one function, not by a feature.
 
 | # | Finding | Where | Severity | What was built |
 |---|---|---|---|---|
