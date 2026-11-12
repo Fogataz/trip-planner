@@ -43,7 +43,13 @@ run "Server syntax" bash -c "find server -name '*.js' -not -path '*/node_modules
 
 # G5 · One helper is the leading measure for epic #20: it fails if any route,
 # socket handler or client component compares a role string (spec 011 §6.2).
-run "Server tests (G5 · One helper, capabilities)" npm test --silent
+# Needs the root dependencies: a test that touches a model pulls in mongoose.
+if [ -d node_modules ]; then
+  run "Server tests (G5 · One helper, capabilities)" npm test --silent
+else
+  printf '\n\033[33m› Server tests skipped: node_modules is missing. Run: npm install\033[0m\n'
+  failed=1
+fi
 
 if [ "$FAST" -eq 1 ]; then
   printf '\n(--fast: skipped the client build and tests)\n'
