@@ -62,11 +62,17 @@ function presentMember(member, trip) {
 // (spec 011 risk 1, AC 12).
 function presentTrip(trip, member, members) {
   const json = typeof trip.toObject === 'function' ? trip.toObject() : { ...trip };
+  const { capabilities, ownCapabilities } = capabilitiesFor(member, trip);
   json.viewer = {
     role: member?.role || null,
     roleLabel: member ? roleLabel(member.role, trip) : null,
     status: member?.status || null,
-    capabilities: capabilitiesFor(member, trip),
+    // Held outright, on anything.
+    capabilities,
+    // Held only on objects this person created — a guest may close the poll
+    // they made and no other. Kept apart so the client can tell the two
+    // cases apart instead of showing a control that will 403.
+    ownCapabilities,
   };
   // `members` comes from the TripMember collection, never from the embedded
   // array on the document — that one is deprecated and no longer written.

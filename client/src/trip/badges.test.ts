@@ -7,7 +7,7 @@ const ANA = 'ana'
 function input(overrides: Partial<BadgeInput> = {}): BadgeInput {
   return {
     currentUid: ME,
-    isOrganizer: false,
+    canManageInvites: false,
     members: [{ status: 'active' }, { status: 'active' }],
     polls: [],
     expenses: { expenses: [], balances: {}, settlements: [] },
@@ -80,7 +80,7 @@ describe('computeBadges', () => {
 
   it('counts outstanding invitations for the organizer only', () => {
     const members = [{ status: 'active' }, { status: 'invited', invitedBy: ME }, { status: 'invited', invitedBy: ANA }]
-    expect(computeBadges(input({ members, isOrganizer: true })).group).toBe(1)
-    expect(computeBadges(input({ members, isOrganizer: false })).group).toBe(0)
+    expect(computeBadges(input({ members, canManageInvites: true })).group).toBe(1)
+    expect(computeBadges(input({ members, canManageInvites: false })).group).toBe(0)
   })
 })

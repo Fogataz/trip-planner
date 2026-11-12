@@ -47,7 +47,10 @@ export interface TripViewer {
   role: string | null
   roleLabel: string | null
   status: string | null
+  /** Held outright, on anything in this trip. */
   capabilities: string[]
+  /** Held only on objects this person created — e.g. a guest closing their own poll. */
+  ownCapabilities: string[]
 }
 
 export interface Trip {
@@ -98,10 +101,10 @@ interface TripContextValue {
   apiUrl: string
   token: string | null
   currentUid?: string
-  /** Does the viewer hold `capability` on this trip? The only access question a component asks. */
+  /** Does the viewer hold `capability` outright on this trip? */
   can: (capability: string) => boolean
-  /** Shorthand for `can('member.invite')`: may the viewer invite and manage people here. */
-  isOrganizer: boolean
+  /** Does the viewer hold `capability` on this particular object, by right or by authorship? */
+  canOn: (capability: string, createdBy?: string) => boolean
   push: ReturnType<typeof usePushNotifications>
   mapOpen: boolean
   setMapOpen: (open: boolean) => void
@@ -302,11 +305,25 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
   // Capabilities come from the server already resolved. A component asks
   // "may I?", never "what am I?" (R-F11, AC 12).
   const capabilities = useMemo(() => new Set(trip?.viewer?.capabilities ?? []), [trip?.viewer?.capabilities])
+  const ownCapabilities = useMemo(
+    () => new Set(trip?.viewer?.ownCapabilities ?? []),
+    [trip?.viewer?.ownCapabilities]
+  )
+
+  /** Held outright: may I do this to anything here? */
   const can = useCallback((capability: string) => capabilities.has(capability), [capabilities])
 
-  // The group screen's "can I run this trip" question, which is holding the
-  // invite and the remove controls. It is one capability, not a role.
-  const isOrganizer = capabilities.has('member.invite')
+  /**
+   * May I do this to THIS object? Held outright, or held on my own and this
+   * one is mine. Asking `can()` alone is what put a close button on everyone's
+   * poll and collected a 403 — the two cases are different answers.
+   */
+  const canOn = useCallback(
+    (capability: string, createdBy?: string) =>
+      capabilities.has(capability) ||
+      (ownCapabilities.has(capability) && !!createdBy && createdBy === currentUid),
+    [capabilities, ownCapabilities, currentUid]
+  )
 
   const polls = usePolls(apiUrl, token, groupId, socket)
   const expenses = useExpenses(apiUrl, token, groupId, socket)
@@ -325,14 +342,14 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
     () =>
       computeBadges({
         currentUid,
-        isOrganizer,
+        canManageInvites: capabilities.has('invite.manage'),
         members: trip?.members ?? [],
         polls: polls.data,
         expenses: expenses.data,
         activity: activity.data,
         seen: seenState.seen,
       }),
-    [currentUid, isOrganizer, trip?.members, polls.data, expenses.data, activity.data, seenState.seen]
+    [currentUid, capabilities, trip?.members, polls.data, expenses.data, activity.data, seenState.seen]
   )
   const seen = useMemo(() => ({ since: seenState.since, mark: seenState.mark }), [seenState.since, seenState.mark])
 
@@ -350,7 +367,7 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             token,
             currentUid,
             can,
-            isOrganizer,
+            canOn,
             push,
             mapOpen,
             setMapOpen,
@@ -366,7 +383,7 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             badges,
           }
         : null,
-    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, can, isOrganizer, push, mapOpen, assistantOpen, drafts, phase, polls, expenses, activity, seen, badges]
+    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, can, canOn, push, mapOpen, assistantOpen, drafts, phase, polls, expenses, activity, seen, badges]
   )
 
   // Skeleton in the shape of the trip chrome and tabs, so nothing jumps when the trip arrives (N3, N4)

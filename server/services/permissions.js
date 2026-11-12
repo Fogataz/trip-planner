@@ -274,27 +274,48 @@ function can(actor, trip, capability, context = {}) {
   return entitlementAllows(trip, capability);
 }
 
-// The viewer's resolved capability list, for the trip payload (R-F11).
+// Which column of the table applies to this actor on this trip.
+function columnFor(actor, trip) {
+  if (actor?.role === 'host' || actor?.role === 'co-host') return actor.role;
+  if (actor?.role === 'guest') return tripKind(trip) === 'hosted' ? 'hostedGuest' : 'personalGuest';
+  return null;
+}
+
+// The viewer's resolved capabilities, for the trip payload (R-F11).
 //
 // The client renders its action controls from this and never sees a role name
 // except to display it (spec 011 risk 1). Capabilities are DERIVED, never
 // persisted on the member (§4.3) — a stored copy goes stale the moment a
 // preset changes.
-function capabilitiesFor(actor, trip, context = {}) {
-  return ALL_CAPABILITIES.filter((capability) => {
-    const row = CAPABILITIES[capability];
-    const isCreatorRow =
-      row[actor?.role === 'guest' ? (tripKind(trip) === 'hosted' ? 'hostedGuest' : 'personalGuest') : actor?.role] ===
-      CREATOR;
-    // A creator-conditional capability is reported as held when the caller
-    // gave no specific resource: "you may close polls you made", which is what
-    // a UI needs in order to show the control at all. The per-object check
-    // still runs on the write itself.
-    if (isCreatorRow && !context.resource) {
-      return can(actor, trip, capability, { resource: { createdBy: actor?.userId } });
+//
+// TWO LISTS, not one. An earlier version returned a single list and reported
+// a CREATOR row — poll.close, expense.delete — as simply "held", on the
+// reasoning that a UI needs it to show the control at all. That is ambiguous
+// in the one place it matters: "I may close polls" and "I may close the polls
+// I made" are different answers, and a client that cannot tell them apart
+// shows a close button on everyone's poll and collects a 403. It did exactly
+// that (review of PR #124, finding 7).
+//
+//   capabilities     — held outright, on anything
+//   ownCapabilities  — held only on objects this person created
+//
+// Authorship stays a separate axis resolved after the capability check
+// (§5.1 footnote 2); this only reports which axis applies.
+function capabilitiesFor(actor, trip) {
+  const column = columnFor(actor, trip);
+  const held = [];
+  const own = [];
+  if (!column) return { capabilities: held, ownCapabilities: own };
+
+  for (const capability of ALL_CAPABILITIES) {
+    const grant = actor.role === 'guest' ? guestGrant(trip, capability) : CAPABILITIES[capability][column];
+    if (grant === CREATOR) {
+      if (can(actor, trip, capability, { resource: { createdBy: actor.userId } })) own.push(capability);
+    } else if (can(actor, trip, capability)) {
+      held.push(capability);
     }
-    return can(actor, trip, capability, context);
-  });
+  }
+  return { capabilities: held, ownCapabilities: own };
 }
 
 // ---------------------------------------------------------------------------

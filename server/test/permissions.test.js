@@ -125,8 +125,8 @@ test('AC 4 · one guest override flips one entry and nothing else', () => {
   assert.strictEqual(can(guest, trip, 'schedule.edit'), true);
 
   // No other guest capability changed.
-  const before = capabilitiesFor(guest, hostedTrip);
-  const after = capabilitiesFor(guest, trip);
+  const before = capabilitiesFor(guest, hostedTrip).capabilities;
+  const after = capabilitiesFor(guest, trip).capabilities;
   assert.deepStrictEqual(
     after.filter((c) => !before.includes(c)),
     ['schedule.edit']
@@ -262,6 +262,7 @@ test('AC 13 · with entitlement null, every capability resolves as before', () =
     for (const trip of [hostedTrip, personalTrip]) {
       const withField = capabilitiesFor(member(role), { ...trip, entitlement: null });
       const withoutField = capabilitiesFor(member(role), { kind: trip.kind });
+      assert.deepStrictEqual(withField.ownCapabilities, withoutField.ownCapabilities, `${role} own`);
       assert.deepStrictEqual(withField, withoutField, `${role} on ${trip.kind}`);
     }
   }
@@ -328,17 +329,47 @@ test('R7 · a trip that has merely ended stays writable', () => {
 // AC 12 · the client renders from the resolved list
 // ---------------------------------------------------------------------------
 
-test('capabilitiesFor returns the viewer’s resolved list', () => {
-  const guestList = capabilitiesFor(member('guest'), hostedTrip);
-  assert.ok(guestList.includes('poll.vote'));
-  assert.ok(!guestList.includes('schedule.edit'));
-  assert.ok(guestList.includes('poll.close'), 'a guest may close polls they made');
+test('capabilitiesFor separates what you hold outright from what you hold on your own', () => {
+  const { capabilities, ownCapabilities } = capabilitiesFor(member('guest'), hostedTrip);
 
-  assert.deepStrictEqual(capabilitiesFor(null, hostedTrip), []);
-  assert.deepStrictEqual(capabilitiesFor(member('guest', 'u1', 'removed'), hostedTrip), []);
+  assert.ok(capabilities.includes('poll.vote'));
+  assert.ok(!capabilities.includes('schedule.edit'));
 
-  const hostList = capabilitiesFor(member('host'), hostedTrip);
-  assert.strictEqual(hostList.length, ALL_CAPABILITIES.length, 'a host holds everything');
+  // The regression this split exists to prevent (review finding 7): a guest
+  // may close the poll THEY made, and a client told only "poll.close" showed
+  // a close button on everyone's poll and collected a 403.
+  assert.ok(!capabilities.includes('poll.close'), 'not held outright');
+  assert.ok(ownCapabilities.includes('poll.close'), 'held on their own');
+  assert.ok(ownCapabilities.includes('expense.delete'));
+
+  // The two lists never overlap — a capability is one or the other.
+  assert.deepStrictEqual(capabilities.filter((c) => ownCapabilities.includes(c)), []);
+});
+
+test('a host holds the creator rows outright, not conditionally', () => {
+  const { capabilities, ownCapabilities } = capabilitiesFor(member('host'), hostedTrip);
+  assert.ok(capabilities.includes('poll.close'), 'a host may close any poll');
+  assert.deepStrictEqual(ownCapabilities, [], 'nothing is creator-conditional for a host');
+  assert.strictEqual(capabilities.length, ALL_CAPABILITIES.length, 'a host holds everything');
+});
+
+test('a non-member and a removed member hold nothing, in either list', () => {
+  for (const actor of [null, member('guest', 'u1', 'removed')]) {
+    const resolved = capabilitiesFor(actor, hostedTrip);
+    assert.deepStrictEqual(resolved.capabilities, []);
+    assert.deepStrictEqual(resolved.ownCapabilities, []);
+  }
+});
+
+test('a personal guest keeps the creator rows conditional too', () => {
+  // The regression was worst here: on a personal trip every member holds
+  // member.invite, so "isOrganizer" was true for everyone.
+  const { capabilities, ownCapabilities } = capabilitiesFor(member('guest'), personalTrip);
+  assert.ok(capabilities.includes('schedule.edit'), 'friends still edit the plan');
+  assert.ok(capabilities.includes('member.invite'), 'and still invite');
+  assert.ok(!capabilities.includes('poll.close'));
+  assert.ok(ownCapabilities.includes('poll.close'));
+  assert.ok(!capabilities.includes('member.remove'), 'but do not remove people');
 });
 
 test('can() is pure — it never mutates what it is given', () => {

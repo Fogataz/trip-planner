@@ -9,7 +9,8 @@ export interface Badges {
 
 export interface BadgeInput {
   currentUid?: string
-  isOrganizer: boolean
+  /** May the viewer manage this trip's invitations? One capability, not a role. */
+  canManageInvites: boolean
   members: ReadonlyArray<{ status?: string; invitedBy?: string }>
   polls: ReadonlyArray<Poll>
   expenses: ExpenseSummary
@@ -30,7 +31,7 @@ function newerThan(entry: ActivityEntry, iso?: string): boolean {
  * - Overview: activity by others since I last opened Overview
  */
 export function computeBadges(input: BadgeInput): Badges {
-  const { currentUid, isOrganizer, members, polls, expenses, activity, seen } = input
+  const { currentUid, canManageInvites, members, polls, expenses, activity, seen } = input
   const byOthers = activity.filter((a) => a.userId !== currentUid)
 
   const unvoted = polls.filter(
@@ -51,6 +52,6 @@ export function computeBadges(input: BadgeInput): Badges {
     overview: byOthers.filter((a) => newerThan(a, seen.overview)).length,
     plan: unvoted + planChanges,
     money: Math.abs(myBalance) >= 1 ? 1 : 0,
-    group: isOrganizer ? mine.length : 0,
+    group: canManageInvites ? mine.length : 0,
   }
 }
