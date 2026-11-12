@@ -114,8 +114,8 @@ Direction from the product owner (D18, D19), detailed here. Engineering confirms
 **Rules:**
 
 - Organization membership never gives access to a trip by itself (D19). Live location stays visible only to active trip members.
-- Hosted trips belong to the Organization, not to the person. **Proposed (D21):** if someone leaves an Organization, they lose host and co-host roles on its trips, and the trips stay. Each hosted trip keeps at least one host. If the last host leaves, an org owner or admin is asked to take over.
-- A user without an Organization can join any trip as a guest (D18). What they can create on their own is D20 (4.3).
+- Hosted trips belong to the Organization, not to the person. **Decided 2026-11-12 (D21 · Leaving an Organization):** if someone leaves an Organization, they lose host and co-host roles on its trips, and the trips stay. Each hosted trip keeps at least one host. If the last host leaves, an org owner or admin is asked to take over.
+- A user without an Organization can join any trip as a guest, **and can host one** (D18 · Account model, amended 2026-11-12 by O1 · Organization never required). `Trip.orgId` is nullable; a trip without one is personally owned. What they can create on their own is D20 · Free personal limits (4.3).
 - **Migration:** each existing trip becomes a personal trip. Its creator becomes host, other organizers become co-hosts, and members become guests.
 
 **Why this avoids rework:** payments attach to a TripMember (payer) and an Organization (payee), not to a trip or a person's profile. Payment status lives on TripMember. Public pages are a separate Listing object. Curators are an Organization type. None of these needs a change to the role model when it arrives.
@@ -245,10 +245,10 @@ The join, day 2 and survey thresholds match the Phase 0 gate in the revenue anal
 | D15 | Phase 1 go-to-market focus: offsite organisers in Barcelona and Madrid tech companies | **Superseded by D33:** Phase 1 go-to-market is premium hosts (T1–T3, then retreat and workshop hosts) |
 | D16 | Start an organisers circle (design partners) after the gathering | Proposed |
 | D17 | Invite link policy | **Decided 2026-11-09:** link plus host approval |
-| D18 | Account model | **Decided 2026-11-09:** Organizations own hosted trips; one account per person, role per trip |
+| D18 · Account model | Account model | **Decided 2026-11-09:** Organizations own hosted trips; one account per person, role per trip. **Amended 2026-11-12 (O1 · Organization never required):** Organizations **may** own hosted trips — hosting never requires one, and `Trip.orgId` is nullable. An Organization is needed to *receive* an invoice or a payout, never to pay or to host. The account model itself is unchanged |
 | D19 | Does Organization membership give trip access? | **Decided 2026-11-09:** no, trip roles apply |
-| D20 | What users without an Organization can create, and the free limits | TBD. Recommendation in 4.3: free personal trips, limit group size and AI drafts, no expiry |
-| D21 | What happens to trips when someone leaves an Organization | Proposed in 4.2 |
+| D20 · Free personal limits | What users without an Organization can create, and the free limits | **Still TBD.** Recommendation in 4.3: free personal trips, limit group size and AI drafts, no expiry. **Cheaper to decide late since 2026-11-12:** R8 · Entitlement axis reserved `Trip.entitlement`, so a tier lands as a lookup rather than a migration against live data ([spec 011](../specs/011-roles-and-permissions.md) §5.4). **R8 does not decide this** — it only removes the cost of deciding it later |
+| D21 · Leaving an Organization | What happens to trips when someone leaves an Organization | **Decided 2026-11-12:** as proposed in 4.2 — host and co-host roles on that Organization's trips are dropped, the trips stay, and an org owner is asked to take over if that empties the hosts. Also closes a contradiction with spec 002 §10, now corrected |
 | D22 | How to spec the gathering work | **Decided 2026-11-09:** one spec, 002 Hosted event pilot |
 | D23 | Localization in the gathering scope | **Decided 2026-11-09:** English, Spanish and Portuguese |
 | D24 | Spec 002 open decisions S1–S8 (join page content, file types, analytics store and retention, Portuguese variant, iPhone reach, who creates Organizations, replies to announcements) | Not blockers. The recommendations in spec 002, §9 are the working defaults (D27). S5 is now pt-BR (shipped). |
@@ -371,6 +371,8 @@ Updated 2026-11-10 for D33: premium hosts lead. The earlier offsite version is i
 | 2026-11-09 | D17: invite links create a join request. Nothing is visible until a host or co-host approves. |
 | 2026-11-09 | D18: Organizations own hosted trips and let their members create and manage them. One account per person with a role per trip. A user without an Organization can join trips as a guest. |
 | 2026-11-09 | D19: Organization membership does not give access to a trip. Trip roles do. |
+| 2026-11-12 | D18 amended by O1 · Organization never required: an Organization is never required to host a trip. A trip without one is personally owned. Organizations *may* own hosted trips; one is needed to receive an invoice or a payout, never to host. |
+| 2026-11-12 | D21 · Leaving an Organization decided as proposed: leaving drops host and co-host roles on that Organization's trips. The trips stay, and an org owner takes over if no host remains. Closed a contradiction with spec 002 §10. |
 | 2026-11-09 | D5: the eDreams policy topic is closed at project level (product owner). |
 | 2026-11-09 | D14: one umbrella brand with plain descriptors. Lazo is the current name favourite; final name after clearance and audience-market fit. |
 | 2026-11-09 | D22: the gathering work is one spec, `002-hosted-event-pilot.md`. |

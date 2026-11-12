@@ -1,8 +1,10 @@
-# Starting the pilot build from another Claude account
+# Starting the pilot build on another machine or agent
 
-> **Runbook.** Written 2026-11-12, when specs 002, 011 and 012 were approved and the build had to be able to start on a different computer and a different Claude account from the one that wrote them.
+> **Runbook.** Written 2026-11-12, when specs 002, 011 and 012 were approved and the build had to be able to start on a different computer, a different account, or a different agent from the one that wrote them. It is written for **any** of them — Claude Code, Codex, Copilot or a person.
 >
 > This is the "you have the repo and nothing else" page. It assumes **nothing from any chat**: everything the build needs is in the repo, which is the point of [ww rule 1](../README.md#working-across-accounts-and-computers) — the repo is the only source of truth, and nothing syncs between accounts except it.
+>
+> **Not using Claude Code?** Nothing here depends on it. The `.claude/` hooks and commands do not run elsewhere, and nothing is lost by that: every rule they enforce is also a CI check on the pull request. [AGENTS.md](../../AGENTS.md) has the table. Run the two scripts in §2 before you push and the difference disappears.
 
 ## 0. The one-paragraph brief
 
