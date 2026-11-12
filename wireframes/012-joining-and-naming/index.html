@@ -37,6 +37,13 @@
   .label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 8px}
   .label .name{font-size:13px;font-weight:600}
   .label .dims{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  /* Build status, added 2026-11-12. A frame is DRAWN; that says nothing about
+     whether it is built. This chip says where the code behind it stands, so a
+     reader does not assume a drawing is a feature. */
+  .st{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+      padding:2px 7px;border-radius:999px;white-space:nowrap;vertical-align:middle;margin-left:8px}
+  .st.review{background:#fff3d6;color:#7a5600;border:1px solid #e8c877}
+  .st.none{background:#f1f2f4;color:#6b7280;border:1px solid #dfe1e5}
   .stage{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff}
 
   .note{margin-top:12px;border-left:3px solid var(--note-line);background:var(--note-bg);border-radius:0 8px 8px 0;padding:11px 13px}
@@ -99,7 +106,7 @@
 <div class="wrap">
 
   <h1>Joining and naming — lo-fi wireframes</h1>
-  <p class="sub">Spec 012: <a href="../../docs/specs/012-joining-naming-and-the-first-trip.md">docs/specs/012-joining-naming-and-the-first-trip.md</a> (<strong>Status: draft</strong>). Thirteen frames.</p>
+  <p class="sub">Spec 012: <a href="../../docs/specs/012-joining-naming-and-the-first-trip.md">docs/specs/012-joining-naming-and-the-first-trip.md</a> (<strong>Status: approved</strong> 2026-11-12). Thirteen frames.</p>
   <p class="sub">Includes the three screens <a href="../002-hosted-event-pilot/index.html">spec 002's set</a> left undrawn — create an Organization (F1), the Organization member list (F2), and trip people and roles (F4) — because what they show is decided here.</p>
 
   <div class="cards">
@@ -114,6 +121,10 @@
       <p>And on attribution: <strong>an Organization is never the author of anything. People write, post and host; Organizations own and vouch.</strong></p>
     </div>
     <div class="card">
+      <h3>Build status — added 2026-11-12</h3>
+      <p><strong>A frame being drawn says nothing about whether it is built.</strong> Where the code behind a frame has moved, the frame carries a chip saying so. <strong>No screen in this set is built.</strong></p>
+      <p><span class="st review">in review · #124</span> means slice <strong>S1 · Permissions foundation</strong> (epic #20, <a href="https://github.com/Fogataz/trip-planner/pull/124">PR #124</a>) implements the <em>rules or the field</em> the frame depends on — the capability table, <code>TripMember</code>, role labels per trip kind, <strong>G3 · No self-demotion</strong>, <strong>G4 · Immediate revocation</strong> and the last-host guard. The screen itself is still to be drawn into code.</p>
+      <p>Frames with no chip are untouched: <strong>S2 · The door</strong> (<a href="https://github.com/Fogataz/trip-planner/issues/25">#25</a>, <a href="https://github.com/Fogataz/trip-planner/issues/29">#29</a>, <a href="https://github.com/Fogataz/trip-planner/issues/52">#52</a>) and later slices. Frame 13's Spanish role labels are blocked on <a href="https://github.com/Fogataz/trip-planner/issues/122">#122</a> (<strong>O8 · Ungendered role labels</strong>) — the 18 key names exist in code, the Spanish and Portuguese words do not.</p>
       <h3>Open decisions drawn as defaults</h3>
       <p>O1 Organization never required — frames 5, 8, 10.<br>O3 role labels per trip kind — frames 6, 7, 13.<br>O4 attribution order — frames 1, 2.<br>O5 first name on the email-link path — frame 3.<br>O6 profile offer while waiting — frame 4.<br>O7 move path, data now and screen later — frame 10.<br>O8 ungendered role labels — frame 13.<br>O9 the event's language for first invitations — frame 12.<br>O11 a count, never names — frame 11.<br>O12 privacy note once per person — frame 11.</p>
       <p><strong>✅ Decided 2026-11-12.</strong> <strong>O1 · Organization never required</strong> landed on <em>never required</em>, so frames 5, 8 and 10 stand as drawn and frame 10's move path goes from reserved to required. <strong>R1 · Org owner reach</strong> landed on <em>claim</em>, which makes frame 10's second "what changes" line true. <strong>R2 · Leaving an Organization</strong> landed on <em>roles are dropped</em>, and <strong>R8 · Entitlement axis</strong> on <em>reserve the field</em>. The door-A design in frame 11 is taken. Everything else below runs on its recommendation per D27 · Recommendations are working defaults.</p>
@@ -312,7 +323,7 @@
     <div class="strip">
 
       <figure class="board">
-        <figcaption class="label"><span class="name">5 · New trip</span><span class="dims">390×844</span></figcaption>
+        <figcaption class="label"><span class="name">5 · New trip</span><span class="st review" title="screen not built">trip.kind in review · #124</span><span class="dims">390×844</span></figcaption>
         <div class="stage" style="width:390px;height:844px">
           <div class="f">
             <div class="hd"><span>&larr; Trips</span><span class="m" style="font-weight:500">New</span></div>
@@ -359,7 +370,7 @@
       </figure>
 
       <figure class="board">
-        <figcaption class="label"><span class="name">6 · Trip people and roles</span><span class="dims">390×844</span></figcaption>
+        <figcaption class="label"><span class="name">6 · Trip people and roles</span><span class="st review" title="screen not built">rules in review · #124</span><span class="dims">390×844</span></figcaption>
         <div class="stage" style="width:390px;height:844px">
           <div class="f">
             <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">People · 41</span></div>
@@ -421,7 +432,7 @@
       </figure>
 
       <figure class="board">
-        <figcaption class="label"><span class="name">7 · Change role — with the last-host guard</span><span class="dims">390×844</span></figcaption>
+        <figcaption class="label"><span class="name">7 · Change role — with the last-host guard</span><span class="st review" title="screen not built">rules in review · #124</span><span class="dims">390×844</span></figcaption>
         <div class="stage" style="width:390px;height:844px">
           <div class="f" style="position:relative">
             <div class="hd"><span>&larr; Gathering</span><span class="m" style="font-weight:500">People · 41</span></div>
@@ -522,7 +533,7 @@
       </figure>
 
       <figure class="board">
-        <figcaption class="label"><span class="name">9 · Organization members</span><span class="dims">390×844</span></figcaption>
+        <figcaption class="label"><span class="name">9 · Organization members</span><span class="st review" title="screen not built">OrgMember in review · #124</span><span class="dims">390×844</span></figcaption>
         <div class="stage" style="width:390px;height:844px">
           <div class="f">
             <div class="hd"><span>&larr; eDreams ODIGEO</span><span class="m" style="font-weight:500">People · 6</span></div>
@@ -569,7 +580,7 @@
       </figure>
 
       <figure class="board">
-        <figcaption class="label"><span class="name">10 · Move a trip into an Organization</span><span class="dims">390×844</span></figcaption>
+        <figcaption class="label"><span class="name">10 · Move a trip into an Organization</span><span class="st review" title="screen not built">Trip.orgId in review · #124</span><span class="dims">390×844</span></figcaption>
         <div class="stage" style="width:390px;height:844px">
           <div class="f">
             <div class="hd"><span>&larr; Annual Gathering</span><span class="m" style="font-weight:500">Move</span></div>
