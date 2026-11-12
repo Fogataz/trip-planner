@@ -2,6 +2,8 @@ const express = require('express');
 const Trip = require('../models/Trip');
 const Poll = require('../models/Poll');
 const { notifyTrip } = require('../services/notifications');
+const { can } = require('../services/permissions');
+const { loadMember } = require('../services/membership');
 
 const router = express.Router();
 
@@ -12,25 +14,25 @@ router.setIO = (socketIO) => {
 
 const MAX_OPTIONS = 10;
 
-function isActiveMember(trip, uid) {
-  return trip.members.some((m) => m.userId === uid && m.status === 'active');
-}
-
-function isOrganizer(trip, uid) {
-  return trip.members.some((m) => m.userId === uid && m.role === 'organizer');
-}
-
-// Load trip by groupId and ensure the caller is an active member
-async function loadTrip(req, res) {
+// Load the trip and refuse unless the caller holds `capability` on it.
+// Returns { trip, member } so nothing below re-queries or re-checks.
+// Every decision here goes through can() — G5 · One helper.
+async function loadTrip(req, res, capability = 'trip.view') {
   const trip = await Trip.findOne({ groupId: req.params.groupId });
   if (!trip) {
     res.status(404).json({ error: 'Trip not found' });
     return null;
   }
-  if (!isActiveMember(trip, req.user.uid)) {
-    res.status(403).json({ error: 'Not a member of this trip' });
+  const member = await loadMember(trip.groupId, req.user.uid);
+  if (!can(member, trip, capability)) {
+    if (!member || member.status !== 'active') {
+      res.status(403).json({ error: 'You do not have access to this trip.' });
+    } else {
+      res.status(403).json({ error: 'You cannot do this on this trip.', capability });
+    }
     return null;
   }
+  trip.viewerMember = member;
   return trip;
 }
 
@@ -41,7 +43,7 @@ function broadcast(trip, event, payload) {
 // List polls for a trip
 router.get('/trip/:groupId', async (req, res) => {
   try {
-    const trip = await loadTrip(req, res);
+    const trip = await loadTrip(req, res, 'trip.view');
     if (!trip) return;
     const polls = await Poll.find({ tripId: trip._id }).sort({ createdAt: -1 });
     res.json(polls);
@@ -53,7 +55,7 @@ router.get('/trip/:groupId', async (req, res) => {
 // Create a poll
 router.post('/trip/:groupId', async (req, res) => {
   try {
-    const trip = await loadTrip(req, res);
+    const trip = await loadTrip(req, res, 'poll.create');
     if (!trip) return;
 
     const { question, options, allowMultiple } = req.body;
@@ -88,7 +90,7 @@ router.post('/trip/:groupId', async (req, res) => {
 // Cast, change or withdraw a vote on an option (toggles for multi-choice polls)
 router.post('/trip/:groupId/:pollId/vote', async (req, res) => {
   try {
-    const trip = await loadTrip(req, res);
+    const trip = await loadTrip(req, res, 'poll.vote');
     if (!trip) return;
 
     const poll = await Poll.findOne({ _id: req.params.pollId, tripId: trip._id });
@@ -123,13 +125,16 @@ router.post('/trip/:groupId/:pollId/vote', async (req, res) => {
 // Close a poll (creator or organizer)
 router.post('/trip/:groupId/:pollId/close', async (req, res) => {
   try {
-    const trip = await loadTrip(req, res);
+    const trip = await loadTrip(req, res, 'trip.view');
     if (!trip) return;
 
     const poll = await Poll.findOne({ _id: req.params.pollId, tripId: trip._id });
     if (!poll) return res.status(404).json({ error: 'Poll not found' });
-    if (poll.createdBy !== req.user.uid && !isOrganizer(trip, req.user.uid)) {
-      return res.status(403).json({ error: 'Only the creator or an organizer can close this poll' });
+    // The CREATOR row of the table: a guest may close the poll they made.
+    // Authorship is resolved AFTER the capability check, never instead of it
+    // (spec 011 §5.1 footnote 2).
+    if (!can(trip.viewerMember, trip, 'poll.close', { resource: poll })) {
+      return res.status(403).json({ error: 'You cannot close this poll.', capability: 'poll.close' });
     }
 
     poll.status = 'closed';
@@ -145,13 +150,15 @@ router.post('/trip/:groupId/:pollId/close', async (req, res) => {
 // Delete a poll (creator or organizer)
 router.delete('/trip/:groupId/:pollId', async (req, res) => {
   try {
-    const trip = await loadTrip(req, res);
+    const trip = await loadTrip(req, res, 'trip.view');
     if (!trip) return;
 
     const poll = await Poll.findOne({ _id: req.params.pollId, tripId: trip._id });
     if (!poll) return res.status(404).json({ error: 'Poll not found' });
-    if (poll.createdBy !== req.user.uid && !isOrganizer(trip, req.user.uid)) {
-      return res.status(403).json({ error: 'Only the creator or an organizer can delete this poll' });
+    // Deleting a poll is the same decision as closing it: the table has no
+    // separate row, so poll.close governs both.
+    if (!can(trip.viewerMember, trip, 'poll.close', { resource: poll })) {
+      return res.status(403).json({ error: 'You cannot delete this poll.', capability: 'poll.close' });
     }
 
     await poll.deleteOne();

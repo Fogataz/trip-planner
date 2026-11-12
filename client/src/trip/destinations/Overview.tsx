@@ -164,7 +164,7 @@ function CountdownBlocks() {
   const daysToGo = daysBetween(localToday(new Date()), calendarDay(trip.startDate))
   const dayOne = groupByDay(trip.itinerary, trip.startDate).find((g) => g.dayNumber === 1)
   const firstStop = dayOne?.items[0]
-  const pending = trip.members.filter((m) => m.status === 'pending')
+  const pending = trip.members.filter((m) => m.status === 'invited')
   const stay = [trip.accommodation?.name, trip.accommodation?.address].filter(Boolean).join(', ')
 
   return (

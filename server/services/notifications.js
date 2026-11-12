@@ -1,5 +1,6 @@
 const { getMessaging } = require('firebase-admin/messaging');
 const User = require('../models/User');
+const TripMember = require('../models/TripMember');
 
 const INVALID_TOKEN_CODES = new Set([
   'messaging/registration-token-not-registered',
@@ -38,11 +39,15 @@ async function notifyUsers(users, { title, body, groupId, url }) {
   }
 }
 
-// Push to every active trip member except the actor
+// Push to every active trip member except the actor.
+//
+// Reach reads status 'active' and nothing else, so "goes to 38 people" means
+// 38 — not 38 plus four pending requests (R-F9, spec 011 case 15).
 async function notifyTrip(trip, excludeUid, { title, body }) {
   try {
-    const uids = trip.members
-      .filter((m) => m.status === 'active' && m.userId && m.userId !== excludeUid)
+    const members = await TripMember.find({ tripId: trip._id, status: 'active' });
+    const uids = members
+      .filter((m) => m.userId && m.userId !== excludeUid)
       .map((m) => m.userId);
     if (uids.length === 0) return;
 

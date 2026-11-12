@@ -78,8 +78,8 @@ describe('computeBadges', () => {
     expect(computeBadges(input({ expenses: { expenses: [], balances: { [ME]: 0 }, settlements: [] } })).money).toBe(0)
   })
 
-  it('counts pending invites for the organizer only', () => {
-    const members = [{ status: 'active' }, { status: 'pending', invitedBy: ME }, { status: 'pending', invitedBy: ANA }]
+  it('counts outstanding invitations for the organizer only', () => {
+    const members = [{ status: 'active' }, { status: 'invited', invitedBy: ME }, { status: 'invited', invitedBy: ANA }]
     expect(computeBadges(input({ members, isOrganizer: true })).group).toBe(1)
     expect(computeBadges(input({ members, isOrganizer: false })).group).toBe(0)
   })

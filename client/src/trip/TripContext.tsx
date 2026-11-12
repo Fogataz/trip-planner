@@ -21,10 +21,29 @@ export interface ItineraryItem {
 export interface TripMember {
   userId?: string
   email?: string
+  /** The stored role: host, co-host or guest. Never compared in a component. */
   role: string
+  /** The word to show for that role on THIS trip (spec 012 §5.3). Display only. */
+  roleLabel?: string
   status?: string
   invitedBy?: string
   invitedAt?: string
+}
+
+/**
+ * What the signed-in viewer may do here, resolved by the server from the one
+ * capability table (spec 011 §5.1, R-F11).
+ *
+ * The client renders every action control from `capabilities` and never from
+ * a role name — spec 011 risk 1 is that the check gets duplicated here as
+ * `if (role === 'host')` and drifts from the server. G5's test covers
+ * client/src for exactly that reason.
+ */
+export interface TripViewer {
+  role: string | null
+  roleLabel: string | null
+  status: string | null
+  capabilities: string[]
 }
 
 export interface Trip {
@@ -39,6 +58,7 @@ export interface Trip {
   durationDays?: { min: number; max: number } | null
   itinerary: ItineraryItem[]
   members: TripMember[]
+  viewer?: TripViewer
   travelSuggestions?: any
   accommodation?: { name?: string; address?: string }
   cover?: TripCoverData | null
@@ -74,6 +94,9 @@ interface TripContextValue {
   apiUrl: string
   token: string | null
   currentUid?: string
+  /** Does the viewer hold `capability` on this trip? The only access question a component asks. */
+  can: (capability: string) => boolean
+  /** Shorthand for `can('member.invite')`: may the viewer invite and manage people here. */
   isOrganizer: boolean
   push: ReturnType<typeof usePushNotifications>
   mapOpen: boolean
@@ -248,7 +271,14 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
     return () => clearTimeout(timer)
   }, [needsSuggestions, locale, refetch])
 
-  const isOrganizer = !!trip?.members.some((m) => m.role === 'organizer' && m.userId === currentUid)
+  // Capabilities come from the server already resolved. A component asks
+  // "may I?", never "what am I?" (R-F11, AC 12).
+  const capabilities = useMemo(() => new Set(trip?.viewer?.capabilities ?? []), [trip?.viewer?.capabilities])
+  const can = useCallback((capability: string) => capabilities.has(capability), [capabilities])
+
+  // The group screen's "can I run this trip" question, which is holding the
+  // invite and the remove controls. It is one capability, not a role.
+  const isOrganizer = capabilities.has('member.invite')
 
   const polls = usePolls(apiUrl, token, groupId, socket)
   const expenses = useExpenses(apiUrl, token, groupId, socket)
@@ -291,6 +321,7 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             apiUrl,
             token,
             currentUid,
+            can,
             isOrganizer,
             push,
             mapOpen,
@@ -307,7 +338,7 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             badges,
           }
         : null,
-    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, isOrganizer, push, mapOpen, assistantOpen, drafts, phase, polls, expenses, activity, seen, badges]
+    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, can, isOrganizer, push, mapOpen, assistantOpen, drafts, phase, polls, expenses, activity, seen, badges]
   )
 
   // Skeleton in the shape of the trip chrome and tabs, so nothing jumps when the trip arrives (N3, N4)

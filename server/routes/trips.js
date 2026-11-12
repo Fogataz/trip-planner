@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const { v4: uuidv4 } = require('uuid');
 const Trip = require('../models/Trip');
+const TripMember = require('../models/TripMember');
 const User = require('../models/User');
 const crypto = require('crypto');
 const { GALLERY, isGalleryKey, isCoverAssetId } = require('../config/coverGallery');
@@ -12,6 +13,8 @@ const { generateItinerary } = require('../services/itineraryBuilder');
 const ActivityLog = require('../models/ActivityLog');
 const { logItineraryChange, logTripUpdate } = require('../services/activityLogger');
 const { notifyTrip } = require('../services/notifications');
+const { can } = require('../services/permissions');
+const { loadMember, presentTrip, allMembers } = require('../services/membership');
 
 const router = express.Router();
 
@@ -21,14 +24,20 @@ router.setIO = (socketIO) => {
   io = socketIO;
 };
 
-// Respond 403 and return true when the caller is not an active member (or organizer if requested)
-function denyUnlessMember(trip, req, res, { organizerOnly = false } = {}) {
-  const me = trip.members.find((m) => m.userId === req.user.uid && m.status === 'active');
-  if (!me || (organizerOnly && me.role !== 'organizer')) {
-    res.status(403).json({ error: organizerOnly ? 'Only the organizer can do this' : 'You are not a member of this trip' });
-    return true;
+// Respond 403 and return null when the caller may not do `capability` here.
+// Every access decision in this file goes through can() — G5 · One helper.
+// Returns the loaded TripMember so the body never queries it again.
+async function denyUnless(trip, req, res, capability) {
+  const member = await loadMember(trip.groupId, req.user.uid);
+  if (!can(member, trip, capability)) {
+    if (!member || member.status !== 'active') {
+      res.status(403).json({ error: 'You do not have access to this trip.' });
+    } else {
+      res.status(403).json({ error: 'You cannot do this on this trip.', capability });
+    }
+    return null;
   }
-  return false;
+  return member;
 }
 
 // Approximate trip length, used when there is no end date. Returns undefined when absent or invalid.
@@ -52,6 +61,11 @@ router.post('/', async (req, res) => {
     const user = await User.findOne({ uid: userId });
     const userEmail = user?.email || null;
 
+    // kind decides the guest preset and the words roles are shown with
+    // (spec 011 §5.2, spec 012 §5.3). It defaults to personal: a trip with
+    // people you know, which is every trip the product makes today.
+    const kind = req.body?.kind === 'hosted' ? 'hosted' : 'personal';
+
     const trip = new Trip({
       name,
       groupId,
@@ -60,14 +74,32 @@ router.post('/', async (req, res) => {
       startDate,
       endDate,
       durationDays,
+      kind,
+      // O1 · Organization never required: a new trip is personally owned.
+      orgId: null,
       createdBy: userId,
+      // The embedded array is deprecated and kept in step only so a rollback
+      // of this slice finds what it expects. TripMember below is the truth.
       members: [{ userId, email: userEmail, role: 'organizer', status: 'active' }],
     });
 
     await trip.save();
+
+    // The creator is the host. On a personal trip that word is shown as
+    // "Organizer", which is what they saw before (spec 012 §5.3).
+    const creator = await TripMember.create({
+      tripId: trip._id,
+      groupId: trip.groupId,
+      userId,
+      email: userEmail,
+      role: 'host',
+      status: 'active',
+      joinedAt: new Date(),
+    });
+
     ensureSuggestions(trip, requestLanguage(req));
 
-    res.status(201).json(trip);
+    res.status(201).json(presentTrip(trip, creator, [creator]));
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -77,10 +109,27 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const userId = req.user.uid;
-    const trips = await Trip.find({
-      members: { $elemMatch: { userId, status: { $nin: ['pending', 'removed'] } } },
-    });
-    res.json(trips);
+    // Only an active TripMember grants anything (R-F3). A requested, invited,
+    // left or removed person's trips are not theirs to list.
+    const memberships = await TripMember.find({ userId, status: 'active' });
+    const tripIds = memberships.map((m) => m.tripId);
+    const trips = await Trip.find({ _id: { $in: tripIds } });
+
+    // One query for every trip's members rather than one per trip.
+    const everyone = await TripMember.find({ tripId: { $in: tripIds } });
+    const byTrip = new Map();
+    for (const m of everyone) {
+      const key = String(m.tripId);
+      if (!byTrip.has(key)) byTrip.set(key, []);
+      byTrip.get(key).push(m);
+    }
+    const mine = new Map(memberships.map((m) => [String(m.tripId), m]));
+
+    res.json(
+      trips.map((trip) =>
+        presentTrip(trip, mine.get(String(trip._id)), byTrip.get(String(trip._id)) || [])
+      )
+    );
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -124,7 +173,8 @@ router.get('/:groupId/activity', async (req, res) => {
   try {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'trip.view');
+    if (!me) return;
 
     const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
     const since = req.query.since ? new Date(req.query.since) : null;
@@ -147,9 +197,12 @@ router.get('/:groupId', async (req, res) => {
   try {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'trip.view');
+    if (!me) return;
     ensureSuggestions(trip, requestLanguage(req));
-    res.json(trip);
+    // The payload carries the viewer's resolved capability list, so the client
+    // renders its controls from capabilities and never from a role (R-F11).
+    res.json(presentTrip(trip, me, await allMembers(trip._id)));
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -161,7 +214,8 @@ router.put('/:groupId', async (req, res) => {
     const { name, destination, origin, startDate, endDate } = req.body;
     const existing = await Trip.findOne({ groupId: req.params.groupId });
     if (!existing) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(existing, req, res, { organizerOnly: true })) return;
+    const me = await denyUnless(existing, req, res, 'trip.edit');
+    if (!me) return;
     const trip = await Trip.findOneAndUpdate(
       { groupId: req.params.groupId },
       {
@@ -189,7 +243,8 @@ router.delete('/:groupId', async (req, res) => {
   try {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res, { organizerOnly: true })) return;
+    const me = await denyUnless(trip, req, res, 'trip.delete');
+    if (!me) return;
     await Trip.deleteOne({ groupId: req.params.groupId });
     await deleteUploadedAsset(trip.cover);
     res.json({ message: 'Trip deleted' });
@@ -203,9 +258,11 @@ router.put('/:groupId/accommodation', async (req, res) => {
   try {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (!trip.members.some((m) => m.userId === req.user.uid && m.status === 'active')) {
-      return res.status(403).json({ error: 'Not a member of this trip' });
-    }
+    // Accommodation is part of "name, dates, place, accommodation, cover"
+    // in the table, so it is trip.edit — unchanged for a personal trip,
+    // and closed to a guest on a hosted one (spec 011 §5.1, F6).
+    const me = await denyUnless(trip, req, res, 'trip.edit');
+    if (!me) return;
 
     const name = String(req.body?.name || '').trim().slice(0, 200);
     const address = String(req.body?.address || '').trim().slice(0, 300);
@@ -288,15 +345,16 @@ function clampFocal(value, fallback = 50) {
   return Math.min(100, Math.max(0, Math.round(n)));
 }
 
-function memberEmail(trip, uid) {
-  return trip.members.find((m) => m.userId === uid)?.email || null;
+async function memberEmail(trip, uid) {
+  const member = await loadMember(trip.groupId, uid);
+  return member?.email || null;
 }
 
 async function persistCover(trip, req, description) {
   trip.updatedAt = new Date();
   await trip.save();
   if (io) io.to(`trip:${trip.groupId}`).emit('trip:coverUpdated', { cover: trip.cover });
-  logTripUpdate(trip._id, trip.groupId, req.user.uid, memberEmail(trip, req.user.uid), null, trip.cover, description);
+  logTripUpdate(trip._id, trip.groupId, req.user.uid, await memberEmail(trip, req.user.uid), null, trip.cover, description);
   return trip.cover;
 }
 
@@ -305,7 +363,8 @@ router.put('/:groupId/cover', async (req, res) => {
   try {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'trip.edit');
+    if (!me) return;
 
     const { source, key, focalY, alt } = req.body || {};
 
@@ -343,7 +402,8 @@ router.post('/:groupId/cover/upload', coverUploadLimiter, readImageBody, async (
   try {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'trip.edit');
+    if (!me) return;
 
     const contentType = sniffImageType(req.body);
     if (!contentType) {
@@ -387,7 +447,8 @@ router.delete('/:groupId/cover', async (req, res) => {
   try {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'trip.edit');
+    if (!me) return;
 
     const previous = trip.cover;
     trip.cover = null;
@@ -405,7 +466,8 @@ router.post('/:groupId/itinerary/generate', async (req, res) => {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
 
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'schedule.edit');
+    if (!me) return;
     if (!trip.destination?.address) {
       return res.status(400).json({ error: 'Trip needs a destination first' });
     }
@@ -451,7 +513,8 @@ router.post('/:groupId/itinerary', async (req, res) => {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
 
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'schedule.edit');
+    if (!me) return;
 
     const user = await User.findOne({ uid: req.user.uid });
 
@@ -509,7 +572,8 @@ router.put('/:groupId/itinerary/:itemId', async (req, res) => {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
 
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'schedule.edit');
+    if (!me) return;
 
     const itineraryItem = trip.itinerary.id(req.params.itemId);
     if (!itineraryItem) {
@@ -588,7 +652,8 @@ router.delete('/:groupId/itinerary/:itemId', async (req, res) => {
     const trip = await Trip.findOne({ groupId: req.params.groupId });
 
     if (!trip) return res.status(404).json({ error: 'Trip not found' });
-    if (denyUnlessMember(trip, req, res)) return;
+    const me = await denyUnless(trip, req, res, 'schedule.edit');
+    if (!me) return;
 
     const deletedItem = trip.itinerary.id(req.params.itemId);
     if (!deletedItem) {
