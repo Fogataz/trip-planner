@@ -30,6 +30,13 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 
 [docs/README.md](docs/README.md) is the source of truth. In short:
 
+<!-- conventions-pin: 5ffbcf9f85aac38b719222fa5dc3696e55d12e53ebae811c0822b9a2274d883e -->
+<!-- Summary of docs/README.md "How to write a spec", "When a spec ships" and "How to update".
+     Change those and CI fails until someone re-reads this list and runs
+     scripts/claude-md-mirror-check.sh --update. CLAUDE.md is loaded into every session,
+     so a stale summary is followed by every session until someone notices. -->
+
+
 - `docs/features.md` is living reference. It describes what the code does today.
 - `docs/specs/NNN-short-name.md` are point-in-time decisions. Never rename, move or rewrite a shipped spec. Changes go in a new spec or an amendment section.
 - Each spec starts with a `Status:` header (draft, approved, building, shipped or superseded) and is listed in the specs table in `docs/README.md`.

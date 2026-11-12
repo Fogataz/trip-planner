@@ -241,6 +241,23 @@ execution, not decisions.
 
 Put the spec number in the epic title: `[002] Invite link, requests and approval`.
 
+### The link runs both ways (trk-D5)
+
+The epic links the spec — that is the rule above, and it has always worked. **Nothing pointed back**, so an approved spec could sit with no epic anywhere and nobody would see it. That is the failure this closes: not a broken link, but **approved work nobody scheduled**. It was live on 2026-11-12, when specs [011](../specs/011-roles-and-permissions.md) and [012](../specs/012-joining-naming-and-the-first-trip.md) were approved with their work scattered across spec 002's epics and no record of where.
+
+| Direction | Where it lives | Why there |
+|---|---|---|
+| **Epic → spec** | The issue body. Links, never restates. | Already the rule. When the two disagree, the spec wins. |
+| **Spec → epic** | The spec's **Build status** section, and nowhere else | A spec is point-in-time; an epic gets re-cut, merged and renamed. Putting epic links in the body would make a frozen document depend on a mutable board. Build status is the one section whose job is to track reality, so it is the only place that may go stale and be corrected. |
+| **Epic → wireframes** | The issue body, beside the spec link | Frames live in `wireframes/`, not in the spec. A builder who misses them builds blind. |
+
+Rules:
+
+- **An approved spec names its epics in Build status**, or says in one line why it has none — "its work lands inside the spec 002 epics it corrects" is a valid answer, and is what spec 012 says.
+- **A spec that reaches `approved` with no epic and no such line is the thing to catch.** `/epic check` reports it, next to the drift it already reports.
+- **An epic links the wireframes it is built from**, when the spec has any.
+- A spec at `draft` needs none of this. The link appears at the gate, not before.
+
 ## Seeding
 
 I1–I5 and their epics below were created in `Fogataz/trip-planner` on 2026-11-10 by a one-off
@@ -359,3 +376,4 @@ Added 2026-11-10 after D33 (premium hosts lead). Outcome titles; epics come from
 | trk-D2 | The three additions to the epic template: a named analytics event, a stop condition, and the payer | Engineering | **Decided 2026-11-11.** Each closes a check that already exists somewhere and is skipped: ways-of-working §1 check 7, the bet-with-no-exit problem, and the premium buyer lens |
 | trk-D3 | The strategic pillars in `strategy.md` predate D33 premium hosts lead. Realign them, retire them, or leave them | Product owner | **Decided 2026-11-11: retire them**, on the owner's instruction to take engineering's recommendation. Options were: rewrite the pillars around the layers in working-doc §2 (keeps one taxonomy, but duplicates §2); leave them (they would keep describing the old shape of the business); retire them into history, as name-D4 did for the roadmap phases (taken). The table stays in [strategy.md](../product/strategy.md) marked retired and pointing at working-doc §2, so nothing is lost. **Layer and the revenue-model claim are the live anchors** |
 | trk-D4 | Where an initiative's long form lives | Engineering | **Decided 2026-11-11:** `docs/product/initiatives/I<n>-<slug>.md`, linked from the issue. A product session cannot write an issue body (ww-D8) and the repo is the only thing that syncs (D26) |
+| trk-D5 · Spec names its epics | Does the spec → epic link exist, or only epic → spec? | Engineering | **Decided 2026-11-12: it exists, in Build status only.** The gap: an approved spec could sit with no epic anywhere and nothing would show it — approved work nobody scheduled. Live the same day, when specs 011 and 012 were approved with their work scattered across spec 002's epics and no record of where. Options were: leave it one-way (rejected — the board is the only place you would notice, and only if you went looking); link epics from the spec body (rejected — a point-in-time document must not depend on a mutable board); name them in **Build status**, the one section whose job is to track reality (taken). An epic also links its wireframes, because frames live outside the spec and a builder who misses them builds blind |
