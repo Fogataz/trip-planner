@@ -1,7 +1,7 @@
 # Spec 011: Organizations, roles and permissions
 
 Status: approved
-Owner: Alberto (product)   Shipped: —   PR: —
+Owner: Alberto (product)   Shipped: —   PR: block 1 in review, [#124](https://github.com/Fogataz/trip-planner/pull/124)
 
 > **Renumbered before merge (2026-11-11).** Drafted as spec 009 in pull request #102, which was opened before specs 009 trip cover layout (#78) and 010 host edits their trip (#110) took those numbers. Nothing published was renumbered — this one had not merged yet ([naming.md](../process/naming.md) §2).
 Current behavior: [features.md](../features.md) — two roles (`organizer`, `member`) embedded in `Trip.members`, checked by string comparison in 11 places across 5 files.
@@ -350,7 +350,7 @@ One conflict to flag, inherited from spec 002 and not created here: **F17** remo
 | Block | What | In the pilot? | Depends on |
 |---|---|---|---|
 | **1** | Capability vocabulary, `can()`, `TripMember` + `OrgMember` with `grants`/`revokes` reserved, the three presets, `guestPermissions`, the migration, **G3 · No self-demotion** and **G5 · One helper**, plus `Trip.entitlement` reserved (§5.4, **R8 · Entitlement axis**) | **Yes — this is epic [#20](https://github.com/Fogataz/trip-planner/issues/20)** | — |
-| **2** | G1, G2, G4: last host, last owner, revocation across socket and live location | **Partly.** G4 is a principle-3 gap in today's code and should not wait; G1 and G2 are one service check each | 1 |
+| **2** | G1, G2, G4: last host, last owner, revocation across socket and live location | **Partly.** G4 is a principle-3 gap in today's code and should not wait; G1 and G2 are one service check each. **Amended 2026-11-12 (§17, Q23):** G4 and G1's pure predicate shipped in block 1 — block 1 is what removes the only last-host guard there is, so leaving the replacement here would have left the pilot unprotected in between. G2 · Last owner is still block 2 | 1 |
 | **3** | `schedule.propose`: guest suggestions as drafts with `source: 'guest_suggestion'`, reviewed in the existing draft screen | No | 1, and spec 002 part 6 |
 | **4** | Per-member overrides: `grants` and `revokes` filled, the "collaborator who can do one extra thing" case | No | 1 |
 | **5** | Organization reach: R1's claim path, moving a trip into an Organization (case 10), partner-style sharing between Organizations | No | 1, 2 |
@@ -411,7 +411,7 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 
 ## 16. Build status
 
-**Approved 2026-11-12.** Not started.
+**Approved 2026-11-12. Block 1 built and in review the same day — [#124](https://github.com/Fogataz/trip-planner/pull/124)** — see §17 for the four defects building it found.
 
 | Block | Epic |
 |---|---|
@@ -421,3 +421,42 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 | 3–5 | No epic yet. Phase 1, after the pilot. |
 
 Both epics sit under **I1 Run the hosted event pilot** ([#19](https://github.com/Fogataz/trip-planner/issues/19)), milestone **M0**. Wireframes for this model are [012 frames 6, 7 and 9](../../wireframes/012-joining-and-naming/index.html).
+
+## 17. Amendment 2026-11-12 — four defects found while building block 1
+
+Added by engineering while building epic [#20](https://github.com/Fogataz/trip-planner/issues/20), per [build-handover.md](../process/build-handover.md) §8: a shipped spec is never rewritten, and these three specs are `approved` rather than shipped, so corrections land here as a dated amendment. Nothing below changes a decision; each is a place where the spec as written would have produced the wrong code, and says what was built instead.
+
+Three were found by building, and **two of those only by running the migration against a seeded database rather than by reading it.** They are registered as **Q21–Q24** in [spec 012](012-joining-naming-and-the-first-trip.md) §4, which is where QA findings live.
+
+> **✅ Q23's scope change accepted 2026-11-12 by the product owner.** Fixing **Q23 · Block 1 removes the only last-host guard** meant pulling the pure predicate `wouldLeaveNoHost()` into block 1, which §12 assigns to block 2. That is scope the slice was not given, so it was put to the product owner rather than taken: accepted. **§12 now reads: the pure last-host predicate is block 1; G1 · Last host's service-layer enforcement and G2 · Last owner remain block 2 ([#115](https://github.com/Fogataz/trip-planner/issues/115)).** The boundary moved by one function, not by a feature.
+
+| # | Finding | Where | Severity | What was built |
+|---|---|---|---|---|
+| **Q21 · Migration can leave a trip with no host** | The §10.2 mapping is "creator → host, other `organizer` → co-host, `member` → guest". **If the trip's creator is not in its own member list, that mapping produces a trip with zero hosts.** The creator's uid is on `Trip.createdBy` whether or not they are still a member, and nothing else in the mapping can produce a host. Such a trip would migrate into a state nobody can administer: no one can invite, approve, change a role or delete it, and **G1 · Last host** is violated from the first second. It is not hypothetical — one of the four seeded trips hit it. | §10.2, 002 F7 | **High** — unadministrable trips, created by the one migration that runs against live data | The migration counts active hosts per trip and, finding none, promotes the longest-standing active `organizer` (or, failing that, the longest-standing active member), and **prints how many trips needed it** so the number is seen before the run is approved rather than discovered later. |
+| **Q22 · "Status carried over" produces an invalid status** | §10.2 says "status carried over" and §6.1 defines the vocabulary as `invited`, `requested`, `active`, `declined`, `left`, `removed`. **Today's `Trip.members.status` is `pending`, `active` or `removed`** (`models/Trip.js`). Carrying `pending` over writes a value that is in no enum — it fails the schema, or worse, is stored and then counts as nothing anywhere. | §10.2 × §6.1 | Medium — the migration fails, or silently mis-states who is invited | `pending → invited` is now explicit in the mapping, and the client reads `invited` (the old string appeared in `badges.ts` and `Overview.tsx` too). |
+| **Q23 · Block 1 removes the only last-host guard and block 2 adds its replacement** | §12 puts **G1 · Last host** in block 2 and block 1 is "the only part in the pilot". But block 1 is what deletes today's guard — `if (target.role === 'organizer') return 'Organizers cannot be removed'` (`routes/groups.js:222`), the single thing standing between a trip and having nobody in charge. Taking a crude guard out in one slice and putting the real one in a later slice **leaves a window, during the pilot, with no protection at all** — a regression this slice would introduce rather than inherit. | §12 blocks 1–2 | **High for the pilot** — and invisible, because it is a gap between two correct-looking slices | The pure predicate `wouldLeaveNoHost(members, change)` ships in block 1 and guards both the remove and the set-role paths, refusing with the way out named. The **service-layer count across an Organization (G2 · Last owner) stays in [#115](https://github.com/Fogataz/trip-planner/issues/115)**, so the slice boundary moves by one function, not by a feature. |
+| **Q24 · `Trip.ownerType` duplicates `Trip.orgId`** | Spec 002 §7.2 has Trip gain `ownerType` **and** `orgId`. Since **O1 · Organization never required** made `orgId` nullable, "personally owned" is exactly "`orgId` is null". A second field holding the same fact is a second thing to keep true, and the first bug it produces is a trip whose `ownerType` says personal while its `orgId` is set. | 002 §7.2 × 012 O-F3 | Low | `ownerType` was **not** built. `orgId === null` is the single source of truth, as [spec 012](012-joining-naming-and-the-first-trip.md) O-F3 states it. |
+
+### Amendment 2026-11-12 (second) — what the review of PR #124 found
+
+[PR #124](https://github.com/Fogataz/trip-planner/pull/124) was reviewed against this spec by someone who did not build it, and changes were requested. Eleven findings, all of them real. Three changed what this spec says; the rest were defects in the build and are recorded in the pull request.
+
+| # | Finding | What changed here |
+|---|---|---|
+| **Q25 · Eviction is for access lost, not for a role change** | Block 1 evicted a member's sockets on every promotion and demotion. The client re-joins the trip room only on `connect`, so a demoted co-host silently stopped receiving live events until they reloaded — principle 2 broken by the fix for principle 3. | **R-F8 is read as two signals, not one.** Removal evicts; a role change emits `trip:access-changed` and leaves the member in the room. "Takes effect immediately" is satisfied because every write re-checks `can()` per request. Figma, Google Docs and Slack all draw the line at access lost rather than role changed. |
+| **Q26 · Removal needs the §6.3 matrix too** | `member.remove` is ✓ for a co-host in §5.1 with no footnote, so a co-host could **remove** a host — while §6.3 forbids them even to demote one. Removal is strictly more destructive than demotion. | **§6.3 governs removal as well as role changes.** You may remove someone only if you could first have moved them to guest. Nobody removes themselves. |
+| **Q27 · Restoring a role must respect the restorer's authority** | §6.1 says re-adding someone "restores what they were", and that is right. But `member.invite` is held by every member of a **personal** trip, so a guest could re-add a removed host and silently restore host — a role they could never grant. | **The record still remembers; the restore is bounded.** You get your old role back if the person letting you in could have granted it, and guest otherwise. §6.1 is unchanged for the case it was written for. |
+
+**A new capability row**, per case 13 (a feature PR that adds a write path adds a row to §5.1 in the same PR, defaulting to host-only):
+
+| Capability | Host | Co-host | Guest (hosted) | Guest (personal) |
+|---|---|---|---|---|
+| `trip.setGuestPermissions` — turn one guest capability on or off | ✓ | — | — | — |
+
+Changing what guests may do is a decision about the shape of the trip, so it stays with the host. Without it AC 4 was only half true: `can()` honoured `Trip.guestPermissions` and nothing could set it.
+
+**And one correction to §10.2's technical shape.** `Trip.guestPermissions` is a **list of `{ capability, allowed }`**, not an object keyed by capability. Mongoose Maps reject keys containing a dot and every capability is named `noun.verb`, so the field as first built could never have been written at all — the unit tests passed because they used plain objects. A dotted key is also ambiguous in a `$set` path. Nothing had written the field, so there was no data to migrate.
+
+**One operational rule this spec did not state.** With no migration run, every existing trip is unreadable to the new code (L11 says so) — which means **deploying the code before the migration locks every existing member out of every existing trip, silently**. The server now refuses to start in that state, naming the trips and the commands, overridable with `ALLOW_UNMIGRATED_TRIPS=1`. Rails halts on a pending migration for the same reason. **Deploy order: migrate first, then the code.**
+
+**One note that is not a defect.** §10.2 asks for `can()` to be pure and database-free, and that is the reason Q21 and Q22 were catchable at all: the capability model has 31 unit tests that run with no Mongo, so the only thing left to verify by hand was the migration — and running it, rather than reading it, is what produced two of the four findings above. The instruction to keep the module pure earned its place.

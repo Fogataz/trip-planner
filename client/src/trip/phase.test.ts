@@ -6,7 +6,7 @@ const START = '2026-06-10T00:00:00.000Z'
 const END = '2026-06-12T00:00:00.000Z'
 
 const active = { status: 'active' }
-const pending = { status: 'pending' }
+const pending = { status: 'invited' }
 const stop = { stop: 'Lisbon' }
 
 /** A trip that is past Setup: one itinerary item and two active members */
@@ -156,7 +156,7 @@ describe('tripPhase Setup', () => {
     expect(tripPhase(trip({ members: [active] }), farOut)).toBe('setup')
   })
 
-  it('does not count pending or removed members as active', () => {
+  it('does not count invited or removed members as active', () => {
     expect(tripPhase(trip({ members: [active, pending, { status: 'removed' }] }), farOut)).toBe('setup')
   })
 

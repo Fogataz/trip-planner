@@ -2,6 +2,8 @@ const express = require('express');
 const Trip = require('../models/Trip');
 const Expense = require('../models/Expense');
 const { notifyTrip } = require('../services/notifications');
+const { can } = require('../services/permissions');
+const { loadMember, activeMembers } = require('../services/membership');
 
 const router = express.Router();
 
@@ -10,20 +12,31 @@ router.setIO = (socketIO) => {
   io = socketIO;
 };
 
-function activeMemberIds(trip) {
-  return trip.members.filter((m) => m.status === 'active' && m.userId).map((m) => m.userId);
+// A split is between people who are actually on the trip: status 'active'
+// and nothing else (R-F9).
+async function activeMemberIds(trip) {
+  const members = await activeMembers(trip._id);
+  return members.filter((m) => m.userId).map((m) => m.userId);
 }
 
-async function loadTrip(req, res) {
+// Load the trip and refuse unless the caller holds `capability` on it.
+// Every decision here goes through can() — G5 · One helper.
+async function loadTrip(req, res, capability = 'trip.view') {
   const trip = await Trip.findOne({ groupId: req.params.groupId });
   if (!trip) {
     res.status(404).json({ error: 'Trip not found' });
     return null;
   }
-  if (!activeMemberIds(trip).includes(req.user.uid)) {
-    res.status(403).json({ error: 'Not a member of this trip' });
+  const member = await loadMember(trip.groupId, req.user.uid);
+  if (!can(member, trip, capability)) {
+    if (!member || member.status !== 'active') {
+      res.status(403).json({ error: 'You do not have access to this trip.' });
+    } else {
+      res.status(403).json({ error: 'You cannot do this on this trip.', capability });
+    }
     return null;
   }
+  trip.viewerMember = member;
   return trip;
 }
 
@@ -83,7 +96,7 @@ function broadcast(trip) {
 // List expenses with balances and suggested settlements
 router.get('/trip/:groupId', async (req, res) => {
   try {
-    const trip = await loadTrip(req, res);
+    const trip = await loadTrip(req, res, 'trip.view');
     if (!trip) return;
     res.json(await summary(trip));
   } catch (error) {
@@ -94,11 +107,11 @@ router.get('/trip/:groupId', async (req, res) => {
 // Add an expense; amount is in major units (e.g. 12.50)
 router.post('/trip/:groupId', async (req, res) => {
   try {
-    const trip = await loadTrip(req, res);
+    const trip = await loadTrip(req, res, 'expense.create');
     if (!trip) return;
 
     const { description, amount, currency, paidBy, splitAmong } = req.body;
-    const members = activeMemberIds(trip);
+    const members = await activeMemberIds(trip);
     const amountCents = Math.round(Number(amount) * 100);
 
     if (typeof description !== 'string' || !description.trim()) {
@@ -141,15 +154,16 @@ router.post('/trip/:groupId', async (req, res) => {
 // Delete an expense (creator or organizer)
 router.delete('/trip/:groupId/:expenseId', async (req, res) => {
   try {
-    const trip = await loadTrip(req, res);
+    const trip = await loadTrip(req, res, 'trip.view');
     if (!trip) return;
 
     const expense = await Expense.findOne({ _id: req.params.expenseId, tripId: trip._id });
     if (!expense) return res.status(404).json({ error: 'Expense not found' });
 
-    const isOrganizer = trip.members.some((m) => m.userId === req.user.uid && m.role === 'organizer');
-    if (expense.createdBy !== req.user.uid && !isOrganizer) {
-      return res.status(403).json({ error: 'Only the creator or an organizer can delete this expense' });
+    // The CREATOR row: a guest may delete the expense they added, and no
+    // other. Authorship is resolved after the capability check (§5.1 fn 2).
+    if (!can(trip.viewerMember, trip, 'expense.delete', { resource: expense })) {
+      return res.status(403).json({ error: 'You cannot delete this expense.', capability: 'expense.delete' });
     }
 
     await expense.deleteOne();

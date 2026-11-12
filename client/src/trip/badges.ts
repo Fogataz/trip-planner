@@ -9,7 +9,8 @@ export interface Badges {
 
 export interface BadgeInput {
   currentUid?: string
-  isOrganizer: boolean
+  /** May the viewer manage this trip's invitations? One capability, not a role. */
+  canManageInvites: boolean
   members: ReadonlyArray<{ status?: string; invitedBy?: string }>
   polls: ReadonlyArray<Poll>
   expenses: ExpenseSummary
@@ -26,11 +27,11 @@ function newerThan(entry: ActivityEntry, iso?: string): boolean {
  * The "needs me" counts per destination (spec 004 section 7.6). Zero means no badge.
  * - Plan: open polls I have not voted in, plus itinerary changes by others since I last opened Plan
  * - Money: 1 if my balance is not zero
- * - Group: pending invites (organizer only), those I sent when the server recorded who sent them
+ * - Group: outstanding invitations (organizer only), those I sent when the server recorded who sent them
  * - Overview: activity by others since I last opened Overview
  */
 export function computeBadges(input: BadgeInput): Badges {
-  const { currentUid, isOrganizer, members, polls, expenses, activity, seen } = input
+  const { currentUid, canManageInvites, members, polls, expenses, activity, seen } = input
   const byOthers = activity.filter((a) => a.userId !== currentUid)
 
   const unvoted = polls.filter(
@@ -42,13 +43,15 @@ export function computeBadges(input: BadgeInput): Badges {
 
   const myBalance = currentUid ? expenses.balances[currentUid] ?? 0 : 0
 
-  const pending = members.filter((m) => m.status === 'pending')
+  // 'invited' in the spec 011 §6.1 vocabulary: sent, not yet accepted, and
+  // counting towards nothing until it is.
+  const pending = members.filter((m) => m.status === 'invited')
   const mine = pending.filter((m) => !m.invitedBy || m.invitedBy === currentUid)
 
   return {
     overview: byOthers.filter((a) => newerThan(a, seen.overview)).length,
     plan: unvoted + planChanges,
     money: Math.abs(myBalance) >= 1 ? 1 : 0,
-    group: isOrganizer ? mine.length : 0,
+    group: canManageInvites ? mine.length : 0,
   }
 }

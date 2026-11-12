@@ -1,6 +1,6 @@
 # 002 — Hosted event pilot, lo-fi wireframes
 
-Wireframes for [spec 002](../../docs/specs/002-hosted-event-pilot.md) (**Status: draft**).
+Wireframes for [spec 002](../../docs/specs/002-hosted-event-pilot.md) (**Status: approved** 2026-11-12).
 The thirteen frames proposed in §6 of that spec, drawn so the spec can go to the approval
 gate with something to look at.
 
@@ -92,3 +92,9 @@ Spec 002 §10, out of scope: RSVP, capacity, check-in and guest forms; an Organi
 page; public event pages and discovery; payments; interests onboarding; the activity feed
 UI; chat and comments; Apple sign-in; announcements by email; machine translation of
 content.
+
+## Build status
+
+Added 2026-11-12. **Nothing in this set is built.** All thirteen frames are **S2 · The door** and later — Google sign-in ([#25](https://github.com/Fogataz/trip-planner/issues/25)), invite link and approval ([#29](https://github.com/Fogataz/trip-planner/issues/29)), email-link sign-in ([#52](https://github.com/Fogataz/trip-planner/issues/52)), agenda drafts ([#43](https://github.com/Fogataz/trip-planner/issues/43)), announcements ([#48](https://github.com/Fogataz/trip-planner/issues/48)), analytics ([#40](https://github.com/Fogataz/trip-planner/issues/40)) — and none has started.
+
+What is in review is the layer underneath: **S1 · Permissions foundation** ([PR #124](https://github.com/Fogataz/trip-planner/pull/124)). Every frame here reads membership, so none can be built until it lands. The frames whose rules it implements are in the [012 set](../012-joining-and-naming/README.md), chipped there.

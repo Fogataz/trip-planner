@@ -9,10 +9,11 @@ interface Props {
   apiUrl: string
   token: string | null
   currentUid?: string
-  isOrganizer: boolean
+  /** May the viewer close or delete THIS poll? Resolved per poll by the parent. */
+  canManagePoll: (poll: { createdBy?: string }) => boolean
 }
 
-export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer }: Props) {
+export default function Polls({ groupId, apiUrl, token, currentUid, canManagePoll }: Props) {
   const { t } = useTranslation()
   // Polls live in TripContext so the Plan badge and Overview see the same list (spec 004 section 7.6)
   const { polls: remote } = useTrip()
@@ -144,7 +145,10 @@ export default function Polls({ groupId, apiUrl, token, currentUid, isOrganizer 
         ) : (
           polls.map((poll) => {
             const total = poll.options.reduce((sum, o) => sum + o.votes.length, 0)
-            const canManage = poll.createdBy === currentUid || isOrganizer
+            // Asked per poll, not per person. A guest may close the poll they
+            // made and no other, so a single "am I an organizer" flag put this
+            // button on everyone's poll and collected a 403.
+            const canManage = canManagePoll(poll)
             return (
               <div key={poll._id} className="comment-item">
                 <div className="question">

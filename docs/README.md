@@ -41,7 +41,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | # | Spec | Status | Shipped | PR |
 |---|---|---|---|---|
 | 001 | [Trip covers](specs/001-trip-covers.md) | shipped | 2026-11-06 | [#3](https://github.com/Fogataz/trip-planner/pull/3) |
-| 002 | [Hosted event pilot](specs/002-hosted-event-pilot.md) | **approved** 2026-11-12 | — | — |
+| 002 | [Hosted event pilot](specs/002-hosted-event-pilot.md) | **approved** 2026-11-12 | — | S1 in review: [#124](https://github.com/Fogataz/trip-planner/pull/124) |
 | 003 | [Localization (EN/PT/ES)](specs/003-localization.md) | shipped | 2026-11-09 | [#5](https://github.com/Fogataz/trip-planner/pull/5) |
 | 004 | [Trip information architecture](specs/004-trip-ia-redesign.md) | shipped | 2026-11-10 | [#77](https://github.com/Fogataz/trip-planner/pull/77) |
 | 005 | [Settle up](specs/005-settle-up.md) | draft | — | — |
@@ -50,8 +50,8 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
 | 009 | [Trip cover layout](specs/009-trip-cover-layout.md) | shipped | 2026-11-10 | [#78](https://github.com/Fogataz/trip-planner/pull/78) |
 | 010 | [Host edits their trip](specs/010-host-trip-edit.md) | draft | — | — |
-| 011 | [Organizations, roles and permissions](specs/011-roles-and-permissions.md) | **approved** 2026-11-12 | — | — |
-| 012 | [Joining, naming and the first trip](specs/012-joining-naming-and-the-first-trip.md) | **approved** 2026-11-12 | — | — |
+| 011 | [Organizations, roles and permissions](specs/011-roles-and-permissions.md) | **approved** 2026-11-12 | — | block 1 in review: [#124](https://github.com/Fogataz/trip-planner/pull/124) |
+| 012 | [Joining, naming and the first trip](specs/012-joining-naming-and-the-first-trip.md) | **approved** 2026-11-12 | — | S1 parts in review: [#124](https://github.com/Fogataz/trip-planner/pull/124) |
 
 ## How a feature goes from idea to shipped
 
@@ -123,6 +123,6 @@ Rules:
 
   It does **not** mean every occurrence. A range (`R3–R7 run on their recommendations`) and a repeat in the same breath (`R1 is why R1 works`) are already resolvable, and naming them again makes the sentence worse. The test is "could someone meet this here and not know what it is?", not a find-and-replace.
 
-  Codes are scoped per document — **D** product-owner decisions in the [working doc](product/working-doc.md), **S / R / O** open decisions in specs 002 / 011 / 012, **G** guarantees, **Q** QA findings, **ww-D / trk-D / lens-D** the process docs' own. [process/naming.md](process/naming.md) §5 is the register that resolves any of them, and it is the fallback when a name will not fit.
+  Codes are scoped per document — **D** product-owner decisions in the [working doc](product/working-doc.md), **S / R / O** open decisions in specs 002 / 011 / 012, **G** guarantees, **Q** QA findings, **ww-D / trk-D / lens-D** the process docs' own. **`S1`–`S8` means two things**: spec 002's open decisions *and* spec 012 §12's build slices, so a slice is always written with the word in front of it — `slice S2 · The door`, never a bare `S2` (name-D5 · Slices carry the word slice). [process/naming.md](process/naming.md) §5 is the register that resolves any of them, and it is the fallback when a name will not fit.
 - Change a document through a pull request so it can be reviewed.
 - When `features.md` gets too long, split it into one page per feature under `features/`. Specs stay where they are.

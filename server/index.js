@@ -11,7 +11,12 @@ const { initFirebase } = require('./config/firebase');
 const { authMiddleware } = require('./middleware/auth');
 const { verifyToken, getSecret } = require('./services/auth');
 const Trip = require('./models/Trip');
+const TripMember = require('./models/TripMember');
 const User = require('./models/User');
+const { can } = require('./services/permissions');
+const { setRevoker } = require('./services/realtime');
+const { makeRevokeTripAccess } = require('./services/revokeAccess');
+const { assertMigrated } = require('./services/migrationGuard');
 
 getSecret(); // fail fast if JWT_SECRET is missing
 
@@ -35,7 +40,10 @@ app.use(express.json());
 
 // Initialize Firebase and MongoDB
 initFirebase();
-connectDB();
+// Connect, then refuse to serve if the data is older than the code. Deploying
+// this build before scripts/migrate-tripmembers.js has run would make every
+// existing trip inaccessible to every member, silently (services/migrationGuard.js).
+connectDB().then(() => assertMigrated());
 
 // Redis adapter for Socket.io scaling (optional - use if REDIS_URL is set)
 if (process.env.REDIS_URL && process.env.REDIS_URL.trim() !== '') {
@@ -121,6 +129,11 @@ io.use((socket, next) => {
   }
 });
 
+// G4 · Immediate revocation (spec 011 §6.2, AC 8, R-F8). The implementation
+// and the reasoning are in services/revokeAccess.js, where a test can drive
+// it; this is only the wiring to the socket state index.js owns.
+setRevoker(makeRevokeTripAccess({ io, liveLocations, activePresence }));
+
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
@@ -131,8 +144,11 @@ io.on('connection', (socket) => {
       if (typeof tripId !== 'string') return;
 
       const trip = await Trip.findOne({ groupId: tripId });
-      const isMember = trip?.members.some((m) => m.userId === userId && m.status === 'active');
-      if (!isMember) {
+      // The socket path calls the SAME helper as every HTTP route. Spec 011
+      // risk 2: these are two code paths and only one is obvious, which is
+      // how they diverged in the first place.
+      const member = trip ? await TripMember.findOne({ groupId: tripId, userId }) : null;
+      if (!can(member, trip, 'trip.view')) {
         socket.emit('trip:forbidden', { tripId });
         return;
       }

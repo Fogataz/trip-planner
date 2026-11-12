@@ -1,7 +1,7 @@
 # 012 — Joining and naming, lo-fi wireframes
 
 Wireframes for [spec 012](../../docs/specs/012-joining-naming-and-the-first-trip.md)
-(**Status: draft**). Thirteen frames.
+(**Status: approved** 2026-11-12). Thirteen frames.
 
 Includes the **three screens [spec 002](../../docs/specs/002-hosted-event-pilot.md) §6 left
 undrawn** — create an Organization (F1), the Organization member list (F2) and trip people
@@ -82,3 +82,11 @@ Out of scope: the Organization home page beyond the member list, billing and pay
 interests onboarding, avatars beyond frame 4's offer ([spec 007](../../docs/specs/007-profiles-and-display-names.md)
 owns profiles), moving a trip back out of an Organization, and whether "Organization" is the
 right word at all — **O2**, which belongs with [brand foundations](../../docs/brand/brand-foundations.md) §3.
+
+## Build status
+
+Added 2026-11-12. **A frame being drawn says nothing about whether it is built, so the frames now carry a chip that says where the code stands.** No screen in this set is built.
+
+`in review · #124` means slice **S1 · Permissions foundation** (epic [#20](https://github.com/Fogataz/trip-planner/issues/20), [PR #124](https://github.com/Fogataz/trip-planner/pull/124)) implements the rules or the field the frame depends on — the capability table, `TripMember`, role labels per trip kind, **G3 · No self-demotion**, **G4 · Immediate revocation** and the last-host guard. The screen is still to be built. It covers frames 5, 6, 7, 9 and 10.
+
+Frames with no chip are untouched: **S2 · The door** ([#25](https://github.com/Fogataz/trip-planner/issues/25), [#29](https://github.com/Fogataz/trip-planner/issues/29), [#52](https://github.com/Fogataz/trip-planner/issues/52)) and later slices. Frame 13's Spanish role labels are blocked on [#122](https://github.com/Fogataz/trip-planner/issues/122) (**O8 · Ungendered role labels**): the 18 key names exist in code, the Spanish and Portuguese words do not.

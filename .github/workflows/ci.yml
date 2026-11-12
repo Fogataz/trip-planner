@@ -62,7 +62,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: client/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            client/package-lock.json
 
       - name: Client install
         working-directory: client
@@ -78,6 +80,20 @@ jobs:
 
       - name: Server syntax
         run: find server -name '*.js' -not -path '*/node_modules/*' -print0 | xargs -0 -n1 node --check
+
+      # The server suite needs the root dependencies: a test that touches a
+      # model pulls in mongoose. Without this step those tests fail with
+      # "Cannot find module 'mongoose'" and only the dependency-free ones run,
+      # which is a trap for anyone adding the next test.
+      - name: Server install
+        run: npm ci
+
+      # G5 · One helper (spec 011 §6.2) is the leading measure for epic #20:
+      # it fails if 'organizer', 'host', 'co-host' or 'guest' is compared
+      # anywhere outside services/permissions.js. Runs with node's built-in
+      # test runner — no test framework, just the root dependencies.
+      - name: Server tests
+        run: npm test
 
       # Report only: findings show in the log but never fail the build.
       - name: Dependency audit (server)

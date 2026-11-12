@@ -25,7 +25,7 @@ function transportIcon(transport: string): string {
 export default function Plan() {
   const { t, i18n } = useTranslation()
   const locale = i18n.resolvedLanguage || 'en'
-  const { trip, refetch, socket, activeUsers, apiUrl, token, currentUid, isOrganizer, setMapOpen, setAssistantOpen, phase, seen, activity } =
+  const { trip, refetch, socket, activeUsers, apiUrl, token, currentUid, canOn, setMapOpen, setAssistantOpen, phase, seen, activity } =
     useTrip()
   const groupId = trip.groupId
   const live = phase === 'live'
@@ -301,7 +301,7 @@ export default function Plan() {
         apiUrl={apiUrl}
         token={token}
         currentUid={currentUid}
-        isOrganizer={isOrganizer}
+        canManagePoll={(poll) => canOn('poll.close', poll.createdBy)}
       />
 
       {ideaCount > 0 && (

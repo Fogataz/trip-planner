@@ -36,6 +36,13 @@
   .label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 8px}
   .label .name{font-size:13px;font-weight:600}
   .label .dims{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  /* Build status, added 2026-11-12. A frame is DRAWN; that says nothing about
+     whether it is built. This chip says where the code behind it stands, so a
+     reader does not assume a drawing is a feature. */
+  .st{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
+      padding:2px 7px;border-radius:999px;white-space:nowrap;vertical-align:middle;margin-left:8px}
+  .st.review{background:#fff3d6;color:#7a5600;border:1px solid #e8c877}
+  .st.none{background:#f1f2f4;color:#6b7280;border:1px solid #dfe1e5}
   .stage{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff}
 
   .note{margin-top:12px;border-left:3px solid var(--note-line);background:var(--note-bg);border-radius:0 8px 8px 0;padding:11px 13px}
@@ -91,7 +98,7 @@
 <div class="wrap">
 
   <h1>Hosted event pilot — lo-fi wireframes</h1>
-  <p class="sub">Spec 002: <a href="../../docs/specs/002-hosted-event-pilot.md">docs/specs/002-hosted-event-pilot.md</a> (<strong>Status: draft</strong>). The 13 frames proposed in §6 of that spec.</p>
+  <p class="sub">Spec 002: <a href="../../docs/specs/002-hosted-event-pilot.md">docs/specs/002-hosted-event-pilot.md</a> (<strong>Status: approved</strong> 2026-11-12). The 13 frames proposed in §6 of that spec.</p>
   <p class="sub">Everything on this page is static markup. Nothing is interactive, and none of it is production code.</p>
 
   <div class="cards">
@@ -107,6 +114,9 @@
       <p>Times show in <strong>Madrid time</strong> and are labelled, whatever the viewer's device zone (F35, AC 28). Phone first at 390×844; desktop is the same layout, wider. The one layout that genuinely differs on desktop is frame 8, called out in its annotation.</p>
     </div>
     <div class="card">
+      <h3>Build status — added 2026-11-12</h3>
+      <p><strong>Nothing in this set is built.</strong> All thirteen frames are <strong>S2 · The door</strong> and later: Google sign-in (<a href="https://github.com/Fogataz/trip-planner/issues/25">#25</a>), the invite link and approval (<a href="https://github.com/Fogataz/trip-planner/issues/29">#29</a>), email-link sign-in (<a href="https://github.com/Fogataz/trip-planner/issues/52">#52</a>), agenda drafts (<a href="https://github.com/Fogataz/trip-planner/issues/43">#43</a>), announcements (<a href="https://github.com/Fogataz/trip-planner/issues/48">#48</a>) and analytics (<a href="https://github.com/Fogataz/trip-planner/issues/40">#40</a>). None has started.</p>
+      <p>What <em>is</em> in review is the layer underneath them: slice <strong>S1 · Permissions foundation</strong> (epic #20, <a href="https://github.com/Fogataz/trip-planner/pull/124">PR #124</a>) — the capability table, <code>TripMember</code> and the migration. Every frame here reads membership, so none of them can be built until it lands. The frames whose <em>rules</em> it implements are in the <a href="../012-joining-and-naming/index.html">012 set</a>, chipped there.</p>
       <h3>Open decisions drawn as defaults</h3>
       <p>S1 join page shows name, dates, host, cover — frame 1.<br>S2 paste plus .md / .txt / .csv — frame 7.<br>S6 manifest and in-app only on iPhone — frames 4 and 10.<br>S7 anyone may create an Organization, not promoted — frame 13.<br>S8 announcements are one-way — frames 9 and 10.</p>
       <p>These are the §9 recommendations drawn as the working default (D27), not owner decisions. Overriding one changes the frame it is listed against.</p>

@@ -125,12 +125,28 @@ One lookup, so a person or any agent session — Claude Code, Codex, Copilot —
 | spec 011 | organizations, roles and permissions | **approved** |
 | spec 012 | joining, naming and the first trip | **approved** |
 
+### Build slices
+
+Spec 012 §12 groups spec 002's eleven build-order parts into eight slices. **They are published as S1–S8, which is the same range spec 002 §9 uses for its own open decisions** — see name-D5 below. A slice is always written with the word **slice** in front of it.
+
+| Code | Name | Epics | Pilot? |
+|---|---|---|---|
+| slice S1 | Permissions foundation | [#20](https://github.com/Fogataz/trip-planner/issues/20) | Must — **in review, [#124](https://github.com/Fogataz/trip-planner/pull/124)** |
+| slice S2 | The door | [#25](https://github.com/Fogataz/trip-planner/issues/25), [#29](https://github.com/Fogataz/trip-planner/issues/29), [#52](https://github.com/Fogataz/trip-planner/issues/52) | Must |
+| slice S3 | Localization of the new surface | [#36](https://github.com/Fogataz/trip-planner/issues/36), [#53](https://github.com/Fogataz/trip-planner/issues/53) | Must |
+| slice S4 | Analytics | [#40](https://github.com/Fogataz/trip-planner/issues/40) | Must, **before 20 Nov** |
+| slice S5 | Agenda drafts | [#43](https://github.com/Fogataz/trip-planner/issues/43), [#54](https://github.com/Fogataz/trip-planner/issues/54) | Must |
+| slice S6 | Announcements and notifications | [#48](https://github.com/Fogataz/trip-planner/issues/48), [#51](https://github.com/Fogataz/trip-planner/issues/51) | Must / Should |
+| slice S7 | Lifecycle hardening | [#115](https://github.com/Fogataz/trip-planner/issues/115) | Should |
+| slice S8 | After the pilot | — | No |
+
 ### Decision series in use
 
 | Series | Scope | Where |
 |---|---|---|
 | `D##` | product and strategy, global | working-doc §7 |
 | `002-S#` | spec 002's own decisions, published as S1–S8 | spec 002 §9 |
+| `012-slice-S#` | spec 012's build slices, published as **slice S1–S8** — **the same range as `002-S#`**, so the word *slice* is part of the code (name-D5) | spec 012 §12, and the table above |
 | `004-D#` | spec 004's own decisions | spec 004 §18.3 |
 | `011-R#` | spec 011's own decisions, published as R1–R8 | spec 011 §13 |
 | `012-O#` | spec 012's own decisions, published as O1–O14 | spec 012 §10 |
@@ -152,3 +168,4 @@ One lookup, so a person or any agent session — Claude Code, Codex, Copilot —
 | name-D2 | Revenue models by name, letters kept as aliases | Product owner | **Decided 2026-11-11.** Names in anything new; old docs are corrected only when touched for another reason |
 | name-D3 | Prefix initiatives with `I`, in docs and in GitHub titles | Product owner | **Decided 2026-11-11** |
 | name-D4 | Retire roadmap phases 1–7 into a history section, leaving Horizon and milestones as the only forward-looking taxonomy | Product owner | **Decided 2026-11-11** |
+| name-D5 · Slices carry the word slice | **S1–S8 means two different things**: spec 002 §9's open decisions and spec 012 §12's build slices. "S4 must land before 20 Nov" is a slice; "S4 · Analytics retention" is a decision. Neither series was going to be renumbered, and the slices were not in the register at all | Product owner | **Decided 2026-11-12.** A build slice is always written **`slice S2 · The door`** — the word *slice*, the code, and the short name. A spec 002 decision keeps its existing form, `S2 · Agenda file types`. The short names never collide, so the `·` rule already resolves any bare code; the word *slice* resolves it at a glance. Registered in §5. **If this keeps being misread, the escalation is renaming the slices to `SL1–SL8`** — an amendment to spec 012 §12 and the epic bodies, which is why it was not done first |

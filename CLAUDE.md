@@ -14,7 +14,7 @@ This file is read by both Claude Code (engineering) and the Claude Cowork projec
 
 - Server: `npm run dev` (nodemon) or `npm start`, run from the repo root.
 - Client: `npm run dev` or `npm run build`, run from `client/`.
-- Client tests: `npm test` in `client/` runs Vitest. The server has no test suite yet; its `npm test` is a placeholder.
+- Client tests: `npm test` in `client/` runs Vitest. Server tests: `npm test` from the repo root runs `node --test server/test/*.test.js` (node's built-in runner, no dependency). It includes **G5 · One helper**, which fails if a role string is compared outside `services/permissions.js`.
 - Copy `.env.example` to `.env` for MongoDB, Firebase, and the optional Maps and Redis settings. Never commit `.env`.
 
 ## Product principles
@@ -30,7 +30,7 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 
 [docs/README.md](docs/README.md) is the source of truth. In short:
 
-<!-- conventions-pin: bd2fa025cc8fc8b2a7cbbe4a7de863044e08b35b1a445d3ea5834f8676c839f4 -->
+<!-- conventions-pin: cce0d883b4c6afc3993ec692800da0b1432ef58077604405e49633bb7e92c675 -->
 <!-- Summary of docs/README.md "How to write a spec", "When a spec ships" and "How to update".
      Change those and CI fails until someone re-reads this list and runs
      scripts/claude-md-mirror-check.sh --update. CLAUDE.md is loaded into every session,
@@ -42,6 +42,7 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 - Each spec starts with a `Status:` header (draft, approved, building, shipped or superseded) and is listed in the specs table in `docs/README.md`.
 - Every spec from 005 on answers the fourteen design lenses in [docs/process/design-lenses.md](docs/process/design-lenses.md), one line each, in a `## Design lenses` section. `scripts/spec-lint.sh` checks it from `approved` onwards.
 - When a spec ships, update the spec, `features.md`, `roadmap.md` and the specs table in the same PR as the feature.
+- **A code carries its short name wherever a reader could meet it cold** — first mention in a section, every table row and heading, every PR or chat message: `R1 · Org owner reach`, never a bare `R1`. **`S1`–`S8` means two different things**, spec 002's open decisions and spec 012 §12's build slices, so a slice is written `slice S2 · The door` (name-D5 · Slices carry the word slice). [docs/process/naming.md](docs/process/naming.md) §5 is the register that resolves any code.
 - Write plainly: short sentences, tables where they help, no marketing tone. Items waiting on the product owner are marked **TBD**.
 - A decision or finding code carries a short name after a `·` wherever a reader could meet it cold — the first mention in a section, every table row and heading, and every pull request or chat message (`D27 · Recommendations are working defaults`, `R1 · Org owner reach`). Not every occurrence: a range or a repeat in the same breath is already clear. [docs/process/naming.md](docs/process/naming.md) §5 resolves any code.
 

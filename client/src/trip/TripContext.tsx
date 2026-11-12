@@ -21,10 +21,36 @@ export interface ItineraryItem {
 export interface TripMember {
   userId?: string
   email?: string
+  /** The stored role: host, co-host or guest. Never compared in a component. */
   role: string
+  /** The English word for that role on THIS trip. Server-side use; prefer the keys below. */
+  roleLabel?: string
+  /** i18n key for the role word on this trip kind — one of the 18 flat keys (spec 012 §6.2). */
+  roleLabelKey?: string
+  /** The spec 003 key to fall back to until O8 lands and `roles.*` is written. */
+  roleLabelFallbackKey?: string
   status?: string
   invitedBy?: string
   invitedAt?: string
+}
+
+/**
+ * What the signed-in viewer may do here, resolved by the server from the one
+ * capability table (spec 011 §5.1, R-F11).
+ *
+ * The client renders every action control from `capabilities` and never from
+ * a role name — spec 011 risk 1 is that the check gets duplicated here as
+ * `if (role === 'host')` and drifts from the server. G5's test covers
+ * client/src for exactly that reason.
+ */
+export interface TripViewer {
+  role: string | null
+  roleLabel: string | null
+  status: string | null
+  /** Held outright, on anything in this trip. */
+  capabilities: string[]
+  /** Held only on objects this person created — e.g. a guest closing their own poll. */
+  ownCapabilities: string[]
 }
 
 export interface Trip {
@@ -39,6 +65,7 @@ export interface Trip {
   durationDays?: { min: number; max: number } | null
   itinerary: ItineraryItem[]
   members: TripMember[]
+  viewer?: TripViewer
   travelSuggestions?: any
   accommodation?: { name?: string; address?: string }
   cover?: TripCoverData | null
@@ -74,7 +101,10 @@ interface TripContextValue {
   apiUrl: string
   token: string | null
   currentUid?: string
-  isOrganizer: boolean
+  /** Does the viewer hold `capability` outright on this trip? */
+  can: (capability: string) => boolean
+  /** Does the viewer hold `capability` on this particular object, by right or by authorship? */
+  canOn: (capability: string, createdBy?: string) => boolean
   push: ReturnType<typeof usePushNotifications>
   mapOpen: boolean
   setMapOpen: (open: boolean) => void
@@ -124,31 +154,46 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
   const [drafts, setDrafts] = useState<DraftStop[]>([])
   const hasTrip = useRef(false)
 
-  const refetch = useCallback(async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/api/trips/${groupId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      setTrip(response.data)
-      hasTrip.current = true
-      setError(null)
-    } catch (err: any) {
-      const status = err.response?.status
-      // A failed background refetch must not replace a trip that is already on screen
-      if (!hasTrip.current) {
-        setError(
-          status === 403
-            ? t('detail.notMember')
-            : status === 404
-              ? t('detail.notFound')
-              : t('detail.loadFailed')
-        )
+  const refetch = useCallback(
+    async ({ accessChanged = false } = {}) => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/trips/${groupId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setTrip(response.data)
+        hasTrip.current = true
+        setError(null)
+      } catch (err: any) {
+        const status = err.response?.status
+        // A failed background refetch must not replace a trip that is already
+        // on screen — EXCEPT when the server has just told us this viewer's
+        // access changed. Then a 403 is the answer, not a glitch, and leaving
+        // the trip up would be the stale screen G4 exists to prevent.
+        if (accessChanged && status === 403) {
+          hasTrip.current = false
+          setTrip(null)
+          setError(t('detail.notMember'))
+        } else if (!hasTrip.current) {
+          setError(
+            status === 403
+              ? t('detail.notMember')
+              : status === 404
+                ? t('detail.notFound')
+                : t('detail.loadFailed')
+          )
+        }
+        console.error(err)
+      } finally {
+        setLoading(false)
       }
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }, [apiUrl, groupId, token, t])
+    },
+    [apiUrl, groupId, token, t]
+  )
+
+  // Held in a ref so the socket effect can call the latest refetch without
+  // tearing down and rebuilding the connection every time it changes.
+  const refetchRef = useRef(refetch)
+  refetchRef.current = refetch
 
   // One trip fetch on entry, and again when the UI language changes (suggestions are generated per language)
   useEffect(() => {
@@ -204,6 +249,15 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
       setTrip((prev) => (prev ? { ...prev, travelSuggestions: data.travelSuggestions } : prev))
     })
 
+    // G4 · Immediate revocation (spec 011 §6.2). The viewer's role or access
+    // just changed. Re-fetch rather than sit on a screen whose controls may
+    // no longer be theirs — if access is gone the fetch 403s and the normal
+    // error path takes over, and if they were merely demoted the new
+    // capability list arrives with the trip.
+    socketInstance.on('trip:access-changed', () => {
+      refetchRef.current({ accessChanged: true })
+    })
+
     // Live location is kept here so the map can open and close without missing anyone (it is never stored)
     socketInstance.on('location:snapshot', ({ locations: list }: { locations: SharedLocation[] }) =>
       setLocations(Object.fromEntries(list.map((l) => [l.userId, l])))
@@ -248,7 +302,28 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
     return () => clearTimeout(timer)
   }, [needsSuggestions, locale, refetch])
 
-  const isOrganizer = !!trip?.members.some((m) => m.role === 'organizer' && m.userId === currentUid)
+  // Capabilities come from the server already resolved. A component asks
+  // "may I?", never "what am I?" (R-F11, AC 12).
+  const capabilities = useMemo(() => new Set(trip?.viewer?.capabilities ?? []), [trip?.viewer?.capabilities])
+  const ownCapabilities = useMemo(
+    () => new Set(trip?.viewer?.ownCapabilities ?? []),
+    [trip?.viewer?.ownCapabilities]
+  )
+
+  /** Held outright: may I do this to anything here? */
+  const can = useCallback((capability: string) => capabilities.has(capability), [capabilities])
+
+  /**
+   * May I do this to THIS object? Held outright, or held on my own and this
+   * one is mine. Asking `can()` alone is what put a close button on everyone's
+   * poll and collected a 403 — the two cases are different answers.
+   */
+  const canOn = useCallback(
+    (capability: string, createdBy?: string) =>
+      capabilities.has(capability) ||
+      (ownCapabilities.has(capability) && !!createdBy && createdBy === currentUid),
+    [capabilities, ownCapabilities, currentUid]
+  )
 
   const polls = usePolls(apiUrl, token, groupId, socket)
   const expenses = useExpenses(apiUrl, token, groupId, socket)
@@ -267,14 +342,14 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
     () =>
       computeBadges({
         currentUid,
-        isOrganizer,
+        canManageInvites: capabilities.has('invite.manage'),
         members: trip?.members ?? [],
         polls: polls.data,
         expenses: expenses.data,
         activity: activity.data,
         seen: seenState.seen,
       }),
-    [currentUid, isOrganizer, trip?.members, polls.data, expenses.data, activity.data, seenState.seen]
+    [currentUid, capabilities, trip?.members, polls.data, expenses.data, activity.data, seenState.seen]
   )
   const seen = useMemo(() => ({ since: seenState.since, mark: seenState.mark }), [seenState.since, seenState.mark])
 
@@ -291,7 +366,8 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             apiUrl,
             token,
             currentUid,
-            isOrganizer,
+            can,
+            canOn,
             push,
             mapOpen,
             setMapOpen,
@@ -307,7 +383,7 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
             badges,
           }
         : null,
-    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, isOrganizer, push, mapOpen, assistantOpen, drafts, phase, polls, expenses, activity, seen, badges]
+    [trip, refetch, socket, activeUsers, locations, apiUrl, token, currentUid, can, canOn, push, mapOpen, assistantOpen, drafts, phase, polls, expenses, activity, seen, badges]
   )
 
   // Skeleton in the shape of the trip chrome and tabs, so nothing jumps when the trip arrives (N3, N4)

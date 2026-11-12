@@ -7,8 +7,18 @@ import { useOneShotIntent } from '../useOneShotIntent'
 
 export default function Group() {
   const { t } = useTranslation()
-  const { trip, refetch, apiUrl, token, isOrganizer, push } = useTrip()
+  const { trip, refetch, apiUrl, token, currentUid, can, push } = useTrip()
   const groupId = trip.groupId
+
+  // May the viewer remove THIS person? One capability, and "not myself".
+  //
+  // G1 · Last host is deliberately NOT re-decided here. Working out who the
+  // last host is would mean reading roles in a component, which is how the
+  // check drifts from the server (spec 011 risk 1) — the first version of this
+  // line did exactly that and the G5 test caught it. The server refuses with
+  // the way out named, and the handler below shows that message.
+  const canRemove = (member: TripMember) =>
+    can('member.remove') && !(member.userId && member.userId === currentUid)
 
   const intent = useOneShotIntent()
   const [showInviteForm, setShowInviteForm] = useState(intent === 'invite')
@@ -58,9 +68,14 @@ export default function Group() {
       <section className="group-section">
         <div className="section-header">
           <h2>{t('detail.membersTitle')}</h2>
-          <button className="add-button" onClick={() => setShowInviteForm(!showInviteForm)}>
-            {showInviteForm ? t('detail.hide') : t('detail.invite')}
-          </button>
+          {/* Shown from the capability, not from a role. On a personal trip
+              every member may invite, exactly as today; on a hosted event a
+              guest may not (spec 011 §5.1, F6). */}
+          {can('member.invite') && (
+            <button className="add-button" onClick={() => setShowInviteForm(!showInviteForm)}>
+              {showInviteForm ? t('detail.hide') : t('detail.invite')}
+            </button>
+          )}
         </div>
 
         {trip.members.length < 2 && !showInviteForm && <p className="hint">{t('trip.groupEmpty')}</p>}
@@ -108,14 +123,21 @@ export default function Group() {
             <li key={member.userId || member.email} className="member-row">
               <strong>{member.email || t('common.unknown')}</strong>
               <span className="member-meta">
-                {member.role === 'organizer' ? t('detail.organizer') : t('detail.member')}
+                {/* The word for the role on this trip, as an ORDERED KEY LIST:
+                    the 18-key name first (spec 012 §6.2), then the string
+                    spec 003 already ships in all three languages. Rendering
+                    the server's English label here instead would read
+                    "Organizer" on a Spanish screen (F33, AC 27). When O8 lands
+                    and `roles.*` is written, the first key wins and nothing
+                    here changes. */}
+                {t([member.roleLabelKey, member.roleLabelFallbackKey, 'detail.member'].filter(Boolean) as string[])}
               </span>
               <span className={`badge ${member.status === 'active' ? 'badge-success' : 'badge-muted'}`}>
-                {member.status === 'pending' ? t('detail.invited') : t('detail.activeBadge')}
+                {member.status === 'invited' ? t('detail.invited') : t('detail.activeBadge')}
               </span>
-              {member.role !== 'organizer' && isOrganizer && (
+              {canRemove(member) && (
                 <button type="button" className="btn-danger btn-sm" onClick={() => handleRemoveMember(member)}>
-                  {member.status === 'pending' ? t('detail.cancelInvite') : t('detail.remove')}
+                  {member.status === 'invited' ? t('detail.cancelInvite') : t('detail.remove')}
                 </button>
               )}
             </li>
