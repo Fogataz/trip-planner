@@ -52,7 +52,7 @@ This page describes what the product does today, based on the code in `server/` 
 
 ## Roles and permissions
 
-Spec: [specs/011-roles-and-permissions.md](specs/011-roles-and-permissions.md) block 1 (epic #20, slice S1).
+Spec: [specs/011-roles-and-permissions.md](specs/011-roles-and-permissions.md) block 1 (epic #20, slice S1 · Permissions foundation).
 
 - **Membership is the `TripMember` collection**, not the embedded `Trip.members` array. One document per person per trip, with role and status kept separate: a removed co-host is `role: 'co-host', status: 'removed'`, so re-adding restores what they were. The array is still on the trip document but is no longer read or written, and is removed after the pilot
 - **Trip roles are `host`, `co-host` and `guest`**; Organization roles are `owner`, `admin` and `member`. Statuses are `invited`, `requested`, `active`, `declined`, `left` and `removed`, and **only `active` counts** towards member counts, push reach, poll denominators and expense splits

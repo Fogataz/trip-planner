@@ -123,6 +123,6 @@ Rules:
 
   It does **not** mean every occurrence. A range (`R3–R7 run on their recommendations`) and a repeat in the same breath (`R1 is why R1 works`) are already resolvable, and naming them again makes the sentence worse. The test is "could someone meet this here and not know what it is?", not a find-and-replace.
 
-  Codes are scoped per document — **D** product-owner decisions in the [working doc](product/working-doc.md), **S / R / O** open decisions in specs 002 / 011 / 012, **G** guarantees, **Q** QA findings, **ww-D / trk-D / lens-D** the process docs' own. [process/naming.md](process/naming.md) §5 is the register that resolves any of them, and it is the fallback when a name will not fit.
+  Codes are scoped per document — **D** product-owner decisions in the [working doc](product/working-doc.md), **S / R / O** open decisions in specs 002 / 011 / 012, **G** guarantees, **Q** QA findings, **ww-D / trk-D / lens-D** the process docs' own. **`S1`–`S8` means two things**: spec 002's open decisions *and* spec 012 §12's build slices, so a slice is always written with the word in front of it — `slice S2 · The door`, never a bare `S2` (name-D5 · Slices carry the word slice). [process/naming.md](process/naming.md) §5 is the register that resolves any of them, and it is the fallback when a name will not fit.
 - Change a document through a pull request so it can be reviewed.
 - When `features.md` gets too long, split it into one page per feature under `features/`. Specs stay where they are.
