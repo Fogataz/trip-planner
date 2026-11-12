@@ -30,6 +30,15 @@ jobs:
         if: startsWith(github.head_ref, 'docs/')
         run: scripts/docs-only-check.sh "origin/${{ github.base_ref }}"
 
+      # CLAUDE.md is loaded into every Claude session, so its summary of the
+      # docs conventions binds every session that follows it. docs/README.md
+      # owns those conventions and product edits it; CLAUDE.md is engineering's.
+      # This fails when docs/README.md has moved and nobody re-checked the
+      # summary (ww-D14). It runs always, not only when those files change:
+      # the drift is between two commits, not inside one diff.
+      - name: CLAUDE.md mirrors the docs conventions
+        run: scripts/claude-md-mirror-check.sh
+
       # A spec at approved or beyond carries its required sections, the design
       # lenses included (ways-of-working.md §2, ww-D10).
       - name: Spec sections
