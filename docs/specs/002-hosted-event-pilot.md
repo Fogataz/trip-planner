@@ -1,7 +1,7 @@
 # Spec 002: Hosted Event Pilot
 
 Status: approved
-Owner: Alberto (product)   Shipped: —   PR: —
+Owner: Alberto (product)   Shipped: —   PR: part 1 (slice S1) in review, [#124](https://github.com/Fogataz/trip-planner/pull/124)
 Current behavior: [features.md](../features.md) (nothing from this spec is built yet)
 Planning list (why now, why later, risks and fallbacks per feature): [product/pilot-event-feature-list.md](../product/pilot-event-feature-list.md)
 

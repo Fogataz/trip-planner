@@ -1,7 +1,7 @@
 # Spec 012: Joining, naming and the first trip
 
 Status: approved
-Owner: Alberto (product)   Shipped: —   PR: —
+Owner: Alberto (product)   Shipped: —   PR: S1 parts in review, [#124](https://github.com/Fogataz/trip-planner/pull/124)
 
 > **Renumbered before merge (2026-11-11).** Drafted as spec 010 in pull request #102, which was opened before specs 009 trip cover layout (#78) and 010 host edits their trip (#110) took those numbers. Nothing published was renumbered — this one had not merged yet ([naming.md](../process/naming.md) §2).
 Wireframes: [`wireframes/012-joining-and-naming/`](../../wireframes/012-joining-and-naming/) — 13 frames, including the three [spec 002](002-hosted-event-pilot.md) §6 left undrawn.

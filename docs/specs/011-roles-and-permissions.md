@@ -1,7 +1,7 @@
 # Spec 011: Organizations, roles and permissions
 
 Status: approved
-Owner: Alberto (product)   Shipped: —   PR: —
+Owner: Alberto (product)   Shipped: —   PR: block 1 in review, [#124](https://github.com/Fogataz/trip-planner/pull/124)
 
 > **Renumbered before merge (2026-11-11).** Drafted as spec 009 in pull request #102, which was opened before specs 009 trip cover layout (#78) and 010 host edits their trip (#110) took those numbers. Nothing published was renumbered — this one had not merged yet ([naming.md](../process/naming.md) §2).
 Current behavior: [features.md](../features.md) — two roles (`organizer`, `member`) embedded in `Trip.members`, checked by string comparison in 11 places across 5 files.
@@ -411,7 +411,7 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 
 ## 16. Build status
 
-**Approved 2026-11-12. Block 1 built and in review the same day** — see §17 for the four defects building it found.
+**Approved 2026-11-12. Block 1 built and in review the same day — [#124](https://github.com/Fogataz/trip-planner/pull/124)** — see §17 for the four defects building it found.
 
 | Block | Epic |
 |---|---|
