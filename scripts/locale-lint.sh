@@ -34,17 +34,43 @@ const path = require('path');
 
 const dir = process.argv[2];
 
-// Known gendered role nouns in es and pt-BR. Lower-cased, accent-sensitive on
+// Known gendered role nouns, by language. Lower-cased, accent-sensitive on
 // purpose: "anfitrion" without the accent is a typo, not a different word, and
 // we would rather flag it.
-const GENDERED = [
-  'anfitrión', 'anfitriona', 'anfitriones', 'anfitrionas',
-  'anfitrião', 'anfitriã', 'anfitriões', 'anfitriãs',
-  'invitado', 'invitada', 'invitados', 'invitadas',
-  'convidado', 'convidada', 'convidados', 'convidadas',
-  'organizador', 'organizadora', 'organizadores', 'organizadoras',
-  'coanfitrión', 'coanfitriona', 'co-anfitrión', 'co-anfitriona',
-];
+//
+// Checked ONLY against the locale file of the same language. The first version
+// of this check loaded every list for every file, on the theory that copying a
+// row from the wrong column is the realistic mistake. It flagged "Participante"
+// in es.json — which is the correct Spanish answer, because Spanish
+// "participante" is invariable while French "participante" is the feminine of
+// "participant". Same spelling, opposite verdict. A check that fails the right
+// answer gets switched off, so: per language, no cross-contamination.
+//
+// English is the outlier, not Spanish: every language on the roadmap inflects
+// role nouns. Adding a language means adding its row here in the same pull
+// request as its locale file (spec 003 §8.5).
+const GENDERED = {
+  es: ['anfitrión', 'anfitriona', 'anfitriones', 'anfitrionas',
+       'invitado', 'invitada', 'invitados', 'invitadas',
+       'organizador', 'organizadora', 'organizadores', 'organizadoras',
+       'coanfitrión', 'coanfitriona', 'co-anfitrión', 'co-anfitriona'],
+  pt: ['anfitrião', 'anfitriã', 'anfitriões', 'anfitriãs',
+       'convidado', 'convidada', 'convidados', 'convidadas',
+       'organizador', 'organizadora', 'organizadores', 'organizadoras'],
+  // Not shipped yet. Here so the check is ready before the language is.
+  fr: ['hôtesse', 'invité', 'invitée', 'invités', 'invitées',
+       'organisateur', 'organisatrice', 'organisateurs', 'organisatrices',
+       'participante', 'participantes'],
+  it: ['organizzatore', 'organizzatrice', 'organizzatori', 'organizzatrici',
+       'invitato', 'invitata', 'invitati', 'invitate'],
+  ca: ['amfitrió', 'amfitriona', 'amfitrions', 'amfitriones',
+       'convidat', 'convidada', 'convidats', 'convidades',
+       'organitzador', 'organitzadora', 'organitzadors', 'organitzadores'],
+  de: ['gastgeber', 'gastgeberin', 'gastgeberinnen',
+       'teilnehmer', 'teilnehmerin', 'teilnehmerinnen',
+       'veranstalter', 'veranstalterin', 'veranstalterinnen'],
+};
+
 
 const problems = [];
 let checked = 0;
@@ -61,6 +87,10 @@ for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.json'))) {
 
   const roles = json.roles;
   if (!roles || typeof roles !== 'object') continue; // not written yet — fine
+
+  // es.json -> 'es'. An unknown file still gets the shape checks below.
+  const lang = path.basename(file, '.json').toLowerCase().split('-')[0];
+  const wordList = GENDERED[lang] || [];
 
   const walk = (node, trail) => {
     for (const [k, v] of Object.entries(node)) {
@@ -79,7 +109,13 @@ for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.json'))) {
       if (/\w@/.test(v)) {
         problems.push([file, key, `"${v}" — an @ ending. Pick one form that does not inflect.`]);
       }
-      for (const word of GENDERED) {
+      // German's contested workarounds: Teilnehmer*innen, TeilnehmerInnen,
+      // Teilnehmer_innen. Ungendered in intent, but they are a political choice
+      // that varies by organisation, and they read badly aloud.
+      if (/\w[*_]innen/i.test(v) || /\p{Ll}Innen/u.test(v)) {
+        problems.push([file, key, `"${v}" — a gender-star or Binnen-I form. Contested, varies by organisation, and poor for screen readers. Use a form that does not inflect, or change the construction.`]);
+      }
+      for (const word of wordList) {
         if (new RegExp(`(^|[^\\p{L}])${word}([^\\p{L}]|$)`, 'u').test(low)) {
           problems.push([file, key, `"${v}" — "${word}" inflects for gender.`]);
           break;

@@ -54,7 +54,7 @@ IP is only a hint: VPNs, expats and travellers can be wrong, and a country does 
 - **Server error messages** and the "Unable to generate answer" fallback are English.
 - **Push notification text** is English.
 - Itinerary weekday names sent to the AI are English by design, so the model can check opening days reliably.
-- PT and ES wording was written without native review. **In review:** native-speaker review is under way.
+- PT and ES wording was written without native review. **In review:** native-speaker review is under way. **Role labels specifically are tracked as [#122](https://github.com/Fogataz/trip-planner/issues/122), owned by @barry-dempsey** (added 2026-11-12) — a review with a name gets chased; "under way" does not.
 - Mixed-language trips: suggestions follow whoever opened the trip last, subject to the cooldown.
 
 ## 7. Adding a language
@@ -130,3 +130,28 @@ Worth being precise, because "blocked on the reviewers" overstates it:
 | Writing the six ES and six pt-BR role labels into `es.json` and `pt.json` | Everything else in the localization slice: `Intl` zone names, the single-key refactor, the missing-key check, the join-page strings |
 | — | The English labels, which ship with [epic #20](https://github.com/Fogataz/trip-planner/issues/20) |
 | — | The build. No slice stops for this |
+
+### 8.5 When we add a language
+
+**English is the outlier here, not Spanish.** Every language on the roadmap — French, Italian, Catalan, German — inflects role nouns. So this is not a one-off Spanish and Portuguese question; it is a step in [§7 Adding a language](#7-adding-a-language), and it recurs every time.
+
+**The rule, which generalises:**
+
+> **Pick a form that does not inflect. Where the language has no such noun, change the construction** — a verb, a participle, or the function rather than the person — **rather than picking a gendered default, a slash pair, or a gender-star form.**
+
+Some languages make it easy, and it is worth knowing which before asking:
+
+| Language | Already invariable | The hard ones |
+|---|---|---|
+| Spanish | *participante*, *asistente* | *anfitrión / anfitriona*, *invitado / invitada* |
+| Portuguese (BR) | *participante* | *anfitrião / anfitriã*, *convidado / convidada* |
+| Italian | *partecipante*, *ospite* | *organizzatore / organizzatrice* |
+| Catalan | *participant* | *amfitrió / amfitriona*, *convidat / convidada* |
+| French | — | *hôte / hôtesse*, *invité / invitée*, *organisateur / organisatrice* |
+| German | — | *Gastgeber / Gastgeberin*, *Teilnehmer / Teilnehmerin* |
+
+**German is the one that needs the escape clause.** Its usual workarounds — `Teilnehmer*innen`, `TeilnehmerInnen`, `Teilnehmer_innen` — are ungendered in intent but are a political choice that varies by organisation, and they read badly aloud. [`scripts/locale-lint.sh`](../../scripts/locale-lint.sh) rejects them. The move there is to change the construction: a participle (*Gastgebend*) or the function rather than the person.
+
+**So §7's checklist gains a fifth step:** add the new language's gendered role nouns to `GENDERED` in `scripts/locale-lint.sh`, **in the same pull request as its locale file**. The lists are per language and are only checked against the file of the same language — the first version checked every list against every file and flagged *Participante* in `es.json`, which is the correct Spanish answer, because French *participante* is a feminine form while Spanish *participante* is invariable. A check that fails the right answer gets switched off.
+
+French, Italian, Catalan and German are already in that list, unshipped, so the check is ready before the language is.
