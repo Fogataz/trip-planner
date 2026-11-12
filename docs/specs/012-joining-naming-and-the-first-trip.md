@@ -51,6 +51,8 @@ So the test is narrow. **Does the product function without this step?**
 
 **Q1, Q4 and Q13 are regressions spec 002 would ship as written.**
 
+**Q21–Q24 were added 2026-11-12 by engineering**, while building slice S1. They are defects in specs 002 and 011 rather than in 002 alone, and the reasoning and the fix for each is [spec 011](011-roles-and-permissions.md) §17.
+
 | # | Finding | Where | Severity | Position |
 |---|---|---|---|---|
 | **Q1 · Guest on friend trips** | **"Guest" is applied to existing friend trips.** F7 migrates members → **guests**; today the word is "member". Five friends planning Lisbon become a host and four guests. [Brand foundations](../brand/brand-foundations.md) §1.3 says the personality is **Fair — "everyone has a voice", not "bossy, organizer-only"**. | 002 F7, every member screen | **High** — visible regression for every existing user, on a migration that cannot be partly undone | Label roles per trip kind (§5.3). Free: spec 011 made roles presets, so the stored role never changes. |
@@ -73,6 +75,10 @@ So the test is narrow. **Does the product function without this step?**
 | **Q18 · Gendered role nouns** | **Role labels do not survive translation ungendered.** Spanish and Portuguese inflect *anfitrión/anfitriona*, *invitado/invitada*. We do not collect gender and should not. | §5.3 × 003 | Medium | §6.2, **O8**. |
 | **Q19 · First invitation has no language** | **The first invitation email has no language.** F36 sends push and email in the recipient's saved language — an invitee has no account yet, so there is none. | 002 F36 | Medium | §6.5, **O9 · First invitation language**. |
 | **Q20 · Entitlement conflated with trip kind** | **The money model does not fit the capability model.** Working doc §4.3's **Trip Pass** sells agenda import, approvals and a ~50-member cap to the organiser of a **personal** trip. Spec 011 §5.1 puts all three in the *hosted* column and §5.2 ties the columns to `trip.kind`. A paying customer would be refused what they bought, or have their trip flipped to `hosted` — which renames their friends into guests, i.e. Q1 again, now charged for. | 011 §5.1, §5.2 × working doc §4.3 | **High for Phase 1, and the fix is only cheap now** | A third axis: role ∩ trip kind ∩ **entitlement** (011 §5.4). One nullable field reserved in block 1; **R8 · Entitlement axis**. |
+| **Q21 · Migration can leave a trip with no host** | **A trip whose creator is no longer in its own member list migrates to zero hosts.** [Spec 011](011-roles-and-permissions.md) §10.2's mapping can only produce a host from the creator, so such a trip becomes unadministrable the moment it migrates. Found while building, on a seeded database. | 011 §10.2, 002 F7 | **High** | Promote the longest-standing active organizer and print the count. [Spec 011](011-roles-and-permissions.md) §17. |
+| **Q22 · Status carried over is not a valid status** | **`pending` is not in the [spec 011](011-roles-and-permissions.md) §6.1 vocabulary.** §10.2 says status is carried over; today's values are `pending`, `active`, `removed`. | 011 §10.2 × §6.1 | Medium | `pending → invited`, explicitly. [Spec 011](011-roles-and-permissions.md) §17. |
+| **Q23 · The last-host guard has a gap between slices** | **Block 1 deletes today's "Organizers cannot be removed" and block 2 adds G1 · Last host** — so the pilot would run in the window between them with no protection at all. | 011 §12 | **High for the pilot** | The pure predicate ships in block 1; G2 · Last owner stays in [#115](https://github.com/Fogataz/trip-planner/issues/115). [Spec 011](011-roles-and-permissions.md) §17. |
+| **Q24 · `ownerType` duplicates `orgId`** | **Spec 002 §7.2 adds both**, but since **O1 · Organization never required** "personally owned" is exactly "`orgId` is null". Two fields, one fact. | 002 §7.2 × O-F3 | Low | `ownerType` not built. [Spec 011](011-roles-and-permissions.md) §17. |
 
 ## 5. The design
 

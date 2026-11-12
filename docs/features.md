@@ -50,6 +50,25 @@ This page describes what the product does today, based on the code in `server/` 
 - Accept an invitation with its token
 - Change a member's role, or remove members
 
+## Roles and permissions
+
+Spec: [specs/011-roles-and-permissions.md](specs/011-roles-and-permissions.md) block 1 (epic #20, slice S1).
+
+- **Membership is the `TripMember` collection**, not the embedded `Trip.members` array. One document per person per trip, with role and status kept separate: a removed co-host is `role: 'co-host', status: 'removed'`, so re-adding restores what they were. The array is still on the trip document but is no longer read or written, and is removed after the pilot
+- **Trip roles are `host`, `co-host` and `guest`**; Organization roles are `owner`, `admin` and `member`. Statuses are `invited`, `requested`, `active`, `declined`, `left` and `removed`, and **only `active` counts** towards member counts, push reach, poll denominators and expense splits
+- **The words shown are not the stored role.** On a personal trip host and co-host read as "Organizer" and guest as "Member"; on a hosted event they read as "Host", "Co-host" and "Guest". The stored value is identical, so a migrated trip reads exactly as it did before
+- **One capability table** (`server/services/permissions.js`) holds 25 capabilities across host, co-host, hosted guest and personal guest. `can(actor, trip, capability)` and `capabilitiesFor(actor, trip)` are pure functions with no database access, unit-tested without Mongo
+- **Every route and the socket handler decide through `can()`.** `requireCapability('schedule.edit')` loads the trip and member once. The **G5 · One helper** test fails the build if `'organizer'`, `'host'`, `'co-host'` or `'guest'` is compared anywhere outside that module, in `server/` or `client/src`
+- **Access comes only from an active `TripMember`.** An Organization role grants no trip capability
+- `Trip.guestPermissions` overrides one entry of the guest column, so "guests can add schedule items" is a setting rather than a branch
+- `Trip.orgId` is nullable and a trip without one is personally owned; `Trip.entitlement` is reserved and always returns unlimited — nothing is gated
+- **Removing or demoting someone takes effect immediately** (G4): their sockets are forced out of the trip room, their live location is dropped and the others are told they stopped sharing, and the client re-fetches rather than showing a screen it no longer has
+- **A trip always has a host** (G1, the pure half): removing or demoting the last one is refused and names the way out. **Nobody can change their own role** (G3)
+- The trip payload carries the viewer's resolved capability list, and the client renders its controls from that rather than from a role name
+- Migration: `scripts/migrate-tripmembers.js` (backup first, idempotent, `--dry-run`) and `scripts/migrate-tripmembers-reverse.js`
+
+**Not built yet:** Organizations have models but no screens; `grants` and `revokes` on a member are reserved and empty; **G2 · Last owner** is [#115](https://github.com/Fogataz/trip-planner/issues/115); guest proposals, per-member overrides and the org claim path are spec 011 blocks 3–5.
+
 ## Itinerary
 
 - Add, edit and delete itinerary items (stop, time, transport, notes)

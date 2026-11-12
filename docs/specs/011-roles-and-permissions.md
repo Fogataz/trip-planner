@@ -411,7 +411,7 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 
 ## 16. Build status
 
-**Approved 2026-11-12.** Not started.
+**Approved 2026-11-12. Block 1 built and in review the same day** — see §17 for the four defects building it found.
 
 | Block | Epic |
 |---|---|
@@ -421,3 +421,18 @@ Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen len
 | 3–5 | No epic yet. Phase 1, after the pilot. |
 
 Both epics sit under **I1 Run the hosted event pilot** ([#19](https://github.com/Fogataz/trip-planner/issues/19)), milestone **M0**. Wireframes for this model are [012 frames 6, 7 and 9](../../wireframes/012-joining-and-naming/index.html).
+
+## 17. Amendment 2026-11-12 — four defects found while building block 1
+
+Added by engineering while building epic [#20](https://github.com/Fogataz/trip-planner/issues/20), per [build-handover.md](../process/build-handover.md) §8: a shipped spec is never rewritten, and these three specs are `approved` rather than shipped, so corrections land here as a dated amendment. Nothing below changes a decision; each is a place where the spec as written would have produced the wrong code, and says what was built instead.
+
+Three were found by building, and **two of those only by running the migration against a seeded database rather than by reading it.** They are registered as **Q21–Q24** in [spec 012](012-joining-naming-and-the-first-trip.md) §4, which is where QA findings live.
+
+| # | Finding | Where | Severity | What was built |
+|---|---|---|---|---|
+| **Q21 · Migration can leave a trip with no host** | The §10.2 mapping is "creator → host, other `organizer` → co-host, `member` → guest". **If the trip's creator is not in its own member list, that mapping produces a trip with zero hosts.** The creator's uid is on `Trip.createdBy` whether or not they are still a member, and nothing else in the mapping can produce a host. Such a trip would migrate into a state nobody can administer: no one can invite, approve, change a role or delete it, and **G1 · Last host** is violated from the first second. It is not hypothetical — one of the four seeded trips hit it. | §10.2, 002 F7 | **High** — unadministrable trips, created by the one migration that runs against live data | The migration counts active hosts per trip and, finding none, promotes the longest-standing active `organizer` (or, failing that, the longest-standing active member), and **prints how many trips needed it** so the number is seen before the run is approved rather than discovered later. |
+| **Q22 · "Status carried over" produces an invalid status** | §10.2 says "status carried over" and §6.1 defines the vocabulary as `invited`, `requested`, `active`, `declined`, `left`, `removed`. **Today's `Trip.members.status` is `pending`, `active` or `removed`** (`models/Trip.js`). Carrying `pending` over writes a value that is in no enum — it fails the schema, or worse, is stored and then counts as nothing anywhere. | §10.2 × §6.1 | Medium — the migration fails, or silently mis-states who is invited | `pending → invited` is now explicit in the mapping, and the client reads `invited` (the old string appeared in `badges.ts` and `Overview.tsx` too). |
+| **Q23 · Block 1 removes the only last-host guard and block 2 adds its replacement** | §12 puts **G1 · Last host** in block 2 and block 1 is "the only part in the pilot". But block 1 is what deletes today's guard — `if (target.role === 'organizer') return 'Organizers cannot be removed'` (`routes/groups.js:222`), the single thing standing between a trip and having nobody in charge. Taking a crude guard out in one slice and putting the real one in a later slice **leaves a window, during the pilot, with no protection at all** — a regression this slice would introduce rather than inherit. | §12 blocks 1–2 | **High for the pilot** — and invisible, because it is a gap between two correct-looking slices | The pure predicate `wouldLeaveNoHost(members, change)` ships in block 1 and guards both the remove and the set-role paths, refusing with the way out named. The **service-layer count across an Organization (G2 · Last owner) stays in [#115](https://github.com/Fogataz/trip-planner/issues/115)**, so the slice boundary moves by one function, not by a feature. |
+| **Q24 · `Trip.ownerType` duplicates `Trip.orgId`** | Spec 002 §7.2 has Trip gain `ownerType` **and** `orgId`. Since **O1 · Organization never required** made `orgId` nullable, "personally owned" is exactly "`orgId` is null". A second field holding the same fact is a second thing to keep true, and the first bug it produces is a trip whose `ownerType` says personal while its `orgId` is set. | 002 §7.2 × 012 O-F3 | Low | `ownerType` was **not** built. `orgId === null` is the single source of truth, as [spec 012](012-joining-naming-and-the-first-trip.md) O-F3 states it. |
+
+**One note that is not a defect.** §10.2 asks for `can()` to be pure and database-free, and that is the reason Q21 and Q22 were catchable at all: the capability model has 31 unit tests that run with no Mongo, so the only thing left to verify by hand was the migration — and running it, rather than reading it, is what produced two of the four findings above. The instruction to keep the module pure earned its place.
