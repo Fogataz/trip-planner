@@ -85,7 +85,7 @@ Proposal: the name becomes the label in anything new, and the letter stays here 
 
 ## 5. The register
 
-One lookup, so a person or a Claude session can resolve any code without hunting. This table points; it never copies.
+One lookup, so a person or any agent session — Claude Code, Codex, Copilot — can resolve any code without hunting. This table points; it never copies.
 
 ### Milestones
 
@@ -113,13 +113,17 @@ One lookup, so a person or a Claude session can resolve any code without hunting
 | Code | Name | Status |
 |---|---|---|
 | spec 001 | trip covers | shipped |
-| spec 002 | hosted event pilot | draft |
+| spec 002 | hosted event pilot | **approved** |
 | spec 003 | localization EN/ES/PT | shipped |
 | spec 004 | trip information architecture | shipped |
 | spec 005 | settle up | draft |
 | spec 006 | transport updates | draft |
 | spec 007 | profiles and display names | draft |
 | spec 008 | activity coverage and read state | draft |
+| spec 009 | trip cover layout | shipped |
+| spec 010 | host edits their trip | draft |
+| spec 011 | organizations, roles and permissions | **approved** |
+| spec 012 | joining, naming and the first trip | **approved** |
 
 ### Decision series in use
 
@@ -128,6 +132,10 @@ One lookup, so a person or a Claude session can resolve any code without hunting
 | `D##` | product and strategy, global | working-doc §7 |
 | `002-S#` | spec 002's own decisions, published as S1–S8 | spec 002 §9 |
 | `004-D#` | spec 004's own decisions | spec 004 §18.3 |
+| `011-R#` | spec 011's own decisions, published as R1–R8 | spec 011 §13 |
+| `012-O#` | spec 012's own decisions, published as O1–O14 | spec 012 §10 |
+| `012-Q#` | spec 012's QA findings, published as Q1–Q20 — findings, not decisions | spec 012 §4 |
+| `011-G#` | spec 011's guarantees, published as G1–G5 — rules the build must hold, not decisions | spec 011 §6.2 |
 | `B#` | brand | brand-foundations §7 |
 | `ww-D#` | quality bar, rhythm and the Cowork handoff | ways-of-working §8 |
 | `pipe-D#` | the command pipeline | pipeline §8 |
