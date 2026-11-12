@@ -77,13 +77,20 @@ function setUp() {
     [`${GROUP}:alberto`, { userId: 'alberto' }],
   ]);
 
+  const { revokeTripAccess, notifyAccessChanged } = makeRevokeTripAccess({
+    io,
+    liveLocations,
+    activePresence,
+  });
+
   return {
     removed,
     staying,
     io,
     liveLocations,
     activePresence,
-    revoke: makeRevokeTripAccess({ io, liveLocations, activePresence }),
+    revoke: revokeTripAccess,
+    notify: notifyAccessChanged,
   };
 }
 
@@ -188,11 +195,64 @@ test('every socket that person holds is removed, not just the first', async () =
   for (const s of [phone, laptop, staying]) s.rooms.add(ROOM);
 
   const io = fakeIo([phone, laptop, staying]);
-  const revoke = makeRevokeTripAccess({ io, liveLocations: new Map(), activePresence: new Map() });
+  const { revokeTripAccess: revoke } = makeRevokeTripAccess({
+    io,
+    liveLocations: new Map(),
+    activePresence: new Map(),
+  });
 
   await revoke(GROUP, 'marta');
 
   assert.deepStrictEqual(phone.left, [ROOM]);
   assert.deepStrictEqual(laptop.left, [ROOM]);
   assert.deepStrictEqual(staying.left, []);
+});
+
+
+// ---------------------------------------------------------------------------
+// A ROLE CHANGE IS NOT A REVOCATION — review finding 1
+// ---------------------------------------------------------------------------
+//
+// An earlier version called revokeTripAccess on every role change. Eviction
+// removes the socket from the room and the client emits join-trip only on
+// `connect`, so a promotion or demotion silently stopped someone receiving
+// live events until they reloaded: principle 2 broken by the fix for
+// principle 3.
+
+test('a role change tells them, and leaves them in the room', async () => {
+  const { removed: demoted, staying, io, notify } = setUp();
+
+  await notify(GROUP, 'marta');
+
+  // Told, so the client re-fetches its capabilities.
+  const told = eventsOn(demoted, 'trip:access-changed');
+  assert.strictEqual(told.length, 1);
+  assert.deepStrictEqual(told[0].payload, { tripId: GROUP });
+
+  // Still in the room — this is the whole point.
+  assert.deepStrictEqual(demoted.left, [], 'not evicted');
+  assert.strictEqual(demoted.rooms.has(ROOM), true);
+
+  // And still receiving live events, with no reload and no re-join.
+  io.to(ROOM).emit('itinerary:itemAdded', { item: { stop: 'Dinner' } });
+  assert.strictEqual(eventsOn(demoted, 'itinerary:itemAdded').length, 1);
+  assert.strictEqual(eventsOn(staying, 'itinerary:itemAdded').length, 1);
+});
+
+test('a role change does not touch their live location or presence', async () => {
+  const { liveLocations, activePresence, staying, notify } = setUp();
+
+  await notify(GROUP, 'marta');
+
+  assert.strictEqual(liveLocations.has(`${GROUP}:marta`), true, 'still sharing');
+  assert.strictEqual(activePresence.has(`${GROUP}:marta`), true, 'still present');
+  assert.strictEqual(eventsOn(staying, 'location:stopped').length, 0);
+});
+
+test('notifying someone who is not connected is harmless', async () => {
+  const { removed, staying, notify } = setUp();
+  await notify(GROUP, 'nobody-here');
+  assert.deepStrictEqual(removed.left, []);
+  assert.strictEqual(eventsOn(removed, 'trip:access-changed').length, 0);
+  assert.strictEqual(eventsOn(staying, 'trip:access-changed').length, 0);
 });

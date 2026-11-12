@@ -12,14 +12,45 @@
 // so this is a principle-3 defect in production — which is why spec 011 §14
 // puts it in slice 1 rather than in the hardening slice after the pilot.
 //
+// EVICTION IS FOR ACCESS LOST, NOT FOR A ROLE CHANGE (review finding 1).
+//
+// An earlier version called this on every role change too. Eviction removes
+// the socket from the room, and the client emits join-trip only on `connect`
+// — so a promotion or demotion silently stopped someone receiving live events
+// until they reloaded the page. That is principle 2 broken by the fix for
+// principle 3.
+//
+// Every comparable product draws the same line: Figma downgrades an open
+// file's toolbar in place and ejects you only when access is revoked; Google
+// Docs moves editor→commenter live; a Slack role change never drops you from
+// a channel. So:
+//
+//   revokeTripAccess   — access is GONE. Evict, drop location, tell them.
+//   notifyAccessChanged — what they may DO changed. Tell them, leave them in.
+//
+// R-F8 ("removing or demoting takes effect immediately") still holds for a
+// demotion, because every write re-checks can() per request. "Takes effect"
+// is not "gets ejected".
+//
 // It is a factory rather than a function so the socket state it needs (io and
 // the two in-memory maps, both owned by index.js) can be handed in — and so
-// server/test/g4-revocation.test.js can drive the real thing against a real
-// socket.io server, with no database. G4 is the part of this slice most
-// easily left half-done, and an assertion is the only thing that stops that.
+// server/test/g4-revocation.test.js can drive it with no database. G4 is the
+// part of this slice most easily left half-done, and an assertion is the only
+// thing that stops that.
 
 function makeRevokeTripAccess({ io, liveLocations, activePresence }) {
-  return async function revokeTripAccess(groupId, userId) {
+  // What they may do here changed, but they are still a member: tell them so
+  // the client re-fetches its capabilities, and leave the room alone.
+  async function notifyAccessChanged(groupId, userId) {
+    const room = `trip:${groupId}`;
+    const sockets = await io.in(room).fetchSockets();
+    for (const socket of sockets) {
+      if (socket.data?.uid !== userId) continue;
+      socket.emit('trip:access-changed', { tripId: groupId });
+    }
+  }
+
+  async function revokeTripAccess(groupId, userId) {
     const room = `trip:${groupId}`;
     const key = `${groupId}:${userId}`;
 
@@ -51,7 +82,9 @@ function makeRevokeTripAccess({ io, liveLocations, activePresence }) {
       .filter(([k]) => k.startsWith(`${groupId}:`))
       .map(([, presence]) => presence);
     io.to(room).emit('presence:update', { activeUsers: remaining });
-  };
+  }
+
+  return { revokeTripAccess, notifyAccessChanged };
 }
 
 module.exports = { makeRevokeTripAccess };

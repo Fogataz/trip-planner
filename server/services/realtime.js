@@ -11,22 +11,35 @@
 // Unregistered (a unit test, a script, a worker) it is a no-op, so nothing
 // here can fail a request.
 
-let revoker = null;
+let impl = null;
 
-function setRevoker(fn) {
-  revoker = typeof fn === 'function' ? fn : null;
+function setRevoker(handlers) {
+  impl = handlers && typeof handlers.revokeTripAccess === 'function' ? handlers : null;
 }
 
-// groupId: the socket room key. userId: who just lost access.
-async function revokeTripAccess(groupId, userId) {
-  if (!revoker || !groupId || !userId) return;
+async function run(name, groupId, userId) {
+  if (!impl || !groupId || !userId) return;
   try {
-    await revoker(groupId, userId);
+    await impl[name](groupId, userId);
   } catch (err) {
-    // Revocation is best-effort on the socket layer; the HTTP decision has
-    // already been written and every later request re-checks can() anyway.
-    console.error('revokeTripAccess error:', err.message);
+    // Best-effort on the socket layer: the HTTP decision is already written
+    // and every later request re-checks can() anyway.
+    console.error(`${name} error:`, err.message);
   }
 }
 
-module.exports = { setRevoker, revokeTripAccess };
+// Access is GONE — removed from the trip. Evict their sockets, drop their
+// live location, tell the room.
+async function revokeTripAccess(groupId, userId) {
+  return run('revokeTripAccess', groupId, userId);
+}
+
+// Still a member, but what they may DO changed — a promotion or demotion.
+// Tell them so the client re-fetches its capabilities, and leave them in the
+// room: evicting them would stop their live updates until they reloaded
+// (review finding 1, principle 2).
+async function notifyAccessChanged(groupId, userId) {
+  return run('notifyAccessChanged', groupId, userId);
+}
+
+module.exports = { setRevoker, revokeTripAccess, notifyAccessChanged };

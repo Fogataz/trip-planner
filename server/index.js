@@ -132,8 +132,7 @@ io.use((socket, next) => {
 // G4 · Immediate revocation (spec 011 §6.2, AC 8, R-F8). The implementation
 // and the reasoning are in services/revokeAccess.js, where a test can drive
 // it; this is only the wiring to the socket state index.js owns.
-const revokeTripAccess = makeRevokeTripAccess({ io, liveLocations, activePresence });
-setRevoker(revokeTripAccess);
+setRevoker(makeRevokeTripAccess({ io, liveLocations, activePresence }));
 
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);

@@ -12,7 +12,7 @@ const {
   LAST_HOST_REFUSAL,
 } = require('../services/permissions');
 const { loadMember, allMembers, presentMember } = require('../services/membership');
-const { revokeTripAccess } = require('../services/realtime');
+const { revokeTripAccess, notifyAccessChanged } = require('../services/realtime');
 
 const router = express.Router();
 
@@ -196,9 +196,11 @@ router.put('/:groupId/members/:userId', async (req, res) => {
       { from: oldRole, to: role }
     );
 
-    // A demotion changes what they may do, now — the client re-fetches rather
-    // than keeping controls it no longer has (G4, R-F8).
-    await revokeTripAccess(trip.groupId, req.params.userId);
+    // What they may do changed, now — the client re-fetches rather than
+    // keeping controls it no longer has (R-F8). They are NOT evicted from the
+    // trip room: they are still a member, and evicting them would stop their
+    // live updates until they reloaded (review finding 1, principle 2).
+    await notifyAccessChanged(trip.groupId, req.params.userId);
 
     res.json(presentMember(targetMember, trip));
   } catch (error) {
