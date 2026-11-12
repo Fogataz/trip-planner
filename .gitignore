@@ -1,5 +1,9 @@
 node_modules/
 .env
+
+# Migration backups and manifests. They contain real members' emails and
+# user ids, and they are machine-local recovery artefacts, not source.
+backups/
 .env.local
 .DS_Store
 *.log
