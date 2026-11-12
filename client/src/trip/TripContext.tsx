@@ -147,31 +147,46 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
   const [drafts, setDrafts] = useState<DraftStop[]>([])
   const hasTrip = useRef(false)
 
-  const refetch = useCallback(async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/api/trips/${groupId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      setTrip(response.data)
-      hasTrip.current = true
-      setError(null)
-    } catch (err: any) {
-      const status = err.response?.status
-      // A failed background refetch must not replace a trip that is already on screen
-      if (!hasTrip.current) {
-        setError(
-          status === 403
-            ? t('detail.notMember')
-            : status === 404
-              ? t('detail.notFound')
-              : t('detail.loadFailed')
-        )
+  const refetch = useCallback(
+    async ({ accessChanged = false } = {}) => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/trips/${groupId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setTrip(response.data)
+        hasTrip.current = true
+        setError(null)
+      } catch (err: any) {
+        const status = err.response?.status
+        // A failed background refetch must not replace a trip that is already
+        // on screen — EXCEPT when the server has just told us this viewer's
+        // access changed. Then a 403 is the answer, not a glitch, and leaving
+        // the trip up would be the stale screen G4 exists to prevent.
+        if (accessChanged && status === 403) {
+          hasTrip.current = false
+          setTrip(null)
+          setError(t('detail.notMember'))
+        } else if (!hasTrip.current) {
+          setError(
+            status === 403
+              ? t('detail.notMember')
+              : status === 404
+                ? t('detail.notFound')
+                : t('detail.loadFailed')
+          )
+        }
+        console.error(err)
+      } finally {
+        setLoading(false)
       }
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }, [apiUrl, groupId, token, t])
+    },
+    [apiUrl, groupId, token, t]
+  )
+
+  // Held in a ref so the socket effect can call the latest refetch without
+  // tearing down and rebuilding the connection every time it changes.
+  const refetchRef = useRef(refetch)
+  refetchRef.current = refetch
 
   // One trip fetch on entry, and again when the UI language changes (suggestions are generated per language)
   useEffect(() => {
@@ -225,6 +240,15 @@ export function TripProvider({ groupId, children }: { groupId: string; children:
 
     socketInstance.on('trip:suggestionsUpdated', (data) => {
       setTrip((prev) => (prev ? { ...prev, travelSuggestions: data.travelSuggestions } : prev))
+    })
+
+    // G4 · Immediate revocation (spec 011 §6.2). The viewer's role or access
+    // just changed. Re-fetch rather than sit on a screen whose controls may
+    // no longer be theirs — if access is gone the fetch 403s and the normal
+    // error path takes over, and if they were merely demoted the new
+    // capability list arrives with the trip.
+    socketInstance.on('trip:access-changed', () => {
+      refetchRef.current({ accessChanged: true })
     })
 
     // Live location is kept here so the map can open and close without missing anyone (it is never stored)
