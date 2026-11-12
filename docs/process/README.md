@@ -15,6 +15,7 @@
 | [design-lenses.md](design-lenses.md) | The fourteen lenses every new spec is checked against | Stage 2 (Define) and stage 4 (Spec), and when reviewing a pull request |
 | [naming.md](naming.md) | Codes, names, and the register that resolves them | You meet a code you cannot read |
 | [device-setup.md](device-setup.md) | The one-time steps to get a product session pushing directly on a new device (ww-D9) | A Cowork session on a device that has never had it needs direct push |
+| [build-handover.md](build-handover.md) | Starting the pilot build with the repo and nothing else: read order, build order, the traps, what is already decided | A different Claude account or computer picks up the build |
 | [../README.md](../README.md) | The stages a feature passes through, and the docs conventions | Any new feature |
 | [../../CLAUDE.md](../../CLAUDE.md) | The four product principles, the layout, who does what | Every session, automatically |
 

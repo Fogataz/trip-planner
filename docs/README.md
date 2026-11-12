@@ -41,7 +41,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | # | Spec | Status | Shipped | PR |
 |---|---|---|---|---|
 | 001 | [Trip covers](specs/001-trip-covers.md) | shipped | 2026-11-06 | [#3](https://github.com/Fogataz/trip-planner/pull/3) |
-| 002 | [Hosted event pilot](specs/002-hosted-event-pilot.md) | draft | — | — |
+| 002 | [Hosted event pilot](specs/002-hosted-event-pilot.md) | **approved** 2026-11-12 | — | — |
 | 003 | [Localization (EN/PT/ES)](specs/003-localization.md) | shipped | 2026-11-09 | [#5](https://github.com/Fogataz/trip-planner/pull/5) |
 | 004 | [Trip information architecture](specs/004-trip-ia-redesign.md) | shipped | 2026-11-10 | [#77](https://github.com/Fogataz/trip-planner/pull/77) |
 | 005 | [Settle up](specs/005-settle-up.md) | draft | — | — |
@@ -50,8 +50,8 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | 008 | [Activity coverage and read state](specs/008-activity-and-read-state.md) | draft | — | — |
 | 009 | [Trip cover layout](specs/009-trip-cover-layout.md) | shipped | 2026-11-10 | [#78](https://github.com/Fogataz/trip-planner/pull/78) |
 | 010 | [Host edits their trip](specs/010-host-trip-edit.md) | draft | — | — |
-| 011 | [Organizations, roles and permissions](specs/011-roles-and-permissions.md) | draft | — | — |
-| 012 | [Joining, naming and the first trip](specs/012-joining-naming-and-the-first-trip.md) | draft | — | — |
+| 011 | [Organizations, roles and permissions](specs/011-roles-and-permissions.md) | **approved** 2026-11-12 | — | — |
+| 012 | [Joining, naming and the first trip](specs/012-joining-naming-and-the-first-trip.md) | **approved** 2026-11-12 | — | — |
 
 ## How a feature goes from idea to shipped
 
@@ -119,5 +119,6 @@ Rules:
 ## How to update
 
 - Keep documents short and factual. Link to code or issues instead of copying them.
+- **Every code carries a short name after a `·`**, so a reference reads without a lookup: `D27 · Recommendations are working defaults`, `R1 · Org owner reach`, `Q13 · Invited people must request`. Codes are scoped per document — **D** product-owner decisions in the [working doc](product/working-doc.md), **S / R / O** open decisions in specs 002 / 011 / 012, **G** guarantees, **Q** QA findings. A bare code with no name is a defect: fix it when you touch the line.
 - Change a document through a pull request so it can be reviewed.
 - When `features.md` gets too long, split it into one page per feature under `features/`. Specs stay where they are.

@@ -1,11 +1,13 @@
 # Spec 011: Organizations, roles and permissions
 
-Status: draft
+Status: approved
 Owner: Alberto (product)   Shipped: —   PR: —
 
 > **Renumbered before merge (2026-11-11).** Drafted as spec 009 in pull request #102, which was opened before specs 009 trip cover layout (#78) and 010 host edits their trip (#110) took those numbers. Nothing published was renumbered — this one had not merged yet ([naming.md](../process/naming.md) §2).
 Current behavior: [features.md](../features.md) — two roles (`organizer`, `member`) embedded in `Trip.members`, checked by string comparison in 11 places across 5 files.
 
+> **✅ Decided 2026-11-12 by the product owner:** **R1 · Org owner reach** = (b) claim, logged and announced. **R2 · Leaving an Organization** = (b) roles are dropped; spec 002 §10 is corrected to match and D21 · Leaving an Organization can move to *decided*. **R8 · Entitlement axis** = (a) reserve `Trip.entitlement` only. Together with **O1 · Organization never required** in [spec 012](012-joining-naming-and-the-first-trip.md), the data model for block 1 is settled. R3–R7 run on their recommendations per D27 · Recommendations are working defaults.
+>
 > Written 2026-11-11, before the approval gate on [spec 002](002-hosted-event-pilot.md). Spec 002 part 1 (epic [#20](https://github.com/Fogataz/trip-planner/issues/20)) builds the first slice of this model; this spec owns the model itself, because [005 settle up](005-settle-up.md), [006 transport](006-transport-updates.md), [007 profiles](007-profiles-and-display-names.md) and everything after will each ask "who is allowed to do this?" and should not each answer it again.
 >
 > **This spec does not add a feature.** It defines a vocabulary and five guarantees, so that features built later do not have to be unpicked. Build-order §12 says which part is in the pilot and which is not.
@@ -36,7 +38,7 @@ Six products that solve the same problem. The question asked of each: **where do
 | Product | Container layer | Thing layer | What we take | What we avoid |
 |---|---|---|---|---|
 | **Meta Business Manager** | Business portfolio role: **Admin** (full control) or **Employee**. Meta recommends adding people as employees by default ([Meta help](https://en-gb.facebook.com/business/help/442345745885606)) | Per-asset **tasks** granted individually — Meta's own example is an employee who can create ads and view Page performance but cannot publish to the Page | **The two-layer model, and tasks as the primitive.** A role name is a preset over a task set, not the thing itself. This is the answer to "a collaborator who can help with certain functions". | The full task matrix as a user-facing control. Meta's own UI is widely reported as hard to reason about; we expose presets and keep the matrix internal. |
-| **GitHub** | Org role: **Owner** or **Member**, plus a **base permission** every member gets on every repo | Repo role: Read → Triage → Write → Maintain → Admin ([GitHub docs](https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization)) | **Base permission as an explicit, settable default** rather than an implicit one. Our D19 is "base permission = none". Also **outside collaborators**: repo access with no org role — our guest. | Five graded repo roles. Three presets is what a trip needs. |
+| **GitHub** | Org role: **Owner** or **Member**, plus a **base permission** every member gets on every repo | Repo role: Read → Triage → Write → Maintain → Admin ([GitHub docs](https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization)) | **Base permission as an explicit, settable default** rather than an implicit one. Our D19 · Org membership grants no trip access is "base permission = none". Also **outside collaborators**: repo access with no org role — our guest. | Five graded repo roles. Three presets is what a trip needs. |
 | **GitHub, ownership continuity** | — | — | **The last-owner rule.** GitHub warns that if an organization only has one owner, its projects can become inaccessible if that owner is unreachable, and recommends at least two ([GitHub docs](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/maintaining-ownership-continuity-for-your-organization)). Transfer is *add the new owner, then remove yourself*. An owner cannot change their own role. | Leaving it to a warning. We enforce it. |
 | **Slack** | Workspace role: Primary Owner → Owner → Admin → Member → Guest | Channel membership; **single-channel guest** | **Ownership is transferred, never dropped.** Only one primary owner at a time, and deactivating them requires transferring first ([Slack help](https://slack.com/help/articles/204401633-Transfer-ownership-of-a-workspace-or-org)). **Guests convert to members in both directions** ([Slack help](https://slack.com/help/articles/218124397)) — the promotion path, with the rule that an owner must become a member before becoming a guest. | Five workspace roles. |
 | **Notion** | Workspace **member** | **Guest**, invited page by page ([Notion help](https://www.notion.com/en-gb/help/add-members-admins-guests-and-groups)) | Guest as a first-class, per-thing identity — not a lesser member. Upgrading a guest is a deliberate, listed action. | Guest count as a billing lever. |
@@ -45,7 +47,7 @@ Six products that solve the same problem. The question asked of each: **where do
 
 ### What the benchmark says about our decisions
 
-**D19 is right, and it is the conservative end of the range.** Every product separates the two layers. But note where we sit: Meta's business *Admin* has full control, GitHub's org *Owner* has admin on every repo, a Luma *calendar admin* can manage any event under the calendar. Spec 002 AC 2 says an Organization admin with no trip role gets 403 and sees nothing — stricter than all six. That is good for principle 3 and it creates a lockout, dealt with in §7 case 9 and open decision R1.
+**D19 · Org membership grants no trip access is right, and it is the conservative end of the range.** Every product separates the two layers. But note where we sit: Meta's business *Admin* has full control, GitHub's org *Owner* has admin on every repo, a Luma *calendar admin* can manage any event under the calendar. Spec 002 AC 2 says an Organization admin with no trip role gets 403 and sees nothing — stricter than all six. That is good for principle 3 and it creates a lockout, dealt with in §7 case 9 and open decision R1.
 
 **Nobody models "suggest" as a weaker write.** Google models it as a *proposal object*. That matters to us because spec 002 already builds one (§5 below).
 
@@ -145,7 +147,46 @@ What that buys:
 - Principle 4 generalizes from a rule about AI into a rule about the product: **nothing enters the shared trip except through someone holding `draft.publish`.** AI and guests are then treated identically, which is the honest position — both are untrusted input to the host's decision.
 - The host's review screen (wireframe frame 8) already exists. A suggestion is one more row in it.
 
-**This spec does not build it.** It reserves the `source` value and the capability name, so block 3 adds a screen and no migration. Open decision R3 covers whether guests get it at all.
+**This spec does not build it.** It reserves the `source` value and the capability name, so block 3 adds a screen and no migration. Open decision **R3 · Guest proposals** covers whether guests get it at all.
+
+### 5.4 The entitlement axis — what the revenue models force
+
+Added 2026-11-12, after reading [revenue-models-analysis.md](../product/revenue-models-analysis.md), [premium-buyer-lens.md](../product/premium-buyer-lens.md) and [working-doc](../product/working-doc.md) §4.3.
+
+**The money model does not line up with the two axes above, and that is a problem this spec has to fix now.** Working doc §4.3 proposes three tiers (**D20 · Free personal limits**, TBD):
+
+| Tier | Who pays | Unlocks |
+|---|---|---|
+| Free personal | nobody | all collaboration, ~12 members per trip, a few AI drafts |
+| **Trip Pass** (model I, celebration trips) | **one person** — "the organiser (maid of honour, best man, couple)" — one-off, €19–39 | **~50 members, more AI drafts, agenda import, approvals, RSVP** |
+| Organization plan (models D, C1, H) | a company, host or operator, per event or yearly (**D8 · Offsite test price**) | hosted trips, co-hosts, all host features, host analytics, payments later |
+
+Read the middle row against §5.1. **Agenda import (`draft.create`), approvals (`member.approve`) and a larger member cap are things the Trip Pass sells to the host of a *personal* trip.** In §5.1 those sit in the hosted-event column, and §5.2 ties the two columns to `trip.kind`. So a paying Trip Pass holder would be refused capabilities they just paid for, or we would have to flip their trip to `kind: 'hosted'` and rename their friends into guests — the exact regression [spec 012](012-joining-naming-and-the-first-trip.md) Q1 is about.
+
+**Three independent axes, which this spec currently collapses into two:**
+
+| Axis | Decides | Example |
+|---|---|---|
+| **Role** (`TripMember.role`) | what *this person* may do | a co-host may publish, a guest may not |
+| **Trip kind** (`trip.kind`) | the *social shape* — what guests may do, and the words we use | friends all edit the schedule; event guests do not |
+| **Entitlement** (plan) | which host *features* are unlocked, and the limits | agenda import, approvals, 50 members |
+
+They are genuinely independent. A free personal trip of eight friends and a 45-person hen trip on a Trip Pass are both `kind: 'personal'` with the same guest freedoms — and only one of them can import an agenda. A company offsite is `kind: 'hosted'` on an Organization plan. Nothing forces these to move together.
+
+So the capability check is:
+
+```
+can(actor, trip, capability)
+  = roleGrants(member.role)                    // who you are
+  ∩ guestPermissions(trip)                     // the social shape, kind as its preset
+  ∩ entitlements(trip)                         // what has been paid for
+```
+
+**Entitlement attaches to the trip, not to the person.** This is Airtable's rule — your bill "is connected to your workspace and not your Airtable account", and one workspace can be paid while others stay free ([Airtable](https://support.airtable.com/docs/changing-your-airtable-workspace-plan)) — and it is the only shape a one-off Trip Pass can have. It also keeps guests free, which is **P1 · Guests never pay** in the premium buyer lens: a guest in a paid trip pays nothing and their own trips stay free.
+
+**What this spec builds now: one nullable field and one parameter.** `Trip.entitlement` (`null` → free) and `entitlements(trip)` returning unlimited while nothing is sold. Roughly twenty lines, zero behaviour change, and it means pricing lands as a lookup rather than a migration against live pilot data. **Nothing is gated during the pilot** — the gathering runs as a free Organization pilot (working doc §5).
+
+What it does **not** build: plans, prices, checkout, limit enforcement, or any upgrade prompt. Those are Phase 1 and **R8 · Entitlement axis** covers how far to go now.
 
 ## 6. Lifecycle
 
@@ -178,15 +219,15 @@ Only `active` counts. Everything that counts members — announcement reach ("go
 
 These are the building blocks. They are cheap now and expensive to retrofit.
 
-| # | Guarantee |
+| # · Name | Guarantee |
 |---|---|
-| **G1** | **Every trip has at least one active host.** The last host cannot be removed, demoted, or leave. They transfer first. (Slack's primary owner; GitHub's add-then-remove.) |
-| **G2** | **Every Organization has at least one active owner.** Same rule. |
-| **G3** | **Nobody can change their own role.** Prevents the accidental self-lockout and makes every demotion attributable to someone else. (GitHub.) |
-| **G4** | **Revocation is immediate across every channel.** Removing a member closes their socket room membership, drops their live location, and invalidates their access within the same request — not at next reconnect. |
-| **G5** | **Every capability check goes through one helper.** `can(actor, trip, capability)`. No route, socket handler or client component compares a role string. |
+| **G1 · Last host** | **Every trip has at least one active host.** The last host cannot be removed, demoted, or leave. They transfer first. (Slack's primary owner; GitHub's add-then-remove.) |
+| **G2 · Last owner** | **Every Organization has at least one active owner.** Same rule. |
+| **G3 · No self-demotion** | **Nobody can change their own role.** Prevents the accidental self-lockout and makes every demotion attributable to someone else. (GitHub.) |
+| **G4 · Immediate revocation** | **Revocation is immediate across every channel.** Removing a member closes their socket room membership, drops their live location, and invalidates their access within the same request — not at next reconnect. |
+| **G5 · One helper** | **Every capability check goes through one helper.** `can(actor, trip, capability)`. No route, socket handler or client component compares a role string. |
 
-G5 is testable: a lint rule or a test that greps the server for a role-string comparison outside `services/permissions.js` and fails.
+G5 · One helper is testable: a lint rule or a test that greps the server for a role-string comparison outside `services/permissions.js` and fails.
 
 ### 6.3 Promotion and demotion
 
@@ -217,12 +258,15 @@ The register. Each is a decision the build will otherwise make by accident.
 | 7 | **A declined person opens the link again** | Spec 002 has no position. They currently see the same "request sent" screen forever (wireframe frame 4). Silence is deliberate for the decline itself (F16) but a permanent lie is not. → R6 |
 | 8 | **The same human, two accounts** | Work Google and personal email are two users unless the verified email matches (F9). Combined with F17 — an email invitee skips approval with *any* account — one person can hold two TripMembers on one trip, one `invited` forever and one `active`. Counts, splits and analytics all drift. The invitation should be marked consumed when it is accepted, whatever account accepts it. |
 | 9 | **An org admin opens a trip in their own Organization** | 403, sees nothing (spec 002 AC 2). Stricter than all six benchmarked products. → R1 |
-| 10 | **A personal trip that should become an Organization's** | A wedding planner starts personal and formalizes. Needs `Trip.orgId` to be settable after creation, by the host only, and only into an Organization they belong to. Reserve the move; do not build the screen. **Upgraded 2026-11-11:** if [spec 012](012-joining-naming-and-the-first-trip.md) O1 lands on "an Organization is never required", this path becomes **required rather than reserved** — Figma deferred the container correctly and then had to move every draft one file at a time. See 012 §5.7 and Q7. |
+| 10 | **A personal trip that should become an Organization's** | A wedding planner starts personal and formalizes. Needs `Trip.orgId` to be settable after creation, by the host only, and only into an Organization they belong to. Reserve the move; do not build the screen. **✅ Upgraded 2026-11-12: required, not reserved.** O1 · Organization never required landed on "never", so a personally owned trip is now the normal case and the move path is the only way one ever reaches an Organization. Figma deferred the container correctly and then had to move every draft one file at a time, with no bulk move and support tickets for cross-account cases. The **field** (`Trip.orgId` settable by the host, into an Organization they belong to) ships in block 1; the **screen** is Phase 1 per O7 · Move path timing. See 012 §5.7 and Q7 · No move path. |
 | 11 | **Removing someone who owes money** | Spec 005 territory. Position for now: removal is blocked while they are part of an unsettled expense, or their share is reassigned first. Named here so 005 inherits it rather than inventing it. |
 | 12 | **A guest is removed and re-added** | Their old polls, expenses and questions stay and keep their name. Re-adding restores `active` on the same record; it does not create a second one. |
 | 13 | **A new feature ships with no capability decided** | The governance case, and the one most likely to actually happen. Rule: **a feature PR that adds a write path adds a row to §5.1 in the same PR, defaulting to host-only.** Reviewable in a diff. |
 | 14 | **A trip after the event ends** | Nobody has decided whether a past trip is read-only. Expenses and settle-up (005) argue for staying writable; announcements argue for closing. → R7 |
 | 15 | **Pending requesters counted as members** | Frame 10 says "goes to 38 people". If that count includes `requested` or `invited`, hosts will believe they reached people they did not. §6.1 settles it: `active` only. |
+| 16 | **A paid trip moves into an Organization** | A Trip Pass holder's trip is adopted into an Organization on a plan ([spec 012](012-joining-naming-and-the-first-trip.md) §5.7). Two entitlements now cover one trip. Wispr Flow warns of exactly this overlap — joining a team can replace a personal plan, and joining an unbilled team can make you its payer ([Wispr Flow](https://docs.wisprflow.ai/articles/2458545840-faqs-for-flow-pro-team-and-flow-enterprise-plans)). Position: **entitlements are additive and the trip keeps the most permissive**; the Trip Pass is never silently consumed or refunded, and the move screen says so. |
+| 17 | **An Organization's plan lapses with trips mid-flight** | Not during the pilot, but the rule belongs here: a lapse **never** removes access or data. It stops new paid actions (no new import, no new approvals beyond the free cap) and leaves every existing member, item and expense exactly as it is. Principle 1 says the trip is the source of truth; billing is not allowed to edit it. |
+| 18 | **The payer is not a trip member** | A People lead buys the offsite and never joins it. Billing must not require a `TripMember`, and buying must not grant one — otherwise paying silently breaks D19 · Org membership grants no trip access. The payer is an account, not a role. |
 
 ## 8. Risks
 
@@ -266,6 +310,9 @@ One conflict to flag, inherited from spec 002 and not created here: **F17** remo
 | R-F10 | Approving an already-active member is a no-op that succeeds. Accepting an invitation marks it consumed whatever account accepts it. |
 | R-F11 | The trip payload returned to a client includes the viewer's resolved capability list. |
 | R-F12 | A demotion or removal never deletes or reattributes content the person created. |
+| R-F13 | `can()` resolves role ∩ guest permissions ∩ **entitlement**. `Trip.entitlement` is nullable and reserved; while it is null the trip is unlimited and nothing is gated. |
+| R-F14 | Entitlement attaches to the **trip**, never to a user. A guest in a paid trip pays nothing and their own trips are unaffected. |
+| R-F15 | Nothing about billing may grant, remove or require a trip role, and a lapsed or absent entitlement never removes access or data. |
 
 ### 10.2 Technical
 
@@ -292,6 +339,9 @@ One conflict to flag, inherited from spec 002 and not created here: **F17** remo
 10. Given a co-host who published schedule items, when they are demoted to guest, then the items remain with their name and the former co-host can no longer edit them.
 11. Given two hosts approve the same request simultaneously, then one TripMember exists and both calls return success.
 12. Given a client, when it renders the trip, then every action control is shown from the resolved capability list and no component compares a role name.
+13. Given `Trip.entitlement` is null, then every capability resolves exactly as it did before the field existed, and no limit is enforced anywhere.
+14. Given a personal trip whose entitlement unlocks agenda import, then its host can import — without the trip's kind changing and without any member's role or label changing.
+15. Given a guest in a paid trip, then they are charged nothing and their own personal trips keep their own entitlement.
 
 ## 12. Build order — the blocks
 
@@ -299,7 +349,7 @@ One conflict to flag, inherited from spec 002 and not created here: **F17** remo
 
 | Block | What | In the pilot? | Depends on |
 |---|---|---|---|
-| **1** | Capability vocabulary, `can()`, `TripMember` + `OrgMember` with `grants`/`revokes` reserved, the three presets, `guestPermissions`, the migration, G3 and G5 | **Yes — this is epic [#20](https://github.com/Fogataz/trip-planner/issues/20)** | — |
+| **1** | Capability vocabulary, `can()`, `TripMember` + `OrgMember` with `grants`/`revokes` reserved, the three presets, `guestPermissions`, the migration, **G3 · No self-demotion** and **G5 · One helper**, plus `Trip.entitlement` reserved (§5.4, **R8 · Entitlement axis**) | **Yes — this is epic [#20](https://github.com/Fogataz/trip-planner/issues/20)** | — |
 | **2** | G1, G2, G4: last host, last owner, revocation across socket and live location | **Partly.** G4 is a principle-3 gap in today's code and should not wait; G1 and G2 are one service check each | 1 |
 | **3** | `schedule.propose`: guest suggestions as drafts with `source: 'guest_suggestion'`, reviewed in the existing draft screen | No | 1, and spec 002 part 6 |
 | **4** | Per-member overrides: `grants` and `revokes` filled, the "collaborator who can do one extra thing" case | No | 1 |
@@ -309,17 +359,20 @@ Block 1 adds nothing to epic #20's existing scope. It **constrains** it: reserve
 
 ## 13. Open decisions — need your call
 
+**Code key.** Every code in these specs carries a short name after a `·`, so it can be read without a lookup: **R*n*** open decisions here, **G*n*** guarantees (§6.2), **Q*n*** QA findings and **O*n*** open decisions in [spec 012](012-joining-naming-and-the-first-trip.md), **S*n*** open decisions in [spec 002](002-hosted-event-pilot.md), **D*n*** product-owner decisions in the [working doc](../product/working-doc.md). Write them as `R1 · Org owner reach`, never bare.
+
 Per D27 each carries a recommendation as the working default. **R1 and R2 shape block 1's data and should be answered before the pilot build starts.** The rest can run on their recommendation.
 
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
-| **R1** | Can an Organization owner reach a trip in their Organization that they have no role on? | (a) Never — spec 002 AC 2 as written / (b) **Claim**: an owner can take a host role, the act is logged and announced in the trip, and they see nothing until they do / (c) Implicit read access, as GitHub and Meta do | **(b) Claim.** (a) means a company cannot get into its own event if the sole host is unreachable, which is case 2 and the single most likely real failure. (c) breaks principle 3. A claim is visible, attributable and refusable in audit — "nobody reads your trip silently" survives. |
-| **R2** | What happens to trip roles when someone leaves an Organization? Working doc §4.2 (D21, proposed) and spec 002 §10 **currently say opposite things.** | (a) Nothing changes — spec 002 §10 / (b) **They lose host and co-host on that Organization's trips; the trips stay; if that empties the hosts, an org owner is asked to take over** — working doc §4.2 / (c) They are removed from the Organization's trips entirely | **(b), and fix spec 002 §10 to match.** (a) means a departed employee keeps host rights on company events. (c) destroys their expense and poll history. Whichever you pick, the two documents must stop disagreeing. |
-| **R3** | Do guests get `schedule.propose` at all? | (a) **Reserve the capability and the `source` value now, build it after the pilot** / (b) Build it in the pilot / (c) Guests never propose; hosted trips are read-only for guests | **(a).** It is the designed answer if pilot engagement is low (risk 6), and building it now is the clearest way to miss 24 Nov. Reserving costs one enum value. |
-| **R4** | Do we need Luma's "credited but powerless" role — a name on the event with no access? | (a) **No, not yet** / (b) Yes, a fourth trip role / (c) Yes, as a flag on guest | **(a).** Real need, no pilot evidence. If it comes up, (c) is cheaper than a fourth preset and fits the overrides in block 4. |
-| **R5** | Can a pending requester be approved straight into co-host? | (a) **Yes, one step** / (b) No, approve first then promote | **(a).** Hosts know who their co-organizers are before the link goes out. Two steps for a known case is friction with no safety gain — the host is making the same decision either way. |
-| **R6** | What does a declined requester see? | (a) The "request sent" screen forever — today's behaviour / (b) **"The host has not added you. Ask them directly."** with no reason, and re-requesting allowed after a host re-opens it / (c) An explicit "declined" | **(b).** (a) is a lie the user will act on. (c) is a rejection notification nobody asked us to deliver — spec 002 F16 is deliberate that a decline is silent, and this keeps it silent without being false. |
-| **R7** | Is a trip read-only after it ends? | (a) **No, nothing changes** / (b) Read-only after a grace period / (c) Host can close it | **(a) for now.** Settle-up (spec 005) needs writes after the event, and we have no evidence anyone wants an archive. Revisit with 005. |
+| **R1 · Org owner reach** ✅ | **Decided 2026-11-12: (b) Claim.** Can an Organization owner reach a trip in their Organization that they have no role on? | (a) Never — spec 002 AC 2 as written / (b) **Claim**: an owner can take a host role, the act is logged and announced in the trip, and they see nothing until they do / (c) Implicit read access, as GitHub and Meta do | **(b) Claim.** (a) means a company cannot get into its own event if the sole host is unreachable, which is case 2 and the single most likely real failure. (c) breaks principle 3. A claim is visible, attributable and refusable in audit — "nobody reads your trip silently" survives. |
+| **R2 · Leaving an Organization** ✅ | **Decided 2026-11-12: (b) roles are dropped.** What happens to trip roles when someone leaves an Organization? Working doc §4.2 (**D21 · Leaving an Organization**, proposed) and spec 002 §10 **currently say opposite things.** | (a) Nothing changes — spec 002 §10 / (b) **They lose host and co-host on that Organization's trips; the trips stay; if that empties the hosts, an org owner is asked to take over** — working doc §4.2 / (c) They are removed from the Organization's trips entirely | **(b), and fix spec 002 §10 to match.** (a) means a departed employee keeps host rights on company events. (c) destroys their expense and poll history. Whichever you pick, the two documents must stop disagreeing. |
+| **R3 · Guest proposals** | Do guests get `schedule.propose` at all? | (a) **Reserve the capability and the `source` value now, build it after the pilot** / (b) Build it in the pilot / (c) Guests never propose; hosted trips are read-only for guests | **(a).** It is the designed answer if pilot engagement is low (risk 6), and building it now is the clearest way to miss 24 Nov. Reserving costs one enum value. |
+| **R4 · Credited-but-powerless role** | Do we need Luma's "credited but powerless" role — a name on the event with no access? | (a) **No, not yet** / (b) Yes, a fourth trip role / (c) Yes, as a flag on guest | **(a).** Real need, no pilot evidence. If it comes up, (c) is cheaper than a fourth preset and fits the overrides in block 4. |
+| **R5 · Approve straight to co-host** | Can a pending requester be approved straight into co-host? | (a) **Yes, one step** / (b) No, approve first then promote | **(a).** Hosts know who their co-organizers are before the link goes out. Two steps for a known case is friction with no safety gain — the host is making the same decision either way. |
+| **R6 · Declined requester** | What does a declined requester see? | (a) The "request sent" screen forever — today's behaviour / (b) **"The host has not added you. Ask them directly."** with no reason, and re-requesting allowed after a host re-opens it / (c) An explicit "declined" | **(b).** (a) is a lie the user will act on. (c) is a rejection notification nobody asked us to deliver — spec 002 F16 is deliberate that a decline is silent, and this keeps it silent without being false. **Carried to spec 012 as O10 · Declined requester**, where the join screens live. |
+| **R7 · Trip after it ends** | Is a trip read-only after it ends? | (a) **No, nothing changes** / (b) Read-only after a grace period / (c) Host can close it | **(a) for now.** Settle-up (spec 005) needs writes after the event, and we have no evidence anyone wants an archive. Revisit with 005. |
+| **R8 · Entitlement axis** ✅ | **Decided 2026-11-12: (a) reserve the field only.** How far do we go now on §5.4's third axis? | (a) **Reserve `Trip.entitlement` and the `entitlements()` parameter in block 1; build nothing else** / (b) Ignore it until pricing is decided / (c) Build plans and limit enforcement now | **(a).** It is ~20 lines and no behaviour change, and it is the difference between pricing being a lookup and pricing being a migration against live pilot data. (b) is the one that costs real money later: **D20 · Free personal limits** is already TBD with a Trip Pass in it, so we know this axis is coming. (c) is scope we cannot afford before 24 Nov and prices nobody has set. |
 
 **TBD — needs the product owner, not a recommendation:** the three screens flagged in spec 002 §6 (create an Organization, the Organization member list, trip people and roles) are the UI for this model. R1 and R2 change what the third one has to show.
 
@@ -330,11 +383,41 @@ Nothing in spec 002's scope. Four corrections and one addition:
 | Spec 002 | Change |
 |---|---|
 | §7.2 "Replace every `role === 'organizer'` check with one capability helper" | Points here for the capability list and `can()`'s signature. |
-| §10 "removing an org member does not change their trip roles" | **Contradicts the working doc §4.2 (D21).** Resolve via R2. |
+| §10 "removing an org member does not change their trip roles" | **Contradicts the working doc §4.2 (D21 · Leaving an Organization).** Resolve via R2. |
 | F6 hosted vs personal guest permissions | Is a preset over `Trip.guestPermissions`, not a branch. §5.2. |
 | F7 migration | Gains `--dry-run` and a reverse script before it runs. Risk 3. |
 | — | **New:** G4. Spec 002 makes removal a real workflow and today's socket keeps serving removed members. Belongs in the pilot, not after it. |
 
-## 15. Build status
+## 15. Design lenses
 
-Not started. Draft, pending the gate. Block 1 is epic [#20](https://github.com/Fogataz/trip-planner/issues/20) under milestone M0.
+Per [design-lenses.md](../process/design-lenses.md) (lens-D1 · All fourteen lenses).
+
+| # | Lens | This spec |
+|---|---|---|
+| L1 | Localization | No user-facing string except the role labels, which are 18 flat keys resolved per trip kind and use forms that do not inflect for gender ([spec 012](012-joining-naming-and-the-first-trip.md) §6.2, **O8 · Ungendered role labels**). The stored role is never shown raw. |
+| L2 | Roles and access | **This spec is that table.** §5.1 is one row per action across host, co-host and guest, by trip kind; §4.3 covers org owner, admin and member; §6.1 covers prospective traveller (`requested`) and signed-out visitor — both see nothing. **D19 · Org membership grants no trip access** holds: only an active `TripMember` grants anything. |
+| L3 | Money | §5.4. The single place entitlement is checked is `entitlements(trip)` inside `can()`. `Trip.entitlement` is nullable and returns unlimited; no tier is enforced in the pilot. No AI cost is added by this spec. |
+| L4 | Privacy and data | No new personal data. `TripMember` and `OrgMember` hold uid and email, both already stored today; `statusChangedBy` is added for attribution and is readable by hosts only. **G4 · Immediate revocation** drops a removed member's live location, which is in memory and never stored. Nothing leaves to an AI provider. |
+| L5 | Real-time | Emits `trip:access-changed` on removal or demotion; the listener is the trip context in `client/src/trip/TripContext.tsx`, which re-fetches rather than showing stale state. No other new event. |
+| L6 | Measurability | None added here — [spec 012](012-joining-naming-and-the-first-trip.md) §5.9.1 owns the funnel events. The analytics `role` property reads `status: 'active'` only (R-F9). |
+| L7 | States and degradation | Every refused action is a 403 that changes nothing (N8). **G1 · Last host** and **G2 · Last owner** refuse with the way out named ("make someone else a host first"), never a bare error. A capability check never depends on a third party, so nothing here degrades when maps, AI or push fail. |
+| L8 | Notifications | None added. `notifyTrip` filters recipients by their `TripMember` settings (002 F28); this spec only changes where that list comes from. |
+| L9 | Accessibility | No new screens. The UI for this model is [spec 012](012-joining-naming-and-the-first-trip.md) frames 6, 7 and 9, where N5 applies. |
+| L10 | Reversibility | A demotion or removal never deletes or reattributes content (§6.3, R-F12); re-adding restores the same record rather than creating a second (case 12). The migration has a reverse script written before the forward one runs (risk 3). Nothing AI-made reaches the trip without `draft.publish`. |
+| L11 | Migration | The core of it: creator → host, other organizers → co-host, members → guest, status carried over. **With no migration run, every existing trip is unreadable to the new code**, so the script is a build-order row in slice S1 and ships in the same PR. `--dry-run` prints the mapping; a backup is taken first (002 F7, AC 4). |
+| L12 | Enforcement | `requireCapability('x')` middleware on every new endpoint, loading trip and member once. A guest, a signed-out visitor or a valid token for another trip all get 403. The socket path calls the same `can()`, which is the gap that exists today (§2). **G5 · One helper** is a test that fails if any route, socket handler or client component compares a role string. |
+| L13 | Scale | `TripMember` is a collection rather than an embedded array precisely for hundreds of members (working doc §4.2); unique index on `(tripId, userId)`, and the capability check reads one member document, not the member list. The people list is the one unbounded list and is paged in [spec 012](012-joining-naming-and-the-first-trip.md) frame 6. |
+| L14 | Lifecycle | Roles apply identically before, during and after. **R7 · Trip after it ends** keeps a trip writable once it is over, because settle-up ([spec 005](005-settle-up.md)) needs writes after the event. A week later, roles still gate the ledger. |
+
+## 16. Build status
+
+**Approved 2026-11-12.** Not started.
+
+| Block | Epic |
+|---|---|
+| 1 — the foundation | [#20 Organizations, trip roles and TripMember migration](https://github.com/Fogataz/trip-planner/issues/20) |
+| 2 — G1 · Last host and G2 · Last owner | [#115 A trip and an Organization always have someone in charge](https://github.com/Fogataz/trip-planner/issues/115) |
+| 2 — G4 · Immediate revocation | [#20](https://github.com/Fogataz/trip-planner/issues/20), because it closes a live principle-3 defect |
+| 3–5 | No epic yet. Phase 1, after the pilot. |
+
+Both epics sit under **I1 Run the hosted event pilot** ([#19](https://github.com/Fogataz/trip-planner/issues/19)), milestone **M0**. Wireframes for this model are [012 frames 6, 7 and 9](../../wireframes/012-joining-and-naming/index.html).

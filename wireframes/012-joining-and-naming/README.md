@@ -56,18 +56,21 @@ Two kinds of annotation:
 | O11 | A count of who is going, never names, from 3 up | 11 |
 | O12 | Privacy note once per person, not per trip | 11 |
 
-**Two matter most.** If **O1** lands on "an Organization is required", frame 5 gains a gate
-before the trip exists, frame 8 stops being contextual and frame 10 loses its purpose. If
-**door A** (§5.8) is not taken, frame 11 disappears and the pilot's 38 invited attendees all
-go through request-and-wait for a decision their host already made.
+**✅ Decided 2026-11-12, and the spec is approved.** **O1 · Organization never required** landed
+on *never required*, so frames 5, 8 and 10 stand as drawn and frame 10's move path goes from
+reserved to **required** — a personally owned trip is now the normal case, so it is the only
+route into an Organization. **R1 · Org owner reach** landed on *claim*, which makes frame 10's
+second "what changes" line **true**: an owner could take the event over, visibly and on the
+record, if the host were unreachable. **R2 · Leaving an Organization** landed on *roles are
+dropped*, which is frame 9's removal behaviour. **R8 · Entitlement axis** landed on *reserve
+`Trip.entitlement` only*. The **door A** design in frame 11 is taken.
 
-**O8 is blocked on someone else.** The Spanish and Portuguese role labels in frame 13 are a
-proposal for the native reviewers named in [spec 003](../../docs/specs/003-localization.md)
-§6 — not final copy, and not something to write into a locale file first.
+Everything else runs on its recommendation per **D27 · Recommendations are working defaults**.
 
-Two frames also depend on decisions in [spec 011](../../docs/specs/011-roles-and-permissions.md):
-**R1** (frame 10's second "what changes" line is false if an org owner can never claim a
-trip) and **R2** (frame 9's removal behaviour).
+**O8 · Ungendered role labels is still blocked on someone else.** The Spanish and Portuguese
+labels in frame 13 are a proposal for the native reviewers named in
+[spec 003](../../docs/specs/003-localization.md) §6 — not final copy, and **not something to
+write into a locale file first**.
 
 ## Not drawn
 

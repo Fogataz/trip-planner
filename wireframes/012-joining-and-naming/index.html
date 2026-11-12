@@ -116,7 +116,7 @@
     <div class="card">
       <h3>Open decisions drawn as defaults</h3>
       <p>O1 Organization never required — frames 5, 8, 10.<br>O3 role labels per trip kind — frames 6, 7, 13.<br>O4 attribution order — frames 1, 2.<br>O5 first name on the email-link path — frame 3.<br>O6 profile offer while waiting — frame 4.<br>O7 move path, data now and screen later — frame 10.<br>O8 ungendered role labels — frame 13.<br>O9 the event's language for first invitations — frame 12.<br>O11 a count, never names — frame 11.<br>O12 privacy note once per person — frame 11.</p>
-      <p><strong>O1 and the door-A design are the ones that matter.</strong> If O1 lands on "Organization required", frames 5, 8 and 10 change shape. If door A is not taken, frame 11 disappears and the pilot's 38 attendees all go through request-and-wait.</p>
+      <p><strong>✅ Decided 2026-11-12.</strong> <strong>O1 · Organization never required</strong> landed on <em>never required</em>, so frames 5, 8 and 10 stand as drawn and frame 10's move path goes from reserved to required. <strong>R1 · Org owner reach</strong> landed on <em>claim</em>, which makes frame 10's second "what changes" line true. <strong>R2 · Leaving an Organization</strong> landed on <em>roles are dropped</em>, and <strong>R8 · Entitlement axis</strong> on <em>reserve the field</em>. The door-A design in frame 11 is taken. Everything else below runs on its recommendation per D27 · Recommendations are working defaults.</p>
     </div>
   </div>
 
@@ -611,7 +611,7 @@
           <h3>Fixes Q7 — 011 case 10, §10.2 · O7, O-F4</h3>
           <p><strong>This is Figma's lesson drawn.</strong> Figma deferred the container for years — correctly — and then had to move every draft into a team, one file at a time, with no bulk move and support tickets for cross-account cases. The deferral was not the mistake; bolting the move on afterwards was.</p>
           <p>So <code>Trip.orgId</code> becomes nullable and settable <strong>in block 1</strong>, even though this screen is Phase 1 (O7). The field costs nothing now and is the whole of the lesson.</p>
-          <p>The three "what changes" lines are written from the member's side first, because the host's real fear is that moving it will spam 41 people or lock someone out. The second line is spec 011 <strong>R1</strong> — if R1 lands on (a) Never, that line is false and this frame loses its best reason to exist.</p>
+          <p>The three "what changes" lines are written from the member's side first, because the host's real fear is that moving it will spam 41 people or lock someone out. The second line is spec 011 <strong>R1 · Org owner reach</strong>, <strong>decided 2026-11-12 as (b) claim</strong> — so it is true as drawn: an owner of the Organization could take the event over, visibly and on the record, if the host were unreachable. That is the whole reason a host would move a trip here.</p>
           <p>One way in v1, said plainly rather than discovered later.</p>
         </div>
       </figure>
