@@ -32,4 +32,13 @@ The hooks and commands under `.claude/` do not run in Codex, Copilot or any othe
 | `.claude/hooks/claude-md-mirror.sh` | `scripts/claude-md-mirror-check.sh`, same |
 | `.claude/skills/` | The process docs they are built from, under `docs/process/` |
 
-So a session in another tool gets the same answer, just later — on the pull request instead of inside the edit. Run both scripts locally before you push and the difference disappears.
+So a session in another tool gets the same answer, just later — on the pull request instead of inside the edit.
+
+**One command closes that gap:**
+
+```bash
+npm run check        # everything CI fails you for, about a minute
+npm run check:fast   # docs and server only, a few seconds
+```
+
+Run it before you push and the difference disappears.
