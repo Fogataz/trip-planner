@@ -14,7 +14,7 @@ This file is read by both Claude Code (engineering) and the Claude Cowork projec
 
 - Server: `npm run dev` (nodemon) or `npm start`, run from the repo root.
 - Client: `npm run dev` or `npm run build`, run from `client/`.
-- Client tests: `npm test` in `client/` runs Vitest. Server tests: `npm test` from the repo root runs `node --test server/test/` (node's built-in runner, no dependency). It includes **G5 · One helper**, which fails if a role string is compared outside `services/permissions.js`.
+- Client tests: `npm test` in `client/` runs Vitest. Server tests: `npm test` from the repo root runs `node --test server/test/*.test.js` (node's built-in runner, no dependency). It includes **G5 · One helper**, which fails if a role string is compared outside `services/permissions.js`.
 - Copy `.env.example` to `.env` for MongoDB, Firebase, and the optional Maps and Redis settings. Never commit `.env`.
 
 ## Product principles
