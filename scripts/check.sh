@@ -41,6 +41,10 @@ run "Role labels do not inflect for gender" bash scripts/locale-lint.sh
 
 run "Server syntax" bash -c "find server -name '*.js' -not -path '*/node_modules/*' -print0 | xargs -0 -n1 node --check"
 
+# G5 · One helper is the leading measure for epic #20: it fails if any route,
+# socket handler or client component compares a role string (spec 011 §6.2).
+run "Server tests (G5 · One helper, capabilities)" npm test --silent
+
 if [ "$FAST" -eq 1 ]; then
   printf '\n(--fast: skipped the client build and tests)\n'
 else

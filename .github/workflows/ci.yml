@@ -79,6 +79,13 @@ jobs:
       - name: Server syntax
         run: find server -name '*.js' -not -path '*/node_modules/*' -print0 | xargs -0 -n1 node --check
 
+      # G5 · One helper (spec 011 §6.2) is the leading measure for epic #20:
+      # it fails if 'organizer', 'host', 'co-host' or 'guest' is compared
+      # anywhere outside services/permissions.js. Runs with node's built-in
+      # test runner, so the server gains a suite without a new dependency.
+      - name: Server tests
+        run: npm test
+
       # Report only: findings show in the log but never fail the build.
       - name: Dependency audit (server)
         continue-on-error: true
