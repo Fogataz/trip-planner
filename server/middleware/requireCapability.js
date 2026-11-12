@@ -11,11 +11,14 @@
 const { can } = require('../services/permissions');
 const { loadTripAndMember } = require('../services/membership');
 
-// A refused call says nothing about what exists. A trip the caller holds no
-// role on is a 404 to them, not a 403 that confirms it is there — principle 3
-// and spec 011 AC 2, "they get 403 and see nothing". The 403 is kept for the
-// case where they ARE a member and simply may not do this thing, because that
-// one is actionable: ask a host.
+// Both refusals are 403, which is what spec 011 AC 2 asks for in so many
+// words: "they get 403 and see nothing". An earlier version of this comment
+// claimed the first case was a 404 while the code returned 403 — the comment
+// was wrong, not the code (review of PR #124).
+//
+// The two messages differ because the situations do: not being on the trip is
+// not actionable by the caller, whereas being on it and lacking one
+// capability is — ask a host. Neither says anything about what exists.
 function refuse(res, { member, capability }) {
   if (!member || member.status !== 'active') {
     return res.status(403).json({ error: 'You do not have access to this trip.' });

@@ -81,6 +81,11 @@ const CAPABILITIES = {
   'question.ask':         { host: YES, 'co-host': YES, hostedGuest: YES,     personalGuest: YES },
   'location.share':       { host: YES, 'co-host': YES, hostedGuest: YES,     personalGuest: YES },
   'analytics.export':     { host: YES, 'co-host': NO,  hostedGuest: NO,      personalGuest: NO },
+  // Added 2026-11-12 for the endpoint that makes AC 4 true end to end.
+  // Spec 011 case 13: a feature PR that adds a write path adds a row here in
+  // the same PR, defaulting to host-only. Changing what guests may do is a
+  // decision about the shape of the trip, so it stays with the host.
+  'trip.setGuestPermissions': { host: YES, 'co-host': NO, hostedGuest: NO,   personalGuest: NO },
 };
 
 const ALL_CAPABILITIES = Object.keys(CAPABILITIES);
@@ -201,22 +206,21 @@ function guestGrant(trip, capability) {
   const row = CAPABILITIES[capability];
   if (!row) return NO;
 
-  const overrides = trip?.guestPermissions;
-  if (overrides && Object.prototype.hasOwnProperty.call(toPlain(overrides), capability)) {
-    const override = toPlain(overrides)[capability];
-    if (override === true || override === false || override === CREATOR) return override;
-  }
+  const override = guestOverride(trip, capability);
+  if (override === true || override === false || override === CREATOR) return override;
   return row[preset];
 }
 
-// Mongoose Maps and documents are not plain objects; read them the same way.
-function toPlain(value) {
-  if (!value) return {};
-  if (typeof value.toObject === 'function') return value.toObject();
-  if (typeof value.get === 'function' && typeof value.entries === 'function') {
-    return Object.fromEntries(value.entries());
-  }
-  return value;
+// Trip.guestPermissions is a list of { capability, allowed }. It is a list
+// rather than an object keyed by capability because capability names contain
+// a dot, which Mongoose Maps reject outright and which is ambiguous in a
+// $set path.
+function guestOverride(trip, capability) {
+  const overrides = trip?.guestPermissions;
+  if (!overrides) return undefined;
+  const entries = typeof overrides.toObject === 'function' ? overrides.toObject() : overrides;
+  if (!Array.isArray(entries)) return undefined;
+  return entries.find((e) => e && e.capability === capability)?.allowed;
 }
 
 // ---------------------------------------------------------------------------

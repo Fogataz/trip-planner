@@ -89,14 +89,20 @@ const tripSchema = new mongoose.Schema({
   // Overrides to the GUEST COLUMN of the capability table, nothing else
   // (spec 011 §5.2). A host turning on "guests can add schedule items" flips
   // one entry here; it branches no route. Keys are capability names.
+  // A LIST, not a map keyed by capability name. Mongoose Maps reject keys
+  // containing a dot and every capability is named `noun.verb`, so a map here
+  // could never actually be written — found by exercising the endpoint
+  // against a real database rather than by unit tests, which passed because
+  // they used plain objects. Dotted keys are also ambiguous in a $set path.
   guestPermissions: {
-    type: Map,
-    of: mongoose.Schema.Types.Mixed,
-    default: () => new Map(),
-    validate: {
-      validator: (map) => [...(map?.keys() || [])].every((k) => ALL_CAPABILITIES.includes(k)),
-      message: 'guestPermissions keys must be capability names from spec 011 §5.1.',
-    },
+    type: [
+      {
+        _id: false,
+        capability: { type: String, enum: ALL_CAPABILITIES, required: true },
+        allowed: { type: Boolean, required: true },
+      },
+    ],
+    default: () => [],
   },
 
   // RESERVED ONLY — R8 · Entitlement axis (decided 2026-11-12).

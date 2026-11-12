@@ -34,9 +34,16 @@
 //
 // It is a factory rather than a function so the socket state it needs (io and
 // the two in-memory maps, both owned by index.js) can be handed in — and so
-// server/test/g4-revocation.test.js can drive it with no database. G4 is the
-// part of this slice most easily left half-done, and an assertion is the only
-// thing that stops that.
+// server/test/g4-revocation.test.js can drive it with no database.
+//
+// That test uses a stand-in for `io` with the four methods used below, not a
+// real socket.io server: it proves which sockets are evicted, which events
+// fire and which map entries are dropped, and not socket.io's own room
+// semantics. An earlier version of this comment claimed otherwise (review of
+// PR #124). The whole path runs against real clients at the dry run.
+//
+// G4 is the part of this slice most easily left half-done, and an assertion
+// is the only thing that stops that.
 
 function makeRevokeTripAccess({ io, liveLocations, activePresence }) {
   // What they may do here changed, but they are still a member: tell them so

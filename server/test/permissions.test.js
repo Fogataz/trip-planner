@@ -45,8 +45,8 @@ test('every capability row has all four columns', () => {
   }
 });
 
-test('the vocabulary is the one in spec 011 §5.1 — 25 capabilities', () => {
-  assert.strictEqual(ALL_CAPABILITIES.length, 25);
+test('the vocabulary is the one in spec 011 §5.1, plus trip.setGuestPermissions', () => {
+  assert.strictEqual(ALL_CAPABILITIES.length, 26);
 });
 
 // ---------------------------------------------------------------------------
@@ -121,7 +121,7 @@ test('a hosted guest writes nothing into the shared trip directly', () => {
 // ---------------------------------------------------------------------------
 
 test('AC 4 · one guest override flips one entry and nothing else', () => {
-  const trip = { kind: 'hosted', entitlement: null, guestPermissions: { 'schedule.edit': true } };
+  const trip = { kind: 'hosted', entitlement: null, guestPermissions: [{ capability: 'schedule.edit', allowed: true }] };
   const guest = member('guest');
 
   assert.strictEqual(can(guest, trip, 'schedule.edit'), true);
@@ -137,7 +137,7 @@ test('AC 4 · one guest override flips one entry and nothing else', () => {
 });
 
 test('an override can also take a capability away', () => {
-  const trip = { kind: 'personal', entitlement: null, guestPermissions: { 'schedule.edit': false } };
+  const trip = { kind: 'personal', entitlement: null, guestPermissions: [{ capability: 'schedule.edit', allowed: false }] };
   assert.strictEqual(can(member('guest'), trip, 'schedule.edit'), false);
 });
 
@@ -376,7 +376,7 @@ test('a personal guest keeps the creator rows conditional too', () => {
 
 test('can() is pure — it never mutates what it is given', () => {
   const actor = member('guest');
-  const trip = { kind: 'hosted', entitlement: null, guestPermissions: { 'poll.create': true } };
+  const trip = { kind: 'hosted', entitlement: null, guestPermissions: [{ capability: 'poll.create', allowed: true }] };
   const actorBefore = JSON.stringify(actor);
   const tripBefore = JSON.stringify(trip);
   capabilitiesFor(actor, trip);

@@ -13,8 +13,9 @@ const { generateItinerary } = require('../services/itineraryBuilder');
 const ActivityLog = require('../models/ActivityLog');
 const { logItineraryChange, logTripUpdate } = require('../services/activityLogger');
 const { notifyTrip } = require('../services/notifications');
-const { can } = require('../services/permissions');
+const { can, ALL_CAPABILITIES } = require('../services/permissions');
 const { loadMember, presentTrip, allMembers } = require('../services/membership');
+const { requireCapability } = require('../middleware/requireCapability');
 
 const router = express.Router();
 
@@ -232,7 +233,9 @@ router.put('/:groupId', async (req, res) => {
       },
       { new: true }
     );
-    res.json(trip);
+    // Not the raw document: that carries the deprecated embedded members
+    // array, which is no longer written and is therefore stale.
+    res.json(presentTrip(trip, me, await allMembers(trip._id)));
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -248,6 +251,45 @@ router.delete('/:groupId', async (req, res) => {
     await Trip.deleteOne({ groupId: req.params.groupId });
     await deleteUploadedAsset(trip.cover);
     res.json({ message: 'Trip deleted' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Turn one guest capability on or off for this trip.
+//
+// AC 4: "Given a host turns on 'guests can add schedule items' for a hosted
+// trip, then a guest can add one, and no other guest capability changes."
+// can() has honoured Trip.guestPermissions since this slice began, but
+// nothing could SET it, so the criterion was only half true (review finding
+// 8). This is the whole of the missing half; the screen is a later slice.
+//
+// Overrides the guest column and nothing else (spec 011 §5.2), so it can
+// never grant a guest something the host does not have.
+router.patch('/:groupId/guest-permissions', requireCapability('trip.setGuestPermissions'), async (req, res) => {
+  try {
+    const { capability, allowed } = req.body || {};
+    if (!ALL_CAPABILITIES.includes(capability)) {
+      return res.status(400).json({ error: 'Unknown capability.', capability });
+    }
+    if (typeof allowed !== 'boolean' && allowed !== null) {
+      return res.status(400).json({ error: 'allowed must be true, false or null to clear the override.' });
+    }
+
+    const trip = req.trip;
+    const overrides = (trip.guestPermissions || []).filter((e) => e.capability !== capability);
+    if (allowed !== null) overrides.push({ capability, allowed });
+    trip.guestPermissions = overrides;
+    trip.updatedAt = new Date();
+    await trip.save();
+
+    if (io) {
+      // Everyone's capability list may have just changed, so the clients
+      // re-fetch rather than keep controls they no longer have.
+      io.to(`trip:${trip.groupId}`).emit('trip:access-changed', { tripId: trip.groupId });
+    }
+
+    res.json(presentTrip(trip, req.member, await allMembers(trip._id)));
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
