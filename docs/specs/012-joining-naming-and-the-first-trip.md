@@ -51,7 +51,7 @@ So the test is narrow. **Does the product function without this step?**
 
 **Q1, Q4 and Q13 are regressions spec 002 would ship as written.**
 
-**Q21–Q24 were added 2026-11-12 by engineering**, while building slice S1. They are defects in specs 002 and 011 rather than in 002 alone, and the reasoning and the fix for each is [spec 011](011-roles-and-permissions.md) §17.
+**Q21–Q27 were added 2026-11-12 by engineering** — Q21–Q24 while building slice S1 · Permissions foundation, Q25–Q27 from the review of [PR #124](https://github.com/Fogataz/trip-planner/pull/124). They are defects in specs 002 and 011 rather than in 002 alone, and the reasoning and the fix for each is [spec 011](011-roles-and-permissions.md) §17.
 
 | # | Finding | Where | Severity | Position |
 |---|---|---|---|---|
@@ -79,6 +79,9 @@ So the test is narrow. **Does the product function without this step?**
 | **Q22 · Status carried over is not a valid status** | **`pending` is not in the [spec 011](011-roles-and-permissions.md) §6.1 vocabulary.** §10.2 says status is carried over; today's values are `pending`, `active`, `removed`. | 011 §10.2 × §6.1 | Medium | `pending → invited`, explicitly. [Spec 011](011-roles-and-permissions.md) §17. |
 | **Q23 · The last-host guard has a gap between slices** | **Block 1 deletes today's "Organizers cannot be removed" and block 2 adds G1 · Last host** — so the pilot would run in the window between them with no protection at all. | 011 §12 | **High for the pilot** | The pure predicate ships in block 1; G2 · Last owner stays in [#115](https://github.com/Fogataz/trip-planner/issues/115). [Spec 011](011-roles-and-permissions.md) §17. |
 | **Q24 · `ownerType` duplicates `orgId`** | **Spec 002 §7.2 adds both**, but since **O1 · Organization never required** "personally owned" is exactly "`orgId` is null". Two fields, one fact. | 002 §7.2 × O-F3 | Low | `ownerType` not built. [Spec 011](011-roles-and-permissions.md) §17. |
+| **Q25 · Eviction is for access lost, not a role change** | **A promotion or demotion evicted the member's sockets**, and the client re-joins only on `connect` — so they silently stopped receiving live events until they reloaded. | 011 R-F8 × principle 2 | **High** | Two signals: removal evicts, a role change notifies. [Spec 011](011-roles-and-permissions.md) §17. |
+| **Q26 · Removal needs the §6.3 matrix too** | **A co-host could remove a host** — while §6.3 forbids them even to demote one. | 011 §5.1 × §6.3 | Medium | Removal borrows the matrix. [Spec 011](011-roles-and-permissions.md) §17. |
+| **Q27 · Restoring a role must respect the restorer's authority** | **A personal-trip guest could re-add a removed host and restore host**, because `member.invite` is held by every member of a personal trip. | 011 §6.1 × §5.1 | Medium | The restore is bounded by the restorer. [Spec 011](011-roles-and-permissions.md) §17. |
 
 ## 5. The design
 

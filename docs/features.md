@@ -65,7 +65,9 @@ Spec: [specs/011-roles-and-permissions.md](specs/011-roles-and-permissions.md) b
 - **Removing or demoting someone takes effect immediately** (G4): their sockets are forced out of the trip room, their live location is dropped and the others are told they stopped sharing, and the client re-fetches rather than showing a screen it no longer has
 - **A trip always has a host** (G1, the pure half): removing or demoting the last one is refused and names the way out. **Nobody can change their own role** (G3)
 - The trip payload carries the viewer's resolved capability list, and the client renders its controls from that rather than from a role name
-- Migration: `scripts/migrate-tripmembers.js` (backup first, idempotent, `--dry-run`) and `scripts/migrate-tripmembers-reverse.js`
+- Migration: `scripts/migrate-tripmembers.js` (backup first, idempotent, `--dry-run`, `--verify-only`) and `scripts/migrate-tripmembers-reverse.js`. It is **resumable**: every member is upserted every run, so an interrupted run is repaired by running it again, and a verification pass exits non-zero if any active member is missing
+- **Deploy order: migrate first, then the code.** The server reads membership from `TripMember` only, so starting it against a database that has not been migrated would make every existing trip inaccessible to every member. It refuses to start in that state and names the trips and the commands; `ALLOW_UNMIGRATED_TRIPS=1` overrides it for a fresh database
+- A host can turn one guest capability on or off: `PATCH /api/trips/:groupId/guest-permissions` with `{ capability, allowed }`, or `allowed: null` to clear the override
 
 **Not built yet:** Organizations have models but no screens; `grants` and `revokes` on a member are reserved and empty; **G2 · Last owner** is [#115](https://github.com/Fogataz/trip-planner/issues/115); guest proposals, per-member overrides and the org claim path are spec 011 blocks 3–5.
 
