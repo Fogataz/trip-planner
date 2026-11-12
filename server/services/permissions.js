@@ -358,6 +358,51 @@ function changeRoleRefusal(actor, target, newRole, trip) {
   return null;
 }
 
+// May this actor REMOVE this person? (review finding 4)
+//
+// `member.remove` alone said yes to a co-host removing a host. The §6.3
+// matrix governs who may move whom between roles, and removal is strictly
+// more destructive than demotion — it would be odd for a co-host to be unable
+// to demote a host but able to remove one. So removal borrows the same rule:
+// you may remove someone only if you could have moved them to guest first.
+//
+// Returns a refusal message, or null when it is allowed.
+function removeRefusal(actor, target, trip) {
+  if (!can(actor, trip, 'member.remove')) {
+    return 'You cannot remove people from this trip.';
+  }
+  if (String(actor.userId) === String(target.userId)) {
+    // Frame 7: "You cannot remove yourself." Leaving is a different act and
+    // is not built in this slice.
+    return 'You cannot remove yourself from this trip.';
+  }
+  const actorIsHost = actor.role === 'host';
+  if (!actorIsHost && target.role === 'host') {
+    return 'Only a host can remove a host.';
+  }
+  if (!actorIsHost && target.role === 'co-host') {
+    return 'Only a host can remove a co-host.';
+  }
+  return null;
+}
+
+// What role should someone come back with? (review finding 5)
+//
+// Spec 011 §6.1 is deliberate: role and status are orthogonal so that
+// "re-adding someone restores what they were". That is the behaviour we want
+// — but `member.invite` is held by every member of a PERSONAL trip, so on its
+// own it let a guest re-add a removed host and silently restore host, which
+// is a role they could never have granted.
+//
+// So the record still remembers, and the restore is bounded by the actor's
+// own authority: you get your old role back if the person letting you back in
+// could have given it to you, and guest otherwise.
+function restoredRole(actor, previousRole, trip) {
+  if (!previousRole || previousRole === 'guest') return 'guest';
+  const target = { userId: '__restoring__', role: 'guest' };
+  return changeRoleRefusal(actor, target, previousRole, trip) ? 'guest' : previousRole;
+}
+
 // The last active host cannot be demoted or removed (spec 011 G1 · Last host).
 //
 // Scope note: G1 and G2 are slice S7 (#115), not block 1. What is here is only
@@ -395,6 +440,8 @@ module.exports = {
   roleLabelKey,
   roleLabelFallbackKey,
   changeRoleRefusal,
+  removeRefusal,
+  restoredRole,
   wouldLeaveNoHost,
   LAST_HOST_REFUSAL,
 };

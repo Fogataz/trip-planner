@@ -8,6 +8,8 @@ const { notifyTrip, notifyEmail } = require('../services/notifications');
 const {
   can,
   changeRoleRefusal,
+  removeRefusal,
+  restoredRole,
   wouldLeaveNoHost,
   LAST_HOST_REFUSAL,
 } = require('../services/permissions');
@@ -15,6 +17,27 @@ const { loadMember, allMembers, presentMember } = require('../services/membershi
 const { revokeTripAccess, notifyAccessChanged } = require('../services/realtime');
 
 const router = express.Router();
+
+// G1 · Last host, without a check-then-write race (review finding 6).
+//
+// Counting active hosts and then writing leaves a window: two hosts removing
+// each other at the same moment both read "2 hosts", both pass, and the trip
+// is left with none. Mongo cannot express "at least one host" as a constraint
+// and we cannot assume a replica set for transactions, so the write is made
+// and then VERIFIED — and undone if it was the one that emptied the hosts.
+//
+// `apply` must return a function that puts the record back as it was.
+async function guardLastHost(trip, apply) {
+  const undo = await apply();
+  const hostsLeft = await TripMember.countDocuments({
+    tripId: trip._id,
+    role: 'host',
+    status: 'active',
+  });
+  if (hostsLeft > 0) return null;
+  await undo();
+  return LAST_HOST_REFUSAL;
+}
 
 // Load the trip and the caller's membership, and refuse unless they hold
 // `capability`. Returns { trip, me } or null, having already answered.
@@ -58,19 +81,24 @@ router.post('/:groupId/members', async (req, res) => {
       const user = await User.findOne({ uid: userId });
       const memberEmail = user?.email || email || null;
 
-      // Re-adding someone restores the record they had, with the role they
-      // had — it never creates a second one (spec 011 case 12, unique index).
+      // Re-adding restores the record they had, never a second one (case 12,
+      // unique index). The ROLE it restores is bounded by the authority of
+      // the person letting them back in: §6.1 wants "restore what they were",
+      // but member.invite is held by every member of a personal trip, so on
+      // its own it let a guest re-add a removed host (review finding 5).
+      const role = restoredRole(requesterMember, existing?.role, trip);
       const member = await TripMember.findOneAndUpdate(
         { tripId: trip._id, userId },
         {
           $set: {
             groupId: trip.groupId,
             email: memberEmail,
+            role,
             status: 'active',
             statusChangedAt: new Date(),
             statusChangedBy: req.user.uid,
           },
-          $setOnInsert: { role: 'guest', joinedAt: new Date() },
+          $setOnInsert: { joinedAt: new Date() },
         },
         { new: true, upsert: true }
       );
@@ -174,17 +202,23 @@ router.put('/:groupId/members/:userId', async (req, res) => {
     const refusal = changeRoleRefusal(requesterMember, targetMember, role, trip);
     if (refusal) return res.status(403).json({ error: refusal });
 
-    // G1 · Last host. See the note in services/permissions.js: the blunt
-    // "organizers cannot be removed" guard this slice replaces was the only
-    // thing keeping a trip from ending up with nobody in charge.
+    const oldRole = targetMember.role;
+
+    // Cheap pre-check first, so the common refusal never writes at all.
     const members = await allMembers(trip._id);
     if (wouldLeaveNoHost(members, { userId: req.params.userId, newRole: role })) {
       return res.status(409).json({ error: LAST_HOST_REFUSAL });
     }
 
-    const oldRole = targetMember.role;
-    targetMember.role = role;
-    await targetMember.save();
+    const refusedByRace = await guardLastHost(trip, async () => {
+      targetMember.role = role;
+      await targetMember.save();
+      return async () => {
+        targetMember.role = oldRole;
+        await targetMember.save();
+      };
+    });
+    if (refusedByRace) return res.status(409).json({ error: refusedByRace });
 
     await logMemberChange(
       trip._id,
@@ -220,19 +254,32 @@ router.delete('/:groupId/members/:userId', async (req, res) => {
       return res.status(404).json({ error: 'Member not found' });
     }
 
+    // Who may remove whom (§6.3, applied to removal — review finding 4).
+    // member.remove on its own let a co-host remove a host.
+    const refusal = removeRefusal(requesterMember, targetMember, trip);
+    if (refusal) return res.status(403).json({ error: refusal });
+
     const members = await allMembers(trip._id);
     if (wouldLeaveNoHost(members, { userId: req.params.userId, remove: true })) {
       return res.status(409).json({ error: LAST_HOST_REFUSAL });
     }
 
     // Removal is a STATUS change, not a delete. Role and status are
-    // orthogonal (§6.1): a removed co-host stays a co-host, so re-adding
-    // restores what they were, and their polls and expenses keep their name
+    // orthogonal (§6.1): a removed co-host stays a co-host, so re-adding can
+    // restore what they were, and their polls and expenses keep their name
     // (R-F12). The record is the history.
-    targetMember.status = 'removed';
-    targetMember.statusChangedAt = new Date();
-    targetMember.statusChangedBy = req.user.uid;
-    await targetMember.save();
+    const previousStatus = targetMember.status;
+    const raced = await guardLastHost(trip, async () => {
+      targetMember.status = 'removed';
+      targetMember.statusChangedAt = new Date();
+      targetMember.statusChangedBy = req.user.uid;
+      await targetMember.save();
+      return async () => {
+        targetMember.status = previousStatus;
+        await targetMember.save();
+      };
+    });
+    if (raced) return res.status(409).json({ error: raced });
 
     await logMemberChange(
       trip._id,
@@ -274,18 +321,31 @@ router.delete('/:groupId/members', async (req, res) => {
 
     // Replaces "Organizers cannot be removed". That guard refused to remove
     // ANY organizer, which also meant two organizers could never part company.
-    // The real rule is narrower and is the one that matters: a trip is never
-    // left with nobody in charge (G1 · Last host).
+    // The real rules are narrower: who may remove whom (§6.3), and a trip is
+    // never left with nobody in charge (G1 · Last host).
+    if (target.userId) {
+      const refusal = removeRefusal(requesterMember, target, trip);
+      if (refusal) return res.status(403).json({ error: refusal });
+    }
+
     const members = await allMembers(trip._id);
     if (wouldLeaveNoHost(members, { userId: target.userId, remove: true })) {
       return res.status(409).json({ error: LAST_HOST_REFUSAL });
     }
 
     if (target.userId) {
-      target.status = 'removed';
-      target.statusChangedAt = new Date();
-      target.statusChangedBy = req.user.uid;
-      await target.save();
+      const previousStatus = target.status;
+      const raced = await guardLastHost(trip, async () => {
+        target.status = 'removed';
+        target.statusChangedAt = new Date();
+        target.statusChangedBy = req.user.uid;
+        await target.save();
+        return async () => {
+          target.status = previousStatus;
+          await target.save();
+        };
+      });
+      if (raced) return res.status(409).json({ error: raced });
     } else {
       // Never accepted, so there is no history to keep: cancelling an
       // invitation removes the placeholder rather than leaving a ghost in
@@ -406,6 +466,9 @@ router.post('/invitations/:token/accept', async (req, res) => {
       placeholder.statusChangedBy = user.uid;
       await placeholder.save();
     } else {
+      // Accepting an invitation never restores an elevated role on its own:
+      // the role a returning member comes back with is set by whoever invited
+      // them, not by what they used to be (review finding 5).
       await TripMember.findOneAndUpdate(
         { tripId: trip._id, userId: user.uid },
         {
@@ -501,6 +564,9 @@ router.post('/:groupId/invitations/:token/accept', async (req, res) => {
       placeholder.statusChangedBy = user.uid;
       await placeholder.save();
     } else {
+      // Accepting an invitation never restores an elevated role on its own:
+      // the role a returning member comes back with is set by whoever invited
+      // them, not by what they used to be (review finding 5).
       await TripMember.findOneAndUpdate(
         { tripId: trip._id, userId: user.uid },
         {

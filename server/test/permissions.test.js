@@ -20,6 +20,8 @@ const {
   roleLabelKey,
   roleLabelFallbackKey,
   changeRoleRefusal,
+  removeRefusal,
+  restoredRole,
   wouldLeaveNoHost,
 } = require('../services/permissions');
 
@@ -421,4 +423,62 @@ test('the 18 key names are stable, so O8 lands as a value change', () => {
   const names = Object.values(ROLE_LABEL_KEYS).flatMap((kind) => Object.values(kind));
   assert.strictEqual(new Set(names).size, 6, 'six key names per language, 18 across three');
   assert.ok(names.every((n) => n.startsWith('roles.')), 'all under `roles.`, which locale-lint checks');
+});
+
+// ---------------------------------------------------------------------------
+// Who may remove whom — review finding 4
+// ---------------------------------------------------------------------------
+
+test('a co-host cannot remove a host, or another co-host', () => {
+  const coHost = member('co-host', 'nuria');
+  assert.match(removeRefusal(coHost, member('host', 'alberto'), hostedTrip), /only a host/i);
+  assert.match(removeRefusal(coHost, member('co-host', 'diego'), hostedTrip), /only a host/i);
+  assert.strictEqual(removeRefusal(coHost, member('guest', 'marta'), hostedTrip), null);
+});
+
+test('a host may remove a co-host or a guest', () => {
+  const host = member('host', 'alberto');
+  assert.strictEqual(removeRefusal(host, member('co-host', 'nuria'), hostedTrip), null);
+  assert.strictEqual(removeRefusal(host, member('guest', 'marta'), hostedTrip), null);
+});
+
+test('nobody removes themselves', () => {
+  const host = member('host', 'alberto');
+  assert.match(removeRefusal(host, host, hostedTrip), /yourself/i);
+});
+
+test('a guest may not remove anyone, on either kind of trip', () => {
+  const guest = member('guest', 'marta');
+  for (const trip of [hostedTrip, personalTrip]) {
+    assert.match(removeRefusal(guest, member('guest', 'joao'), trip), /cannot remove/i);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// What role you come back with — review finding 5
+// ---------------------------------------------------------------------------
+
+test('a host re-adding a removed co-host restores co-host', () => {
+  // §6.1: role and status are orthogonal so re-adding restores what they were.
+  assert.strictEqual(restoredRole(member('host', 'alberto'), 'co-host', hostedTrip), 'co-host');
+  assert.strictEqual(restoredRole(member('host', 'alberto'), 'host', hostedTrip), 'host');
+});
+
+test('a personal-trip guest re-adding a removed host gets them back as a guest', () => {
+  // The escalation: member.invite is held by every member of a personal trip,
+  // so without this a guest could restore a host they could never appoint.
+  const guest = member('guest', 'marta');
+  assert.strictEqual(restoredRole(guest, 'host', personalTrip), 'guest');
+  assert.strictEqual(restoredRole(guest, 'co-host', personalTrip), 'guest');
+});
+
+test('a co-host restores a co-host but not a host', () => {
+  const coHost = member('co-host', 'nuria');
+  assert.strictEqual(restoredRole(coHost, 'co-host', hostedTrip), 'co-host');
+  assert.strictEqual(restoredRole(coHost, 'host', hostedTrip), 'guest');
+});
+
+test('somebody brand new is always a guest', () => {
+  assert.strictEqual(restoredRole(member('host', 'a'), undefined, hostedTrip), 'guest');
+  assert.strictEqual(restoredRole(member('host', 'a'), 'guest', hostedTrip), 'guest');
 });
