@@ -16,13 +16,13 @@ Picking up the hosted event pilot build? Read
 ## Before you push
 
 ```bash
-bash scripts/spec-lint.sh
-bash scripts/claude-md-mirror-check.sh
-cd client && npm run build && npm test
+npm run check        # everything CI fails you for, about a minute
+npm run check:fast   # docs and server only, a few seconds
 ```
 
-CI runs all of these on every pull request, plus a server syntax check and `npm audit` on both
-package trees.
+That is the same set CI runs, minus `npm audit`, which CI reports and never fails on. You do not
+get the inline feedback a Claude Code session gets from its hooks — this command is how you get it
+anyway.
 
 > This file exists because the guides disagree about which instruction files Copilot reads in which
 > surface. AGENTS.md and CLAUDE.md are both documented as supported by the coding agent

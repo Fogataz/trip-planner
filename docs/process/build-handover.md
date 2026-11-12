@@ -39,8 +39,7 @@ Then read, in this order. It is about 90 minutes and it replaces every conversat
 ## 2. Check you are looking at the right thing
 
 ```bash
-bash scripts/spec-lint.sh                   # expect: spec-lint: ok (12 checked)
-bash scripts/claude-md-mirror-check.sh      # expect: claude-md-mirror: ok (<hash>)
+npm run check:fast    # spec sections, the CLAUDE.md pin, role labels, server syntax
 grep -m1 '^Status:' docs/specs/002-hosted-event-pilot.md \
   docs/specs/011-roles-and-permissions.md \
   docs/specs/012-joining-naming-and-the-first-trip.md
@@ -48,7 +47,9 @@ grep -m1 '^Status:' docs/specs/002-hosted-event-pilot.md \
 
 All three must say `Status: approved`. **If any says `draft`, stop** — the gate in docs/README.md allows no code before approval, and you are on a stale commit or the wrong branch.
 
-Both scripts also run in CI on every pull request, along with the client build, the client tests, a server syntax check and `npm audit` on both package trees. Run them locally before pushing and you will not find out from a red check.
+`npm run check` is the same thing plus the client build and tests — the whole of what CI fails you for, in about a minute. Run it before you push and you will not find out from a red check.
+
+This matters most if you are **not** in Claude Code: the `.claude/` hooks give a Claude Code session these answers inside the edit, and this command is how every other agent gets them.
 
 ## 3. Get it running
 
