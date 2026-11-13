@@ -64,12 +64,13 @@ By folder, because the per-document index already exists and should not be copie
 | [docs/features.md](../features.md) | Living: what the code does today | **Engineering only** | [docs/README.md](../README.md) |
 | `wireframes/` | Artifacts, linked from a spec, each set with a Build status per frame (trk-D6) | Either — a product session commits them with `docs-commit.sh` (ww-D13) | The spec that uses them |
 | [CLAUDE.md](../../CLAUDE.md), [AGENTS.md](../../AGENTS.md) | Living: principles, layout, conventions summary, who does what | Either (ww-D18). A change to the conventions summary is re-pinned and named in the pull request (ww-D14) | Read automatically, every session |
-| `.claude/commands/`, `.claude/agents/`, `.claude/skills/`, `scripts/*.sh` | The process tooling (§4) | Either (ww-D18) | §4 below |
+| `.claude/commands/`, `.claude/agents/`, `.claude/skills/` | The process tooling (§4) | Claude Code (the Cowork bridge cannot write it) | §4 below |
+| `scripts/*.sh`, `CLAUDE.md`, `AGENTS.md` | The process tooling (§4) | Either (ww-D18) | §4 below |
 | `.claude/hooks/`, `.claude/settings.json`, `.github/`, data scripts | Run on their own, or touch data | **Engineering only** | §4 below |
 
-Who commits what, and how, is [ways-of-working.md](ways-of-working.md) §7. In one line: documentation
-and the process tooling go through `scripts/docs-commit.sh` from a product session; application code,
-hooks, CI and anything mixed goes through Claude Code.
+Who commits what, and how, is [ways-of-working.md](ways-of-working.md) §7. In one line: documentation,
+`CLAUDE.md`, `AGENTS.md` and `scripts/*.sh` go through `scripts/docs-commit.sh` from a product session; application code,
+all of `.claude/`, CI and anything mixed goes through Claude Code.
 
 ## 4. The tooling
 
@@ -96,7 +97,7 @@ rule.
 | `scripts/check.sh` | Script | Everything CI fails you for, in one command: `npm run check`, `--fast` (ww-D15) | By hand, before a push | **Built** 2026-11-12 | Run `npm audit` as a failure |
 | `scripts/docs-only-check.sh` | Script | The paths a product session may change: documentation and process tooling (ww-D11, ww-D13, ww-D18). `--pattern` prints the rule | CI on every `docs/…` pull request, and `docs-commit.sh` | **Built**; widened 2026-11-13 | Allow application code, hooks, settings, CI or data scripts on a `docs/…` branch |
 | `scripts/audit-checks.sh` | Script | The mechanical half of `/audit`: orphan socket events, locale-key parity, routes with no auth | On demand, from `/audit` | **Built** 2026-11-11 | Run in CI. It reports on code that already exists, and a required check that fails on day one gets bypassed (sys-D3) |
-| `scripts/docs-commit.sh` | Script | A product session's commit, push and pull request (ww-D6, ww-D18) | From a product session | **Built**; widened 2026-11-13 | Stage anything outside the allowed paths |
+| `scripts/docs-commit.sh` | Script | A product session's commit, push and pull request (ww-D6, ww-D18); prints the computer-side command when Cowork blocks the push | From a product session | **Built**; widened 2026-11-13 | Stage anything outside the allowed paths |
 | `.github/workflows/ci.yml` | CI | The quality gate ([ways-of-working.md](ways-of-working.md) §2, ww-D1) | Every pull request to `main` | **Built**, required on `main` | Auto-merge anything |
 | GitHub Projects workflows | Board | Adding open issues; closed issues become Shipped (pipe-D1) | Automatically | **Built** | Move "In review" — that is done by hand |
 | `follow-up` label and Follow-ups view | Board | Where review follow-ups are counted, oldest first (ww-D17) | By hand, once | **To set up** — a product session's token cannot create labels or views | — |

@@ -10,6 +10,8 @@
 #   - anything outside those paths is staged;
 #   - the branch already carries commits that touch files outside them.
 # So a product session can never commit or push application code with it.
+# If the push is blocked (Cowork's network policy, ww-D9), it prints the line to
+# run from a terminal on the computer: the same command, which then just pushes.
 set -euo pipefail
 
 usage='usage: docs-commit.sh branch-suffix "commit message" [path ...]'
@@ -84,7 +86,11 @@ if ! scripts/docs-only-check.sh "$base_ref"; then
   exit 1
 fi
 
-git push -u origin "$branch"
+if ! git push -u origin "$branch"; then
+  printf 'Push blocked from here. The commit is on %s. From a terminal on your computer, run:\n  cd %s && scripts/docs-commit.sh %s "%s"\n' \
+    "$branch" "$(pwd)" "$suffix" "$message" >&2
+  exit 1
+fi
 
 # 4. Open the pull request, or say how to.
 if ! command -v gh >/dev/null 2>&1; then
