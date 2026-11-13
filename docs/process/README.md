@@ -10,6 +10,7 @@
 |---|---|---|
 | [system.md](system.md) | **Start here.** The whole thing on one page: the loop, the objects, the documents, every command, agent, skill, hook and script with its status, and the fronts beyond product and engineering | You want to know what we have, or whether a tool exists |
 | [tracker.md](tracker.md) | The board: three levels, fields, views, milestones, how an initiative, an epic and a story are written, and follow-ups | You are creating or grooming an issue |
+| [dependency-map.md](dependency-map.md) | The Now/Next work backward from each active milestone: a Mermaid dependency network, a work-package register, and the open questions it surfaced | You need to know what blocks what, or what to do next to unblock delivery |
 | [pipeline.md](pipeline.md) | The commands and the reviewer agent, and where each hands over | You are about to run a command, or build a new one |
 | [ways-of-working.md](ways-of-working.md) | The quality bar, the three tiers of review finding, the weekly rhythm, and who commits what | Before merging, and on Friday |
 | [design-lenses.md](design-lenses.md) | The fourteen lenses every new spec is checked against | Stage 2 (Define) and stage 4 (Spec), and when reviewing a pull request |

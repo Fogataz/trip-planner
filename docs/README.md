@@ -27,6 +27,7 @@ Folders are organized by kind of document, not by status. Status lives inside ea
 | [process/system.md](process/system.md) | The whole setup on one page: objects, documents, tooling with its status, and the fronts beyond product and engineering |
 | [process/README.md](process/README.md) | How we work: the map of the process docs (tracker, pipeline, ways of working, naming), how one piece of work travels, and why we chose it |
 | [process/tracker.md](process/tracker.md) | How delivery is tracked in GitHub Issues and the Trip-Planner project: the three levels, fields, views, and how the board relates to specs |
+| [process/dependency-map.md](process/dependency-map.md) | Backward-built dependency network for the Now/Next horizon: what must be true before each active milestone, what runs in parallel, the work-package register and open questions |
 | [product/spec-backlog.md](product/spec-backlog.md) | Candidates for future specs: where each goes in the product, a recommendation and where to start in the code |
 | [product/premium-buyer-lens.md](product/premium-buyer-lens.md) | Analysis (2026-11-10): who should pay and at what price, using Alex Hormozi's market and pricing advice |
 | [product/destination-weddings.md](product/destination-weddings.md) | Analysis (2026-11-10): destination weddings as a niche, use cases, gaps, who pays, test plan |
