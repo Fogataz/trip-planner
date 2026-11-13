@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trip Planner — dependency map (Now/Next)</title>
+<style>
+  :root { color-scheme: light; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    color: #0f172a;
+    line-height: 1.5;
+  }
+  h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+  .meta { color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.1rem; margin-top: 3rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; }
+  .diagram { overflow-x: auto; padding: 1rem 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: 0.85rem; margin: 1rem 0 2rem; }
+  .legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  .note {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+    padding: 0.75rem 1rem; font-size: 0.9rem; color: #334155; margin: 1rem 0;
+  }
+  a { color: #0284c7; }
+  code { background: #f1f5f9; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+</style>
+</head>
+<body>
+
+<h1>Dependency map — Now / Next</h1>
+<p class="meta">
+  Generated view of
+  <a href="../dependency-map.md">docs/process/dependency-map.md</a> — that file is authoritative;
+  this page is regenerated from its Mermaid blocks by hand whenever they change. Last reviewed
+  2026-11-13.
+</p>
+
+<div class="note">
+  This page needs an internet connection to load Mermaid's own script from its CDN to render the
+  diagrams below — the same trade-off the wireframes' README accepts for its webfont. Everything
+  else about this page works with no build step and no account, opened directly as a file or served
+  with <code>npx serve docs/process/dependency-map</code>.
+</div>
+
+<div class="legend">
+  <span><span class="swatch" style="background:#f1f5f9;border:1px solid #64748b;"></span>Foundational decision / shared prerequisite</span>
+  <span><span class="swatch" style="background:#e0f2fe;border:1px solid #0284c7;"></span>Identity / cross-cutting foundation</span>
+  <span><span class="swatch" style="background:#ede9fe;border:1px solid #7c3aed;"></span>Feature delivery (Now)</span>
+  <span><span class="swatch" style="background:#ede9fe;border:1px dashed #7c3aed;"></span>Feature delivery (Next)</span>
+  <span><span class="swatch" style="background:#fff7ed;border:1px solid #ea580c;"></span>Verification / gate</span>
+  <span><span class="swatch" style="background:#dcfce7;border:1px solid #16a34a;"></span>Milestone</span>
+</div>
+
+<h2>1. Overview — initiatives across the active horizon</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart LR
+    S1["S1 · Permissions foundation<br/>#20 — building (PR #124 open)"]
+    I1REST["I1 slices S2–S7<br/>door, localization, analytics,<br/>agenda, announcements, lifecycle<br/>— open, not started"]
+    DRYRUN["Dry run #56<br/>20 Nov — open"]
+    LIVE["Pilot runs live<br/>24–25 Nov"]
+    M0["M0 · Pilot retro<br/>27 Nov 2026"]
+    SPIKE58["#58 · What the pilot<br/>teaches us about hosts (I2)"]
+    I3["I3 · features.md matches<br/>the code (ongoing, target 5 Dec)"]
+    E60["#60 · Host home<br/>(I6)"]
+    E87["#87 · Charge a host<br/>(I6)"]
+    OTHI6["#59, #85, #86<br/>other I6 epics"]
+    I7["I7 · discovery spikes<br/>#83, #92–96"]
+    M1["M1 · Phase 1 gate<br/>26 Feb 2027"]
+    E88["#88 · Spike: how hosts<br/>take payments — Now"]
+    E89["#89 · Deposits & instalments<br/>— Next"]
+    E61["#61 · Public sign-up page<br/>— Next"]
+    E90["#90 · Host branding<br/>— Next"]
+    E91["#91 · Offline schedule<br/>— Next"]
+    M2["M2 · Phase 2 gate<br/>30 Jun 2027"]
+
+    S1 --> I1REST
+    I1REST --> DRYRUN
+    DRYRUN --> LIVE
+    LIVE --> M0
+    LIVE --> SPIKE58
+    SPIKE58 --> M0
+    S1 --> E60
+    S1 --> E87
+    SPIKE58 --> E60
+    SPIKE58 --> E87
+    SPIKE58 --> OTHI6
+    E60 --> M1
+    E87 --> M1
+    OTHI6 --> M1
+    I7 --> M1
+    E88 --> E89
+    E89 --> M2
+    E61 --> M2
+    E90 --> M2
+    E91 --> M2
+
+    classDef decision fill:#f1f5f9,stroke:#64748b,color:#0f172a;
+    classDef delivery fill:#ede9fe,stroke:#7c3aed,color:#3b0764;
+    classDef gate fill:#fff7ed,stroke:#ea580c,color:#7c2d12;
+    classDef milestone fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    classDef next fill:#ede9fe,stroke:#7c3aed,color:#3b0764,stroke-dasharray: 5 3;
+
+    class S1 decision;
+    class I1REST,E60,E87,OTHI6 delivery;
+    class E88 delivery;
+    class E89,E61,E90,E91 next;
+    class I3,I7 decision;
+    class DRYRUN,LIVE,SPIKE58 gate;
+    class M0,M1,M2 milestone;
+
+    click S1 "https://github.com/Fogataz/trip-planner/issues/20" "#20 · Permissions foundation" _blank
+    click I1REST "https://github.com/Fogataz/trip-planner/issues/19" "#19 · I1 Run the hosted event pilot" _blank
+    click DRYRUN "https://github.com/Fogataz/trip-planner/issues/56" "#56 · Dry run" _blank
+    click SPIKE58 "https://github.com/Fogataz/trip-planner/issues/58" "#58 · What the pilot teaches us" _blank
+    click I3 "https://github.com/Fogataz/trip-planner/issues/62" "#62 · I3 What we have built works as documented" _blank
+    click E60 "https://github.com/Fogataz/trip-planner/issues/60" "#60 · Host home" _blank
+    click E87 "https://github.com/Fogataz/trip-planner/issues/87" "#87 · Charge a host" _blank
+    click OTHI6 "https://github.com/Fogataz/trip-planner/issues/59" "#59, #85, #86 · other I6 epics (opens #59)" _blank
+    click I7 "https://github.com/Fogataz/trip-planner/issues/83" "#83 · I7 discovery" _blank
+    click E88 "https://github.com/Fogataz/trip-planner/issues/88" "#88 · Spike: how hosts take payments" _blank
+    click E89 "https://github.com/Fogataz/trip-planner/issues/89" "#89 · Deposits & instalments" _blank
+    click E61 "https://github.com/Fogataz/trip-planner/issues/61" "#61 · Public sign-up page" _blank
+    click E90 "https://github.com/Fogataz/trip-planner/issues/90" "#90 · Host branding" _blank
+    click E91 "https://github.com/Fogataz/trip-planner/issues/91" "#91 · Offline schedule" _blank
+    click M0 "https://github.com/Fogataz/trip-planner/milestone/1" "M0 · Pilot retro" _blank
+    click M1 "https://github.com/Fogataz/trip-planner/milestone/2" "M1 · Phase 1 gate" _blank
+    click M2 "https://github.com/Fogataz/trip-planner/milestone/3" "M2 · Phase 2 gate" _blank
+</pre>
+</div>
+<p class="note">
+  Every box here links to its GitHub issue or milestone — click to open it in a new tab. I3 is drawn
+  unconnected on purpose — parallel quality debt with no completion dependency to or from
+  the active-horizon chain. No Now/Next item here depends on anything Later (I4) or on the closed I5.
+</p>
+
+<h2>2. Detail — I1, the pilot MVP (Now, M0, due 24–25 Nov)</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart LR
+    S1["S1 · Permissions foundation<br/>#20 — building<br/>PR #124 open, 2026-11-12"]
+    G25["Google sign-in<br/>#25 — open"]
+    G52["Email-link sign-in<br/>#52 — open"]
+    S2["S2 · The door<br/>#29 — open<br/>(join, invite, approve)"]
+    S3["S3 · Localization of<br/>the new surface<br/>#36, #53 — open"]
+    S4["S4 · Analytics &<br/>CSV export<br/>#40 — open"]
+    S5["S5 · Agenda drafts +<br/>app shell<br/>#43, #54 — open"]
+    S6a["S6 · Announcements<br/>#48 — Must — open"]
+    S6b["Notification categories<br/>#51 — Should — open"]
+    S7["S7 · Lifecycle hardening<br/>#115 — Should — open"]
+    P74["Profiles & display names<br/>#74 — open"]
+    DRY["Dry run<br/>#56 — 20 Nov"]
+    LIVE["Pilot live<br/>24–25 Nov"]
+    M0["M0 · Pilot retro<br/>27 Nov 2026"]
+
+    S1 --> S2
+    S1 --> S3
+    S1 --> S4
+    S1 --> S5
+    S1 --> S6a
+    S1 --> S6b
+    S1 --> S7
+    G25 --> S2
+    G52 --> S2
+    G25 -.ships alongside.-> P74
+    S2 --> DRY
+    S3 --> DRY
+    S4 --> DRY
+    S5 --> DRY
+    G25 --> DRY
+    G52 --> DRY
+    S6a --> LIVE
+    S7 --> LIVE
+    DRY --> LIVE
+    P74 --> LIVE
+    S6b -.Should, not blocking.-> LIVE
+    LIVE --> M0
+
+    classDef decision fill:#f1f5f9,stroke:#64748b,color:#0f172a;
+    classDef foundation fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e;
+    classDef delivery fill:#ede9fe,stroke:#7c3aed,color:#3b0764;
+    classDef gate fill:#fff7ed,stroke:#ea580c,color:#7c2d12;
+    classDef milestone fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    class S1 decision;
+    class G25,G52 foundation;
+    class S2,S3,S4,S5,S6a,S6b,S7,P74 delivery;
+    class DRY,LIVE gate;
+    class M0 milestone;
+
+    click S1 "https://github.com/Fogataz/trip-planner/issues/20" "#20 · Permissions foundation" _blank
+    click G25 "https://github.com/Fogataz/trip-planner/issues/25" "#25 · Google sign-in" _blank
+    click G52 "https://github.com/Fogataz/trip-planner/issues/52" "#52 · Email-link sign-in" _blank
+    click S2 "https://github.com/Fogataz/trip-planner/issues/29" "#29 · The door" _blank
+    click S3 "https://github.com/Fogataz/trip-planner/issues/36" "#36 · Localization of the new surface" _blank
+    click S4 "https://github.com/Fogataz/trip-planner/issues/40" "#40 · Analytics & CSV export" _blank
+    click S5 "https://github.com/Fogataz/trip-planner/issues/43" "#43 · Agenda drafts + app shell" _blank
+    click S6a "https://github.com/Fogataz/trip-planner/issues/48" "#48 · Announcements" _blank
+    click S6b "https://github.com/Fogataz/trip-planner/issues/51" "#51 · Notification categories" _blank
+    click S7 "https://github.com/Fogataz/trip-planner/issues/115" "#115 · Lifecycle hardening" _blank
+    click P74 "https://github.com/Fogataz/trip-planner/issues/74" "#74 · Profiles & display names" _blank
+    click DRY "https://github.com/Fogataz/trip-planner/issues/56" "#56 · Dry run" _blank
+    click M0 "https://github.com/Fogataz/trip-planner/milestone/1" "M0 · Pilot retro" _blank
+</pre>
+</div>
+<p class="note">
+  Every box here links to its GitHub issue or milestone — click to open it in a new tab. Every Must box upstream of <code>LIVE</code> has to be done for the pilot to run as designed. As of
+  2026-11-13, only S1 has an open pull request; S4 — the one slice spec 002 §14 names as a hard
+  pre-dry-run deadline — has not started.
+</p>
+
+<h2>Full register and assessment</h2>
+<p>
+  The work-package register, delivery assessment, next steps and open questions are long enough to
+  stay in <a href="../dependency-map.md">the markdown file</a> rather than duplicated here — this
+  page exists for the picture, that one for the full reasoning.
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+</script>
+</body>
+</html>

@@ -27,7 +27,7 @@ One **agent** sits under them: the reviewer ([`.claude/agents/reviewer.md`](../.
 | Command | Cadence | Reads | Writes | Hands to |
 |---|---|---|---|---|
 | `/initiative` | Per bet, before its epics | working-doc §2–3, venture-analysis, epic-briefs §2, early-testers, learnings | the initiative file and the issue body; the reviewer's sceptic verdict on the press release | `/epic` |
-| `/roadmap` | Monday, and after a strategy change | the initiatives and their key results and kill conditions, the board, open follow-ups, learnings, venture-analysis §11 as a dated reference, spec-backlog | recommended Horizon moves with a reason on the issue, the next brief | `/epic` |
+| `/roadmap` | Monday, and after a strategy change | the initiatives and their key results and kill conditions, the board, open follow-ups, learnings, venture-analysis §11 as a dated reference, spec-backlog, **the dependency map** | recommended Horizon moves with a reason on the issue, the next brief | `/epic` |
 | `/epic` | Per bet | a brief, a spec or an issue | the epic with **What done looks like**, its fields, story sub-issues with **Done when** | `/feature` |
 | `/feature` | Per feature | the stages in docs/README.md, the spec | spec, wireframes, the reviewer's verdict at the gate, branch, PR, docs | `/pr`, then `/audit` |
 | `/pr` | Per pull request | the spec, the diff, the lenses, the four principles | a verdict in three tiers; on an OK, one PR comment and the follow-up issues | the owner, who merges |
@@ -85,7 +85,9 @@ Built 2026-11-11 (pipe-D6), both halves at once: pipe-D3 split it into December 
 five changes below made the writing half cheap enough to build with the rest.
 
 1. **State.** Open epics by Horizon and milestone, what is in the sprint, what is blocked, what has
-   no spec yet.
+   no spec yet. Cross-check against [dependency-map.md](dependency-map.md)'s register: a package it
+   marks blocked on an unmerged prerequisite is reported as blocked here too, even if nothing on the
+   issue itself says so.
 2. **Work in progress, first.** Two or more epics `In build` or `In review` and it recommends
    nothing new: it reports what is in flight and stops. Two people cannot carry three open epics,
    and a roadmap that keeps starting work is how a quarter ends with nothing finished.
@@ -223,6 +225,7 @@ and both templates are in [tracker.md](tracker.md), "Writing an initiative".
 | pipe-D6 | The five changes to `/roadmap` before building it | Engineering | **Decided 2026-11-11** (§6.1): a work-in-progress limit that refuses, measures printed and checked for readability, kill conditions read weekly, the drift baseline moved from a point-in-time analysis to the initiatives' key results with the analysis's date printed, and Horizon moves recorded on the issue. Options considered and rejected: build it as originally drafted (it would recommend work while three epics were in flight, and report drift that was really a stale document) |
 | pipe-D7 | The five changes to `/audit` before building it | Engineering | **Decided 2026-11-11** (§6.2): the lenses added, the mechanical half split into a script, the script kept out of CI, a duplicate check before filing, and `features.md` given a route. "Monthly" dropped for ships and gates. Options rejected: build it as drafted (no lenses, no script, and one near-duplicate issue already proved the filing gap) |
 | pipe-D8 | Is `/initiative` its own command, or a mode on `/epic`? | Engineering | **Decided 2026-11-11: its own command.** Options were: a mode on `/epic` (rejected — writing a press release is a different conversation from setting fields, and §1 says a command is named after the object it owns); a skill that loads itself (rejected — initiatives are written a handful of times a year, and a skill would have to guess the moment); its own command (taken) |
+| pipe-D10 | Does `/roadmap` read the dependency map? | Product owner | **Decided 2026-11-13: yes.** Added to `/roadmap`'s reads in §2 and §6.1 step 1, next to the board and venture-analysis §11. [dependency-map.md](dependency-map.md) exists to answer exactly what step 7 ("one or two things to start") needs — what's blocked and on what — so leaving it out would mean the one document built to show that never reaches the command that recommends what's next |
 | pipe-D9 · One reviewer agent | Where does independent judgment live, now that three steps need it (the pull request, the spec at the gate, the press release)? | Product owner | **Decided 2026-11-13: one agent definition, [`.claude/agents/reviewer.md`](../../.claude/agents/reviewer.md), with three modes**, called by `/pr`, `/feature` and `/initiative`. It replaces the reviewer instructions written inline in `/pr` and is the sceptic sys-D4 planned. Options rejected: three agents (three copies of what "independent" means, drifting apart); keep the review inline in each command (pipe-D5's subagent stays, but its definition would live in three places). The agent reads the rules from the process docs, like every command (§3) |
 
 ## Appendix A. `/roadmap` and `/audit`
