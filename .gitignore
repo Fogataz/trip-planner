@@ -11,6 +11,3 @@ build/
 
 # Claude Code worktrees
 .claude/worktrees/
-
-# Local token file, never committed
-gh-token.txt
