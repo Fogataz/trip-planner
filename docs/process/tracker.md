@@ -41,7 +41,7 @@ Set on the issue (org-level issue fields), so they survive outside the board:
 | Layer | Epic | Core, Host, Money, Public, Content — from working-doc §2 |
 | Phase | Epic | **Retired (name-D4).** Phases 1–7 are history in [roadmap.md](../product/roadmap.md). Horizon and the milestones replace it |
 | Revenue Model | Initiative, Epic | By name (name-D2): host tool, operator app, offsites, group payments… Letters stay as aliases in [naming.md](naming.md) §4 |
-| Priority | all | |
+| Priority | all | Urgent, High, Medium, Low (GitHub's own scale — there is no literal "Must"/"Should" option). **Found undocumented 2026-11-13:** every I1 epic already follows one mapping — the row's cut line in "Seeding" below, Must → **High**, Should → **Medium**. Use that mapping; don't invent a new scale per epic |
 | Start date / Target date | Initiative, Epic | drives the Roadmap view |
 | Effort | — | deliberately unused. Two people, and it does not roll up |
 
