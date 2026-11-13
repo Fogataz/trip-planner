@@ -91,7 +91,7 @@ The board already runs one-week sprints from Mon 10 Nov. Two short rituals hang 
 
 | When | Ritual | Output |
 |---|---|---|
-| Monday, 15 min | What is in this sprint and what is not. **The oldest open follow-up goes in** (ww-D17). With **eight or more** open, no new epic starts until the count is below eight — `/roadmap` reports both | Sprint set on the board |
+| Monday, 15 min | What is in this sprint and what is not. **The oldest open follow-up goes in** (ww-D17). With **eight or more** open, no new epic starts until the count is below eight — `/roadmap` reports both, cross-checked against [dependency-map.md](dependency-map.md)'s register for anything blocked on an unmerged prerequisite (pipe-D10) | Sprint set on the board |
 | Friday, 15 min | Retro and demo: what shipped against what was planned, one process friction, one thing to keep. **Any follow-up older than four weeks is decided:** next sprint, or closed as won't-fix with the reason on the issue | Three lines, in the sprint item or here |
 | Friday, 5 min | Read the analytics events shipped so far: trend, not detail | Noted only if it changes a priority |
 
@@ -105,7 +105,7 @@ Run this before the gate decision, not after it.
 
 1. **Measures.** For every epic closed since the last milestone, read its leading and lagging measures against the targets in its own body. Record a verdict: paid off, did not pay off, or could not be measured.
 2. **Privacy and security.** Live location still never stored. No personal data in AI prompts. Analytics still carry no content and no coordinates. `npm audit` reviewed. Secrets still only in `.env`.
-3. **Docs truth.** `features.md` matches the code. Spec statuses match reality.
+3. **Docs truth.** `features.md` matches the code. Spec statuses match reality. [dependency-map.md](dependency-map.md)'s register matches the board — a slice it still shows as open that has actually shipped, or a dependency that turned out to be wrong, gets corrected here before the gate, not after.
 4. **Gate.** The criteria in [tracker.md](tracker.md), "Milestones". The decision is the owner's, taken with the evidence above in front of him.
 
 "Could not be measured" is a finding about our process, not a neutral result. Count them.

@@ -57,7 +57,7 @@ Layer and Revenue Model live on the **epic only**. A story inherits context from
 
 ## Milestones
 
-Three gate milestones in `Fogataz/trip-planner`. The criteria are from [venture-analysis.md](../product/venture-analysis.md) §9. Put them in each milestone's description. Every initiative and epic belongs to one.
+Three gate milestones in `Fogataz/trip-planner`. The criteria are from [venture-analysis.md](../product/venture-analysis.md) §9. Put them in each milestone's description. Every initiative and epic belongs to one. [dependency-map.md](dependency-map.md) is the backward-built path to each one — what has to be true before it counts as delivered, and what's blocking it right now.
 
 | Milestone | Due | Gate |
 |---|---|---|

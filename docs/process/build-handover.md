@@ -33,6 +33,7 @@ Then read, in this order. It is about 90 minutes and it replaces every conversat
 | 5 | [docs/specs/012-joining-naming-and-the-first-trip.md](../specs/012-joining-naming-and-the-first-trip.md) | A QA pass over 002 that found three regressions it would otherwise ship. §4 is the register; §12 is the slice plan. |
 | 6 | The wireframes, in a browser | `npx serve wireframes/002-hosted-event-pilot` and `npx serve wireframes/012-joining-and-naming`. 26 frames, each annotated with the requirement it satisfies. |
 | 7 | [docs/process/tracker.md](tracker.md) and [design-lenses.md](design-lenses.md) | How the board works; the fourteen lenses every spec answers. |
+| 8 | [docs/process/dependency-map.md](dependency-map.md) | **What actually blocks what, right now** — a Mermaid dependency network plus a register, kept current. The table in §4 below is a snapshot from when this runbook was written; the dependency map is the live one. |
 
 **Do not read the product docs first.** [working-doc.md](../product/working-doc.md), [revenue-models-analysis.md](../product/revenue-models-analysis.md) and the rest are the *why*. They are worth reading, and nothing in the build is blocked on them.
 
@@ -62,6 +63,13 @@ cd client && npm install && npm run dev   # client
 `.env` is never in git. Copy it from the other machine by hand or through a password manager. The server has no test suite; `npm test` in `client/` runs Vitest.
 
 ## 4. Build order — and it is not negotiable
+
+**This table is a snapshot from 2026-11-12.** It already disagrees with GitHub in one place: #25
+(Google sign-in) and #52 (email-link sign-in) are listed under S2 here, but neither has ever actually
+been placed in tracker.md's own slice table, and #74 (Profiles) isn't in this table at all even
+though it carries the same M0 milestone. [dependency-map.md](dependency-map.md) is the one that gets
+re-read and corrected as things change; treat the table below as "the shape," not "the current
+truth," and check the map or the board for anything load-bearing.
 
 Spec 012 §12 groups spec 002's eleven parts into eight slices. **Slice 1 is the dependency for everything else**, because it replaces the embedded `Trip.members` array with a `TripMember` collection and every other slice reads membership.
 
