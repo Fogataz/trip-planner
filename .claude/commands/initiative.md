@@ -34,11 +34,16 @@ revenue models in §3 by name (name-D2), and the sizing and risks in
    one claim), Unblocks, Next bottleneck, Instead of, Kill condition with a date. Do not cite the
    strategic pillars in `strategy.md`: they predate D33 premium hosts lead (trk-D3).
 6. Owner decisions stay open with options and a recommendation, never answered (D27). The kill
-   condition and the price are the two most likely to be the owner's.
-7. Show the file and the `gh` commands, and wait for an OK before writing the file or touching
+   condition and the price are the two most likely to be the owner's. Read
+   `docs/product/learnings.md` first: a row that contradicts the bet goes in the sceptic's FAQ.
+7. **The sceptic's read.** Before showing the draft for approval, give the initiative file — and
+   nothing from this conversation — to the reviewer agent (`.claude/agents/reviewer.md`), mode
+   `press-release`. Show its verdict beside the draft. A must-fix (an invented quote, a kill
+   condition nobody could observe) is fixed before asking for approval.
+8. Show the file and the `gh` commands, and wait for an OK before writing the file or touching
    GitHub. Then: the file in `docs/product/initiatives/`, the issue body's outcome, key result,
    fields and link, and nothing restated between them.
-8. Hand over (`docs/process/pipeline.md` §4): "Next: `/epic <brief>` for the first epic under this
+9. Hand over (`docs/process/pipeline.md` §4): "Next: `/epic <brief>` for the first epic under this
    initiative".
-9. "check" mode: for every open initiative, report what is missing from §2's list, plus **whether
+10. "check" mode: for every open initiative, report what is missing from §2's list, plus **whether
    its kill condition has already happened**. Change nothing.

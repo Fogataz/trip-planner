@@ -31,7 +31,9 @@ The rules are in `docs/process/pipeline.md` §6.2. Read them first; do not copy 
      documented**, or a comment on the existing issue with the file and line;
    - an improvement → a row in `docs/product/spec-backlog.md`;
    - **`features.md` says something the code does not** → fix `features.md` in a pull request.
-     Engineering owns it and it is living, so documentation rot is a finding with a route, not a note.
+     Engineering owns it and it is living, so documentation rot is a finding with a route, not a note;
+   - **a pattern across findings** (the same lens missed in several specs, the same kind of bug
+     returning) → a draft row in `docs/product/learnings.md`, with the findings as its evidence.
 7. Change no application code and open no pull request except the `features.md` correction. Show the
    findings table and the issues or rows you would create, and wait for an OK.
 8. **When to run this:** after a spec ships, and before a milestone gate. Not monthly — a calendar
