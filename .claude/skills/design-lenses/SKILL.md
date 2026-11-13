@@ -20,10 +20,12 @@ In short:
 - Never answer a product owner's decision. It becomes an open decision with options and a
   recommendation (D27 open questions never block).
 - `scripts/spec-lint.sh` checks that each lens has a line once the spec reaches
-  `Status: approved`. It does not judge the answers; `/pr` does.
+  `Status: approved`. It does not judge the answers; the reviewer agent does, on the spec before
+  the gate and on the diff in `/pr`.
+- L5 real-time includes two people acting at once and one person acting twice (lens-D4).
 - The lenses ask whether a feature is **complete**. The seven UX tests in
   `docs/brand/brand-foundations.md` §5 ask whether it is **good**. Both apply.
 
-A product session in Cowork does not load this skill — committed skills are a Claude Code
-feature. `docs/process/design-lenses.md` is therefore the source of truth, and
-`docs/README.md` names it in the stage table so every tool reaches it.
+Whether a Cowork product session loads this skill depends on the client — one listed it on
+2026-11-13, earlier ones did not. `docs/process/design-lenses.md` is therefore the source of
+truth, and `docs/README.md` names it in the stage table so every tool reaches it.

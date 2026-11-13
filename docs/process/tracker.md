@@ -26,7 +26,7 @@ Rules:
 - Every epic has exactly one initiative. A story needs no epic if it is a one-off fix.
 - An initiative closes when its outcome is decided or achieved, not when its last child closes.
 - If the outcome does not fit in one sentence, it is an epic, not an initiative.
-- Issue bodies link to the spec. They never restate it.
+- Issue bodies link to the spec and **summarise** what done looks like: one plain line per outcome, each with the acceptance criteria it covers, stamped with the spec version it was read from. They never copy the spec's text, and the spec wins if they differ (trk-D7).
 
 **One deviation, on purpose.** The rule is one epic per spec. Spec 002 is a two-week programme with
 eleven parts, so its §12 build order becomes eleven epics, all pointing at the same spec. If a spec
@@ -172,7 +172,8 @@ Epics are written by the `/epic` command (`.claude/commands/epic.md`), which fol
 | **The title is an outcome**: what changes for a host or traveller, in plain words. "Hosts start a new departure from a past one in minutes", not "Templates". Once a spec exists, prefix its number: `[009] Hosts start…` | Roadmaps work best when they name problems and outcomes, not features [E3][E4]. The title survives if the solution changes. |
 | **Every epic carries a hypothesis and a measure** | An epic is a bet. A testable hypothesis plus early (leading) indicators lets us stop or continue before all the work is spent [E1][E2]. |
 | **3–6 main user stories, from named personas (personas in [epic-briefs.md](../product/epic-briefs.md) §2)** | Enough to show the shape of the work. Stories become sub-issues only after the spec is approved, from its build order (tracker.md). |
-| **Before a spec:** the issue body is the full brief. **After a spec:** the body keeps outcome, hypothesis, measures and stories, and links the spec for requirements and acceptance criteria | Keeps one source of truth: the brief, then the spec. The board never restates a spec (tracker.md). |
+| **Before a spec:** the issue body is the full brief. **After a spec:** the body keeps outcome, hypothesis, measures and stories, adds **What done looks like** — four to eight plain lines, each ending with the acceptance criteria it covers — and links the spec for the detail | Opening an epic should tell a person what good looks like without opening the spec. A summary in plain words with AC numbers does that; a copy of the criteria would go stale the first time the spec is amended. The stamp says which version was summarised, and `/epic check` flags it once the spec has moved on (trk-D7). |
+| **Wireframes are a link, not a task** | Frames are made at stage 3, before the gate, and the board already shows that work as Spec draft. A task would be a second record of whether they are done, and a product session cannot create issues (ww-D8). The epic links the set; each story names the frames it builds (trk-D6). |
 | **Principles check in every brief** | CLAUDE.md asks us to flag conflicts early. |
 | **Owner questions are listed, never answered** | D27: each has a recommendation that is the working default. |
 | **The leading measure names an analytics event**, not a description of one | ways-of-working §1 check 7 is the check that gets skipped, and L6 measurability asks the same thing at spec time. "Hosts reuse a departure" cannot be read; `departure_duplicated` can (trk-D2). |
@@ -188,6 +189,7 @@ Epics are written by the `/epic` command (`.claude/commands/epic.md`), which fol
 **Models:** <by name, e.g. host tool> · **Layer:** Core | Host | Money | Public | Content
 **Payer:** host | organisation | nobody — <if nobody, what it buys us>
 **Spec:** none yet (next step: /feature benchmark) | [NNN](link)
+**Wireframes:** none | [wireframes/NNN-slug](link) — F1–F<n>
 
 ### Problem
 <2–3 sentences, with the evidence and a link>
@@ -195,6 +197,15 @@ Epics are written by the `/epic` command (`.claude/commands/epic.md`), which fol
 ### Hypothesis
 We believe <capability> for <persona> will <outcome>.
 We'll know when <measure and target>.
+
+### What done looks like
+<!-- After a spec only. Four to eight lines a person can check at a glance, in plain
+     words, each ending with the acceptance criteria it covers. Not the Given/When/Then,
+     not the edge cases, not the thresholds — those stay in the spec. -->
+- <what a host or traveller can now do, or what can no longer go wrong> (AC 1, 4)
+- …
+
+<sub>Summarised from spec NNN at `<short commit>`, YYYY-MM-DD. The spec wins if they differ.</sub>
 
 ### Measures
 - Leading (during build or the first departure): `<analytics_event_name>` — <how it is counted>.
@@ -205,7 +216,7 @@ We'll know when <measure and target>.
 <what we would see that means we stop this epic> by <date>.
 
 ### Main user stories
-- As a <persona>, I want <goal>, so that <reason>.
+- As a <persona>, I want <goal>, so that <reason>. → #<sub-issue, once the spec is approved>
 
 ### Scope
 - In: …
@@ -215,8 +226,53 @@ We'll know when <measure and target>.
 ### Principles check
 ### Open questions for the owner (with recommendation)
 ### Done when
-Spec shipped and docs updated (docs/README.md "When a spec ships"), and the measure checked at the milestone.
+Spec shipped and docs updated (docs/README.md "When a spec ships"), no follow-up from review left open, and the measure checked at the milestone.
 ```
+
+### Writing a story
+
+After the gate, `/epic` creates **one sub-issue per row of the spec's build order**. The build order
+already names, per row, the acceptance criteria it satisfies and the frames it builds
+([docs/README.md](../README.md), "How to write a spec"), so a story is assembled, not invented.
+
+| Rule | Why |
+|---|---|
+| **Story** if a person can see the change; **Task** if it only enables one (a migration, a capability table). Bug and Spike as usual | A Task with no user sentence is honest; a fake "As a developer…" story is not |
+| The title is an outcome where it can be, prefixed with the spec number | Same as an epic |
+| **Done when** lists the row's acceptance criteria as plain one-liners with their numbers, stamped like the epic | The builder and the reviewer check the same numbers; the reader gets the sense without opening the spec |
+| **Not in this story** names what a reader might expect here and where it lives instead | Most review disputes are about scope, not quality |
+
+```markdown
+**Epic:** #<n> · **Spec:** [NNN, build order row <k>](link) · **Frames:** F6, F7 | none
+As a <persona>, I want <goal>, so that <reason>.
+<!-- A Task replaces the sentence with one line: what it unblocks. -->
+
+### Done when
+- <the outcome in plain words> (AC 8)
+- <…> (AC 11)
+
+<sub>Summarised from spec NNN at `<short commit>`, YYYY-MM-DD. The spec wins if they differ.</sub>
+
+### Not in this story
+- <what someone might expect here> — in #<n>
+```
+
+**When the spec moves.** An approved spec gets amendments while it is built (spec 011 §17 is the
+example). `/epic check` compares each stamp with the last commit that touched the spec and flags every
+summary older than it. The fix is to re-summarise from the spec, never to edit the spec to match.
+
+## Follow-ups from review
+
+A follow-up is a real finding from a review that is outside the pull request's scope
+([ways-of-working.md](ways-of-working.md) §3.1, ww-D17). It is filed before the merge, so it cannot
+be forgotten after it.
+
+- **Type and label:** Task or Bug, label `follow-up`.
+- **Parent:** the epic the pull request belongs to. If there is none, or it is closed, I3 · What we have built works as documented.
+- **Body:** what is wrong in a user's terms, the pull request and the file and line it came from, and the review tier it was given.
+- **An epic does not move to Shipped with an open follow-up**, unless each one is moved under I3 with a reason on the issue. `/epic check` reports it.
+- **Cadence:** the oldest one joins every sprint; eight or more open stops new epics; one older than four weeks is decided at the Friday retro ([ways-of-working.md](ways-of-working.md) §5).
+- No `TODO` comment in code stands in for one. The issue is the record.
 
 ## Views
 
@@ -226,6 +282,7 @@ Spec shipped and docs updated (docs/README.md "When a spec ships"), and the meas
 | Sprint board | the current sprint, columns by Status |
 | Roadmap | initiatives and epics across Start → Target date |
 | Initiatives | top-level bets, expandable to their children |
+| Follow-ups | open issues labelled `follow-up`, oldest first, with their parent epic |
 
 ## How this fits the spec process
 
@@ -247,15 +304,16 @@ The epic links the spec — that is the rule above, and it has always worked. **
 
 | Direction | Where it lives | Why there |
 |---|---|---|
-| **Epic → spec** | The issue body. Links, never restates. | Already the rule. When the two disagree, the spec wins. |
+| **Epic → spec** | The issue body. Links, and summarises what done looks like with AC numbers (trk-D7). | Already the rule. When the two disagree, the spec wins. |
 | **Spec → epic** | The spec's **Build status** section, and nowhere else | A spec is point-in-time; an epic gets re-cut, merged and renamed. Putting epic links in the body would make a frozen document depend on a mutable board. Build status is the one section whose job is to track reality, so it is the only place that may go stale and be corrected. |
-| **Epic → wireframes** | The issue body, beside the spec link | Frames live in `wireframes/`, not in the spec. A builder who misses them builds blind. |
+| **Epic → wireframes** | The issue body's `Wireframes:` line, beside the spec link; each story names its frames | Frames live in `wireframes/`, not in the spec. A builder who misses them builds blind. |
+| **Wireframe → code** | The set's README, "Build status": which frames are built, in review or untouched, with the pull request | A drawn frame says nothing about whether it is built. The pull request that builds a frame updates its line (trk-D6) |
 
 Rules:
 
 - **An approved spec names its epics in Build status**, or says in one line why it has none — "its work lands inside the spec 002 epics it corrects" is a valid answer, and is what spec 012 says.
 - **A spec that reaches `approved` with no epic and no such line is the thing to catch.** `/epic check` reports it, next to the drift it already reports.
-- **An epic links the wireframes it is built from**, when the spec has any.
+- **An epic links the wireframes it is built from**, when the spec has any, and each story names its frames (trk-D6).
 - A spec at `draft` needs none of this. The link appears at the gate, not before.
 
 ## Seeding
@@ -374,6 +432,8 @@ Added 2026-11-10 after D33 (premium hosts lead). Outcome titles; epics come from
 |---|---|---|---|
 | trk-D1 | Does an initiative carry a press release, and how much of Amazon's PR/FAQ do we take? | Product owner | **Decided 2026-11-11:** the one-page press release and a sceptic's FAQ of five to seven questions. Options were: nothing (today's one-line outcome); the full PR/FAQ including a customer FAQ and five pages; or the press release plus the sceptic's half. Taken: the third. The customer FAQ waits for public pages, and the epic template already carries the structured version of the rest |
 | trk-D2 | The three additions to the epic template: a named analytics event, a stop condition, and the payer | Engineering | **Decided 2026-11-11.** Each closes a check that already exists somewhere and is skipped: ways-of-working §1 check 7, the bet-with-no-exit problem, and the premium buyer lens |
-| trk-D3 | The strategic pillars in `strategy.md` predate D33 premium hosts lead. Realign them, retire them, or leave them | Product owner | **Decided 2026-11-11: retire them**, on the owner's instruction to take engineering's recommendation. Options were: rewrite the pillars around the layers in working-doc §2 (keeps one taxonomy, but duplicates §2); leave them (they would keep describing the old shape of the business); retire them into history, as name-D4 did for the roadmap phases (taken). The table stays in [strategy.md](../product/strategy.md) marked retired and pointing at working-doc §2, so nothing is lost. **Layer and the revenue-model claim are the live anchors** |
+| trk-D3 | The strategic pillars in `strategy.md` predate D33 premium hosts lead. Realign them, retire them, or leave them | Product owner | **Decided 2026-11-11: retire them**, on the owner's instruction to take engineering's recommendation. Options were: rewrite the pillars around the layers in working-doc §2 (keeps one taxonomy, but duplicates §2); leave them (they would keep describing the old shape of the business); retire them into history, as name-D4 did for the roadmap phases (taken). The table stays in [strategy.md](../product/strategy.md) marked retired and pointing at working-doc §2, so nothing is lost. **Layer and the revenue-model claim are the live anchors**. **Amended 2026-11-13:** the table itself moved to git history, leaving the pointer, because a retired table in a living document is read as current |
 | trk-D4 | Where an initiative's long form lives | Engineering | **Decided 2026-11-11:** `docs/product/initiatives/I<n>-<slug>.md`, linked from the issue. A product session cannot write an issue body (ww-D8) and the repo is the only thing that syncs (D26) |
 | trk-D5 · Spec names its epics | Does the spec → epic link exist, or only epic → spec? | Engineering | **Decided 2026-11-12: it exists, in Build status only.** The gap: an approved spec could sit with no epic anywhere and nothing would show it — approved work nobody scheduled. Live the same day, when specs 011 and 012 were approved with their work scattered across spec 002's epics and no record of where. Options were: leave it one-way (rejected — the board is the only place you would notice, and only if you went looking); link epics from the spec body (rejected — a point-in-time document must not depend on a mutable board); name them in **Build status**, the one section whose job is to track reality (taken). An epic also links its wireframes, because frames live outside the spec and a builder who misses them builds blind |
+| trk-D6 · Wireframes are links | Are wireframes linked tasks under the epic, or a link in its body? | Product owner | **Decided 2026-11-13: a link.** The epic carries a `Wireframes:` line, each story names the frames it builds, and the set's README keeps a Build status per frame, updated by the pull request that builds it. Options rejected: a task per set (a second record of what the spec's status already says, and a trip to Claude Code each time, because a product session cannot create issues). **Revisit** when someone other than the spec's author draws frames: then the drawing is separate work, and a Spike under the epic fits |
+| trk-D7 · Epics summarise done | How does someone opening an epic see what done and good look like, without the board restating the spec? | Product owner | **Decided 2026-11-13: a plain-words summary with AC numbers, stamped.** After the gate the epic carries **What done looks like** (four to eight lines) and each story a **Done when** list, one line per acceptance criterion with its number. Each summary carries the spec commit it was read from; `/epic check` flags it when the spec has moved since. The build order names each row's criteria and frames, and `scripts/spec-lint.sh` checks that every criterion lands in some row. Options rejected: AC numbers only (unreadable at a glance — the reason for this decision); copy the criteria (stale at the first amendment, and spec 011 had two in its first day of build) |

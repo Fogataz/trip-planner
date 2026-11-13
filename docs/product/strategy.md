@@ -33,30 +33,11 @@ Group trips break down in predictable ways:
 
 ## Strategic pillars
 
-> **Retired 2026-11-11 (trk-D3).** These six pillars describe the product's capability areas as they
-> were before **D33 premium hosts lead**, and they are kept here as history — nothing below is
-> deleted. The live taxonomy is the layers in [working-doc.md](working-doc.md) §2 (Core, Host, Money,
-> Public, Content) plus the revenue models in §3 by name. An initiative cites a Layer and the
-> revenue-model claim it validates, not a pillar ([tracker.md](../process/tracker.md), "Writing an
-> initiative"). Retired the same way name-D4 retired the roadmap phases.
-
-| Pillar | Goal | Current state |
-|---|---|---|
-| Collaborative planning | Members build and edit the itinerary together | Itinerary, comments and presence are in place |
-| Group decisions | Members decide quickly and fairly | Polls are in place |
-| Shared money | Costs are visible and easy to settle | Expenses and suggested settlements (who pays whom) are in place. Payments are not built yet |
-| Live coordination | Members see where others are during the trip | Opt-in live location is in place |
-| Smart suggestions | AI helps draft itineraries and travel ideas | AI itinerary, Q&A and travel suggestions are in place, in the user's language. Itinerary generation still writes straight in; spec 002 makes it a draft |
-| Transport awareness | Members are alerted to delays and changes | **Not started.** See [roadmap.md](roadmap.md) |
+**Retired 2026-11-11 (trk-D3)**, because they predate **D33 premium hosts lead**. The live taxonomy is the layers in [working-doc.md](working-doc.md) §2 (Core, Host, Money, Public, Content) plus the revenue models in §3 by name. An initiative cites a Layer and the revenue-model claim it validates ([tracker.md](../process/tracker.md), "Writing an initiative"). The six pillars are in git history; the table was removed on 2026-11-13, since a retired table in a living document is read as current.
 
 ## Success metrics
 
-**TBD.** Candidate metrics for discussion:
-
-- Trips with at least three active members
-- Share of trips that use polls or expenses
-- Itinerary items added per trip
-- Invitation acceptance rate
+Each bet carries its own: the **key result** of every initiative and the **gate criteria** of each milestone (M0 · Pilot retro, M1 · Phase 1 gate, M2 · Phase 2 gate) in [tracker.md](../process/tracker.md). What they taught us goes in [learnings.md](learnings.md). There is no separate product-wide metric yet, on purpose: with no paying host, a usage metric would measure the friends-and-family app rather than the bet.
 
 ## Key risks
 

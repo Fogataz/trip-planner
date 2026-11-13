@@ -17,6 +17,11 @@
 # order, and a design-lenses section carrying every lens code L1-L14
 # (docs/process/design-lenses.md). A draft is never blocked, so a seed draft
 # still costs nothing.
+#
+# From spec 013 on (trk-D7), the build order is a table with an "ACs" column,
+# and every numbered acceptance criterion must appear in some row of it. That
+# is what lets /epic turn each row into a story whose "Done when" covers the
+# spec between them. Specs 001-012 were approved before the column existed.
 set -uo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
@@ -32,6 +37,7 @@ LENS_COUNT=14
 # Everything else carries the lenses from Status: approved onwards.
 GRANDFATHERED_THROUGH=4
 LENSES_LANDED=2026-11-11
+AC_COVERAGE_FROM=13
 
 failed=0
 checked=0
@@ -58,6 +64,49 @@ fi
 # A heading matches on its words, so our numbered headings ("## 9. Acceptance
 # criteria") pass without the lint caring about the number.
 has_heading() { grep -qiE "^#{1,6}[[:space:]]*[0-9.]*[[:space:]]*$2" "$1"; }
+
+# Print the body of the first heading whose words match $2 (lower case), up to
+# the next heading of the same or a higher level. Plain awk: macOS has no gawk.
+section_body() {
+  awk -v pat="$2" '
+    /^#+[[:space:]]/ {
+      n = match($0, /^#+/); level = RLENGTH
+      if (grab && level <= want) exit
+      if (!grab && tolower($0) ~ pat) { grab = 1; want = level; next }
+    }
+    grab { print }
+  ' "$1"
+}
+
+# The numbered acceptance criteria: top-level "N." list items in that section.
+ac_numbers() {
+  section_body "$1" "acceptance criteria" | grep -oE '^[0-9]+\.' | tr -d '.' | sort -un
+}
+
+# Every number in the build-order table's ACs column, with ranges (3–5, 3-5)
+# expanded. Prints nothing if the table has no such column.
+build_order_acs() {
+  section_body "$1" "build order" | awk -F'|' '
+    /^\|/ {
+      if (!col) {
+        for (i = 1; i <= NF; i++) {
+          c = tolower($i); gsub(/^[ \t]+|[ \t]+$/, "", c)
+          if (c ~ /^(acs?|acceptance criteria)$/) col = i
+        }
+        next
+      }
+      if ($0 ~ /^\|[ \t:|-]+$/) next
+      print $col
+    }
+  ' | sed -E 's/([0-9]+)[[:space:]]*(–|-|to)[[:space:]]*([0-9]+)/\1..\3/g' \
+    | grep -oE '[0-9]+(\.\.[0-9]+)?' \
+    | while IFS= read -r n; do
+        case "$n" in
+          *..*) seq "${n%%..*}" "${n##*..}" ;;
+          *) echo "$n" ;;
+        esac
+      done | sort -un
+}
 
 for file in "${files[@]}"; do
   case "$file" in docs/specs/*.md) ;; *) continue ;; esac
@@ -104,6 +153,19 @@ for file in "${files[@]}"; do
       fi
     else
       missing+=("a 'Design lenses' section, one line per lens (docs/process/design-lenses.md)")
+    fi
+
+    if [ -n "$number" ] && [ "$((10#$number))" -ge "$AC_COVERAGE_FROM" ] \
+       && has_heading "$file" "build order" && has_heading "$file" "acceptance criteria"; then
+      acs="$(ac_numbers "$file")"
+      covered="$(build_order_acs "$file")"
+      if [ -z "$covered" ]; then
+        missing+=("a build-order table with an 'ACs' column naming the criteria each row satisfies (trk-D7)")
+      elif [ -n "$acs" ]; then
+        uncovered="$(comm -23 <(printf '%s\n' "$acs" | sort) <(printf '%s\n' "$covered" | sort) \
+          | sort -n | sed 's/^/AC /' | paste -sd, - | sed 's/,/, /g')"
+        [ -n "$uncovered" ] && missing+=("every acceptance criterion in some build-order row; in none: $uncovered (trk-D7)")
+      fi
     fi
   fi
 
