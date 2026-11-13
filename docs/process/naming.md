@@ -41,6 +41,9 @@
 | Horizon | name | Next | tracker.md |
 | Design lens | `L#` | L13 scale | [design-lenses.md](design-lenses.md) §2 |
 | Early tester | `T#` | T2 | early-testers.md, no contact details |
+| Interviewee not in the tester register | `H#` | H4 | [research/README.md](../product/research/README.md), no contact details |
+| Learning | `K#` | K3 hosts plan in Sheets | [learnings.md](../product/learnings.md) (sys-D5) |
+| Wireframe frame | `F#`, inside one set | 012 F6 | that set's README. Always with the set number, since `F` alone is also the booking-commissions alias (§4) |
 | Source in a point-in-time doc | `[X#]` | [E1] | that document's Sources section. Document-local |
 
 Three rules: a prefix is never reused for two kinds; a published code is never renumbered; a new kind checks this table before taking a letter.

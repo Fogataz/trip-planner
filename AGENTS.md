@@ -31,6 +31,7 @@ The hooks and commands under `.claude/` do not run in Codex, Copilot or any othe
 | `.claude/hooks/spec-lint.sh` | `scripts/spec-lint.sh`, in CI and runnable by hand |
 | `.claude/hooks/claude-md-mirror.sh` | `scripts/claude-md-mirror-check.sh`, same |
 | `.claude/skills/` | The process docs they are built from, under `docs/process/` |
+| `.claude/agents/reviewer.md` | The review rules in `docs/process/ways-of-working.md` §3 and `docs/process/pipeline.md` §6.4 and §6.6 — run the review in a fresh session that did not build the change, and sort findings into must fix, follow-up and nit |
 
 So a session in another tool gets the same answer, just later — on the pull request instead of inside the edit.
 

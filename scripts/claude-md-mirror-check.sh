@@ -22,9 +22,10 @@
 #   scripts/claude-md-mirror-check.sh            # check (CI)
 #   scripts/claude-md-mirror-check.sh --update   # re-pin, after checking the summary
 #
-# Decided 2026-11-12. The alternative was letting a docs/… branch edit
-# CLAUDE.md, which would let a product session change the rules engineering
-# runs on without engineering seeing it (ways-of-working.md §7.1, ww-D11).
+# Decided 2026-11-12. Since ww-D18 (2026-11-13) a product session may edit
+# CLAUDE.md too, so the pin no longer separates who edits what. It still makes
+# a change to the conventions visible: the summary cannot go stale silently, and
+# the pull request that moves the conventions has to say so.
 
 set -euo pipefail
 
@@ -124,10 +125,8 @@ if [ "$have" != "$want" ]; then
       "" \
       "If only the wording of $README changed and the summary still holds, step 3 alone is correct." \
       "" \
-      "A product session cannot do this. The pin lives in CLAUDE.md, which a docs/… branch may not" \
-      "touch (ww-D11) and which product does not own (CLAUDE.md, 'Who does what'). Say in the pull" \
-      "request that the conventions moved and hand it to Claude Code, which re-pins on a chore/…" \
-      "branch. That handoff is the point: it is how engineering finds out the rules changed."
+      "Any session may do this, product included since ww-D18. Say in the pull request that the" \
+      "conventions moved, so whoever reviews it sees the rules changed: that is the point of the pin."
 fi
 
 echo "claude-md-mirror: ok ($want)."

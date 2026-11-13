@@ -30,7 +30,7 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 
 [docs/README.md](docs/README.md) is the source of truth. In short:
 
-<!-- conventions-pin: bd2fa025cc8fc8b2a7cbbe4a7de863044e08b35b1a445d3ea5834f8676c839f4 -->
+<!-- conventions-pin: 0c7f790c31cbe0b7600890ef1e2b9b1846a86759f4c9eb94cff33933fb314a32 -->
 <!-- Summary of docs/README.md "How to write a spec", "When a spec ships" and "How to update".
      Change those and CI fails until someone re-reads this list and runs
      scripts/claude-md-mirror-check.sh --update. CLAUDE.md is loaded into every session,
@@ -44,6 +44,8 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 - When a spec ships, update the spec, `features.md`, `roadmap.md` and the specs table in the same PR as the feature.
 - Write plainly: short sentences, tables where they help, no marketing tone. Items waiting on the product owner are marked **TBD**.
 - A decision or finding code carries a short name after a `·` wherever a reader could meet it cold — the first mention in a section, every table row and heading, and every pull request or chat message (`D27 · Recommendations are working defaults`, `R1 · Org owner reach`). Not every occurrence: a range or a repeat in the same breath is already clear. [docs/process/naming.md](docs/process/naming.md) §5 resolves any code.
+- Mark what is not known: **TBD** for the owner's decisions, `[assumption]` and `[unverified]` for claims and numbers with no source yet. A number carries its source and date, or a marker (ww-D16).
+- Acceptance criteria are numbered and never renumbered once approved. From spec 013 on, the build order is a table with an **ACs** and a **Frames** column, and `scripts/spec-lint.sh` checks that every criterion lands in a row (trk-D7).
 
 ## Working across computers
 
@@ -53,6 +55,6 @@ These come from [docs/product/strategy.md](docs/product/strategy.md). Flag any c
 
 ## Who does what
 
-- **Product (Cowork project):** edits only `docs/product/`, `docs/brand/`, `docs/process/`, `docs/README.md` and draft specs in `docs/specs/`. Reads code to check facts but never edits code. Its git is read-only and fast-forward — `git fetch`, `git pull --ff-only`, `git status`, `git log`, `git diff` — plus `scripts/docs-commit.sh` for changes under `docs/` and `wireframes/` on a `docs/…` branch (ww-D6, ww-D8, ww-D13). Never commits by hand, merges, rebases, resets, or changes git config; those are Claude Code's. Pulls before editing; if the pull is refused, says so and names the commit it worked from. The script pushes and opens the PR itself once that session's `gh` is authenticated (ww-D9); otherwise it stops at the push and hands over the branch. It never merges and doesn't make up answers to TBDs.
+- **Product (Cowork project):** edits `docs/product/`, `docs/brand/`, `docs/process/`, `docs/README.md`, draft specs in `docs/specs/` and `wireframes/`, and the process tooling: `.claude/commands/`, `.claude/agents/`, `.claude/skills/`, `CLAUDE.md`, `AGENTS.md` and `scripts/*.sh` (ww-D18). The Cowork bridge cannot write `.claude/`, so a product session drafts those files under `docs/process/pending-claude/` and Claude Code moves them into place before the merge (ways-of-working §7.1). Reads application code to check facts but never edits it, and leaves `.claude/hooks/`, `.claude/settings.json`, `.github/` and data scripts to engineering. Its git is read-only and fast-forward — `git fetch`, `git pull --ff-only`, `git status`, `git log`, `git diff` — plus `scripts/docs-commit.sh`, which commits only those paths on a `docs/…` branch (ww-D6, ww-D8, ww-D13). Never commits by hand, merges, rebases, resets, or changes git config; those are Claude Code's. Pulls before editing; if the pull is refused, says so and names the commit it worked from. The script pushes and opens the PR itself once that session's `gh` is authenticated (ww-D9); otherwise it stops at the push and hands over the branch. It never merges and doesn't make up answers to TBDs.
 - **Engineering (Claude Code):** builds features from specs, owns all code and `docs/features.md`, and handles branches, commits and PRs for code, config and mixed changes. It reports its outcome into the repo or the board (the PR, the doc it changed, or the issue), never only into its chat (ww-D7).
 - Work on a branch, never directly on `main`. PRs go to `main` on GitHub (`Fogataz/trip-planner`).

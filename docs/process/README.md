@@ -1,6 +1,6 @@
 # How we work
 
-> **Living reference.** Updated whenever a way of working changes, so it stays true. Written 2026-11-11.
+> **Living reference.** Updated whenever a way of working changes, so it stays true. Written 2026-11-11, updated 2026-11-13.
 >
 > The front door to `docs/process/`: one document per thing, plus the two outside this folder that they all defer to. This file says what is where, and why we chose it.
 
@@ -8,10 +8,10 @@
 
 | Document | Owns | Read it when |
 |---|---|---|
-| [system.md](system.md) | **Start here.** The whole thing on one page: the objects, the documents, the tooling with its status, and the fronts beyond product and engineering | You want to know what we have, or whether a tool exists |
-| [tracker.md](tracker.md) | The board: three levels, fields, views, milestones, and how an epic is written | You are creating or grooming an issue |
-| [pipeline.md](pipeline.md) | The commands, and where each hands over | You are about to run a command, or build a new one |
-| [ways-of-working.md](ways-of-working.md) | The quality bar and the weekly rhythm | Before merging, and on Friday |
+| [system.md](system.md) | **Start here.** The whole thing on one page: the loop, the objects, the documents, every command, agent, skill, hook and script with its status, and the fronts beyond product and engineering | You want to know what we have, or whether a tool exists |
+| [tracker.md](tracker.md) | The board: three levels, fields, views, milestones, how an initiative, an epic and a story are written, and follow-ups | You are creating or grooming an issue |
+| [pipeline.md](pipeline.md) | The commands and the reviewer agent, and where each hands over | You are about to run a command, or build a new one |
+| [ways-of-working.md](ways-of-working.md) | The quality bar, the three tiers of review finding, the weekly rhythm, and who commits what | Before merging, and on Friday |
 | [design-lenses.md](design-lenses.md) | The fourteen lenses every new spec is checked against | Stage 2 (Define) and stage 4 (Spec), and when reviewing a pull request |
 | [naming.md](naming.md) | Codes, names, and the register that resolves them | You meet a code you cannot read |
 | [device-setup.md](device-setup.md) | The one-time steps to get a product session pushing directly on a new device (ww-D9) | A Cowork session on a device that has never had it needs direct push |
@@ -23,11 +23,7 @@ Rule of thumb: `docs/README.md` owns **what happens**, `tracker.md` owns **where
 
 ## How one piece of work travels
 
-```
-strategy -> /roadmap -> /epic -> /feature -> ships -> /audit -> /milestone -> strategy
-```
-
-There are exactly two places work stops:
+The loop is drawn in [system.md](system.md) §1. There are exactly two places work stops:
 
 1. **The spec gate.** No code before a spec reaches `Status: approved` ([docs/README.md](../README.md), D6).
 2. **The milestone gate.** Every bet is settled against its own measure at M0, M1 or M2 ([tracker.md](tracker.md), "Milestones").
@@ -53,6 +49,11 @@ Everything else is a recommendation, not a blocker (D27).
 | A rule gets a script or a hook, or it is goodwill | The checks we skip are the ones that depend on two people remembering while busy | Checklists nobody runs | [ways-of-working.md](ways-of-working.md) §2, §7 |
 | A code never travels without its name | "M0 epic target dates" is unreadable a week later | Bare codes | [naming.md](naming.md) |
 | Premium hosts are the lead segment | Sized bottom-up and scored on two lenses; offsites stay as a benchmark | An offsite-platform pivot | D33, [venture-analysis.md](../product/venture-analysis.md) |
+| Review findings come in three tiers, and follow-ups are filed before the merge | Holding a feature for taste delays value; merging on "we'll clean it up later" means it never happens. Category decides the tier, the board holds what is deferred, and the oldest follow-up joins every sprint | Request every change before merging; or merge and leave the rest in a comment | [ways-of-working.md](ways-of-working.md) §3.1, ww-D17 |
+| An epic says what done looks like in plain words | Opening an epic should show what good is at a glance. A summary with AC numbers and a stamp does that without becoming a second spec | AC numbers only; copying the criteria | [tracker.md](tracker.md), trk-D7 |
+| One reviewer agent, three moments | The pull request, the spec before the gate and the press release all need someone who did not write them. One definition keeps "independent" meaning one thing | A reviewer per command | [pipeline.md](pipeline.md), pipe-D9 |
+| What we learn has one home | A lesson that stays in the retro of the bet that taught it never reaches the next bet | Lessons per initiative, or in chat | [learnings.md](../product/learnings.md), sys-D5 |
+| The product session maintains the process tooling | The commands and rules are how the process is enforced; routing every change through Claude Code made them the slowest thing to change. Application code, hooks and CI stay with engineering | A work order for every process change | [ways-of-working.md](ways-of-working.md) §7.1, ww-D18 |
 
 ## What we deliberately do not do
 
@@ -63,6 +64,8 @@ Everything else is a recommendation, not a blocker (D27).
 - No `/strategy` command. Strategy is the owner's call at a milestone, prepared by `/milestone`.
 - No auto-merge, even on a green build.
 - No rewriting a shipped spec.
+- No `TODO` comment in code standing in for work. A follow-up is an issue.
+- No task per set of wireframes. They are a link on the epic and a line per story (trk-D6).
 
 ## When a way of working changes
 

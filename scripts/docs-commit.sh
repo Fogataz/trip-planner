@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# Commit and push documentation changes from a product session (ww-D6).
+# Commit and push a product session's changes (ww-D6, widened by ww-D18).
 #
-#   scripts/docs-commit.sh <branch-suffix> "<commit message>" [docs/path ...]
+#   scripts/docs-commit.sh <branch-suffix> "<commit message>" [path ...]
 #
-# Stages docs/ and wireframes/ only (or just the paths given), and refuses if:
+# Stages only the paths a product session may change — documentation and the
+# process tooling (scripts/docs-only-check.sh --pattern is the one rule) — or
+# just the paths given, and refuses if:
 #   - you are not on main or on docs/<branch-suffix>;
-#   - anything outside those two folders is staged;
+#   - anything outside those paths is staged;
 #   - the branch already carries commits that touch files outside them.
-# wireframes/ is documentation: docs/README.md rule 7 says to save frames there,
-# and stage 3 of the feature process produces them.
-# So a product session can never commit or push code with it.
+# So a product session can never commit or push application code with it.
 set -euo pipefail
 
-usage='usage: docs-commit.sh branch-suffix "commit message" [docs/path ...]'
+usage='usage: docs-commit.sh branch-suffix "commit message" [path ...]'
 suffix="${1:?$usage}"
 message="${2:?$usage}"
 shift 2
@@ -20,16 +20,19 @@ branch="docs/${suffix}"
 
 cd "$(git rev-parse --show-toplevel)"
 
+allowed="$(scripts/docs-only-check.sh --pattern)"
+refusal='Refusing: %s is outside what a product session may commit (docs-only-check.sh --pattern).\n'
+
 # 0. Check the inputs before touching any branch.
 for path in "$@"; do
-  case "$path" in
-    docs/*|wireframes/*) ;;
-    *) printf 'Refusing: %s is outside docs/ and wireframes/.\n' "$path" >&2; exit 1 ;;
-  esac
+  if ! printf '%s\n' "$path" | grep -qE "$allowed"; then
+    printf "$refusal" "$path" >&2
+    exit 1
+  fi
 done
-outside="$(git diff --cached --name-only | grep -vE '^(docs|wireframes)/' || true)"
+outside="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
 if [ -n "$outside" ]; then
-  printf 'Refusing: these staged files are outside docs/ and wireframes/:\n%s\nUnstage them first (git restore --staged <file>).\n' "$outside" >&2
+  printf 'Refusing: these staged files are outside what a product session may commit:\n%s\nUnstage them first (git restore --staged <file>).\n' "$outside" >&2
   exit 1
 fi
 
@@ -48,28 +51,31 @@ elif [ "$current" != "$branch" ]; then
   exit 1
 fi
 
-# 2. Stage docs/ and wireframes/ only, or just the paths given.
+# 2. Stage the paths given, or every changed file under the allowed paths
+#    (modified, new or deleted). A loop, not mapfile: macOS ships bash 3.2.
 if [ "$#" -gt 0 ]; then
-  git add -- "$@"
+  git add -A -- "$@"
 else
-  git add -- docs/ wireframes/
+  git ls-files -m -o -d --exclude-standard | sort -u | grep -E "$allowed" | while IFS= read -r f; do
+    git add -A -- "$f"
+  done || true
 fi
 
-outside="$(git diff --cached --name-only | grep -vE '^(docs|wireframes)/' || true)"
+outside="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
 if [ -n "$outside" ]; then
-  printf 'Refusing: these staged files are outside docs/ and wireframes/:\n%s\n' "$outside" >&2
+  printf 'Refusing: these staged files are outside what a product session may commit:\n%s\n' "$outside" >&2
   exit 1
 fi
 
 if git diff --cached --quiet; then
-  echo "Nothing to commit under docs/."
+  echo "Nothing to commit."
 else
   git commit -m "$message"
 fi
 
-# 3. Everything this branch adds on top of main must be documentation. One rule in
-#    one place: scripts/docs-only-check.sh, which CI runs on every docs/… pull
-#    request too (ww-D11).
+# 3. Everything this branch adds on top of main must be within the allowed
+#    paths. One rule in one place: scripts/docs-only-check.sh, which CI runs on
+#    every docs/… pull request too (ww-D11).
 git fetch --quiet origin main || true
 base_ref="origin/main"
 git rev-parse --verify --quiet "$base_ref" >/dev/null || base_ref="main"
@@ -86,5 +92,5 @@ if ! command -v gh >/dev/null 2>&1; then
 elif [ "$(gh pr view "$branch" --json state --jq .state 2>/dev/null || true)" = "OPEN" ]; then
   echo "Pull request already open: $(gh pr view "$branch" --json url --jq .url)"
 else
-  gh pr create --base main --head "$branch" --title "$message" --body "Docs-only change from a product session, committed with scripts/docs-commit.sh (ww-D6)."
+  gh pr create --base main --head "$branch" --title "$message" --body "From a product session, committed with scripts/docs-commit.sh (ww-D6, ww-D18)."
 fi

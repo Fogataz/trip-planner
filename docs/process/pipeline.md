@@ -1,20 +1,12 @@
 # Pipeline
 
-> **Living reference.** Written 2026-11-11, and current: all seven commands exist. Updated whenever a command is built or changed.
+> **Living reference.** Written 2026-11-11, and current: all seven commands and the reviewer agent exist (updated 2026-11-13). Updated whenever a command is built or changed.
 >
 > What each command owns, and where it hands over. It does not repeat the rules: [docs/README.md](../README.md) owns the stages, [tracker.md](tracker.md) owns the board and how an epic is written, [ways-of-working.md](ways-of-working.md) owns the quality bar and the rhythm. This file owns the chain between them.
 
 ## 1. The loop
 
-```
-   strategy (owner, at a milestone)
-         |
-         v
-  /initiative --> /roadmap --> /epic --> /feature --> /pr --> ships
-         ^                                                      |
-         |                                                      v
-    /milestone <------------------------------------------- /audit
-```
+The loop is drawn once, in [system.md](system.md) §1. The commands on it:
 
 | Command | Owns | State |
 |---|---|---|
@@ -28,17 +20,19 @@
 
 Each name is the thing the command owns. Nothing is named after a job that two commands share.
 
+One **agent** sits under them: the reviewer ([`.claude/agents/reviewer.md`](../../.claude/agents/reviewer.md), pipe-D9). It never built what it reads. `/pr` calls it on a diff, `/feature` on a spec before the gate, `/initiative` on a press release before approval. It judges and reports; the command that called it does the writing.
+
 ## 2. What each command reads and writes
 
 | Command | Cadence | Reads | Writes | Hands to |
 |---|---|---|---|---|
-| `/initiative` | Per bet, before its epics | working-doc §2–3, venture-analysis, epic-briefs §2, early-testers | the initiative file and the issue body | `/epic` |
-| `/roadmap` | Monday, and after a strategy change | the initiatives and their key results and kill conditions, the board, venture-analysis §11 as a dated reference, spec-backlog | recommended Horizon moves with a reason on the issue, the next brief | `/epic` |
-| `/epic` | Per bet | a brief, a spec or an issue | the epic, its fields, story sub-issues | `/feature` |
-| `/feature` | Per feature | the stages in docs/README.md, the spec | spec, wireframes, branch, PR, docs | `/pr`, then `/audit` |
-| `/pr` | Per pull request | the spec, the diff, the lenses, the four principles | a verdict, and on an OK one PR comment | the owner, who merges |
-| `/audit` | After a ship, and before a gate | `scripts/audit-checks.sh`, shipped acceptance criteria, the seven UX tests, the fourteen lenses, the four principles | Bug issues under I3, rows in spec-backlog, `features.md` corrections | `/roadmap` |
-| `/milestone` | At M0, M1, M2 | each epic's own measures, analytics, the board | verdicts and an evidence pack | the owner, then `/roadmap` |
+| `/initiative` | Per bet, before its epics | working-doc §2–3, venture-analysis, epic-briefs §2, early-testers, learnings | the initiative file and the issue body; the reviewer's sceptic verdict on the press release | `/epic` |
+| `/roadmap` | Monday, and after a strategy change | the initiatives and their key results and kill conditions, the board, open follow-ups, learnings, venture-analysis §11 as a dated reference, spec-backlog | recommended Horizon moves with a reason on the issue, the next brief | `/epic` |
+| `/epic` | Per bet | a brief, a spec or an issue | the epic with **What done looks like**, its fields, story sub-issues with **Done when** | `/feature` |
+| `/feature` | Per feature | the stages in docs/README.md, the spec | spec, wireframes, the reviewer's verdict at the gate, branch, PR, docs | `/pr`, then `/audit` |
+| `/pr` | Per pull request | the spec, the diff, the lenses, the four principles | a verdict in three tiers; on an OK, one PR comment and the follow-up issues | the owner, who merges |
+| `/audit` | After a ship, and before a gate | `scripts/audit-checks.sh`, shipped acceptance criteria, the seven UX tests, the fourteen lenses, the four principles | Bug issues under I3, rows in spec-backlog, `features.md` corrections, learnings rows | `/roadmap` |
+| `/milestone` | At M0, M1, M2 | each epic's own measures, analytics, the board, open follow-ups | verdicts, an evidence pack, learnings rows | the owner, then `/roadmap` |
 
 ## 3. Rules every command follows
 
@@ -49,7 +43,7 @@ These are why the two existing commands have not drifted. Keep them in any new o
 3. **A `check` mode that changes nothing.** Every command can answer "what is wrong right now?" without writing.
 4. **Show, then wait.** Print the body or the `gh` commands and wait for an OK before writing to GitHub or to `main`.
 5. **Owner decisions stay open**, with options and a recommendation, never answered (D27).
-6. **Never restate a spec.** Link it.
+6. **Never restate a spec.** Link it, and where a reader needs the gist, summarise in plain words with the AC numbers and the spec version it was read from (trk-D7).
 
 ## 4. The handoffs
 
@@ -60,10 +54,10 @@ Each command ends by naming the next one. Added to `feature.md`, `epic.md` and `
 | `/initiative` writes a press release | `/epic` | "Next: `/epic <brief>` for the first epic under this initiative" |
 | `/roadmap` writes a brief | `/epic` | "Next: `/epic <brief>`" |
 | `/epic` creates an epic with no spec | `/feature` | "Next: `/feature <title>`, stage 1 benchmark" |
-| `/feature` drafts the spec (stage 4) | `/epic` | "Next: `/epic <spec>` to link the spec and set fields" |
+| `/feature` drafts the spec (stage 4) | the reviewer, then `/epic` | "Next: read the reviewer's verdict on the spec, then approve it; `/epic <spec>` to link the spec and set fields" |
 | `/feature` passes the approval gate | `/epic` | "Next: `/epic <spec>` to create one story per build-order row" |
 | `/feature` opens a pull request | `/pr` | "Next: `/pr <number>` from a session that did not build this" |
-| `/pr` returns a verdict | the owner | "Next: your call. Nothing auto-merges" |
+| `/pr` returns a verdict | the owner | "Next: your call. Nothing auto-merges" — or, with a must-fix open, "Next: `/feature <spec>` to fix it on this branch, then `/pr` again" |
 | `/feature` ships | `/audit` | "Next: `/audit <spec>` once it is live" |
 | `/audit` finds something | the board or the backlog | A Bug issue under I3, or a row in [spec-backlog.md](../product/spec-backlog.md) |
 | `/milestone` records verdicts | `/roadmap` | "Next: `/roadmap` to re-cut Now / Next / Later" |
@@ -104,15 +98,20 @@ five changes below made the writing half cheap enough to build with the rest.
    board's order with [venture-analysis.md](../product/venture-analysis.md) §11 and the briefs in
    [epic-briefs.md](../product/epic-briefs.md) — **printing that document's date**, because a
    difference from a three-month-old analysis is the document ageing, not drift.
-6. **Next.** One or two things to start, sized against two people for one week. Skipped entirely if
-   step 2 stopped it.
-7. **Brief.** Write or update the top brief in `epic-briefs.md` so `/epic` can take it.
-8. Never rewrite [strategy.md](../product/strategy.md), and never answer a TBD. A Horizon move, a
+6. **Follow-ups and learnings.** Count the open `follow-up` issues and name the oldest with its age:
+   it goes in this sprint. At **eight or more**, recommend no new epic, as step 2 does for work in
+   progress ([ways-of-working.md](ways-of-working.md) §5, ww-D17). Then read the
+   [learnings](../product/learnings.md) added since last Monday and say which open epic or initiative
+   each one touches.
+7. **Next.** One or two things to start, sized against two people for one week. Skipped entirely if
+   step 2 or step 6 stopped it.
+8. **Brief.** Write or update the top brief in `epic-briefs.md` so `/epic` can take it.
+9. Never rewrite [strategy.md](../product/strategy.md), and never answer a TBD. A Horizon move, a
    re-parenting or a milestone change is recorded as a comment on the issue with its reason, not
    only in a chat (ww-D7).
 
 **Output:** a status report, recommended Horizon moves, and one brief ready for `/epic`. `check` mode
-runs steps 1 to 5 and writes nothing.
+runs steps 1 to 6 and writes nothing.
 
 ### 6.2 `/audit` — what is wrong with what we shipped
 
@@ -136,8 +135,9 @@ runs steps 1 to 5 and writes nothing.
    Broken against a spec becomes a Bug issue under **I3 what we have built works as documented**, or
    a comment on the issue that already exists. An improvement becomes a row in
    [spec-backlog.md](../product/spec-backlog.md). **A contradiction with `features.md` is fixed in
-   `features.md`**, so documentation rot has a route like anything else. Nothing stays only in the
-   report.
+   `features.md`**, so documentation rot has a route like anything else. A pattern across findings
+   — the same lens missed in three specs, say — becomes a row in
+   [learnings.md](../product/learnings.md). Nothing stays only in the report.
 7. Change no application code, and open no pull request except the `features.md` correction.
 
 **Output:** a findings table, plus the issues and backlog rows it would create, shown for an OK
@@ -151,11 +151,12 @@ skipped, so it runs on ships and gates instead.
 1. List every epic closed since the previous milestone.
 2. For each, read the leading and lagging measures in its own body against its own targets. Record: paid off, did not, or could not be measured.
 3. Count "could not be measured" separately. It is a finding about how we work, not a result.
-4. Run the milestone checklist in [ways-of-working.md](ways-of-working.md) §6.
+4. Run the milestone checklist in [ways-of-working.md](ways-of-working.md) §6, and count the open follow-ups per epic: debt carried into a gate is a finding too.
 5. Set the result against the gate criteria in [tracker.md](tracker.md), "Milestones".
-6. Assemble the evidence and stop. The decision is the owner's.
+6. Draft the [learnings](../product/learnings.md) the verdicts support, one claim per row with its evidence, and show them for an OK.
+7. Assemble the evidence and stop. The decision is the owner's.
 
-**Output:** an evidence pack. Measures against targets, the checklist, and what the criteria say. No decision.
+**Output:** an evidence pack — measures against targets, the checklist, what the criteria say — and the learnings rows. No decision.
 
 **Why there is no `/strategy` command.** Strategy changes three or four times a year, on evidence from interviews and milestones rather than on repo state, and the call is the owner's. `/milestone` prepares that conversation. A command would manufacture it from stale documents.
 
@@ -164,12 +165,19 @@ skipped, so it runs on ships and gates instead.
 **When:** after a pull request is opened, before it is merged. **Input:** the pull request number. Built 2026-11-11 (pipe-D5). The command is [`.claude/commands/pr.md`](../../.claude/commands/pr.md).
 
 1. Read the pull request, its diff, and the spec it names. If no spec can be found, say so and stop rather than inventing acceptance criteria.
-2. Hand the spec and the diff to a **subagent**, and nothing else. [ways-of-working.md](ways-of-working.md) §3 requires a reviewer that did not build the thing; running the review in a subagent makes that true even when `/pr` is typed in the session that wrote the code.
-3. The verdict has four parts: every acceptance criterion (met, not met, can't tell — "can't tell" counts as not met); the four product principles in [CLAUDE.md](../../CLAUDE.md); the fourteen lenses in [design-lenses.md](design-lenses.md) against what the diff actually does; and anything in the diff the spec did not ask for.
-4. Show the verdict. Offer to post it as one pull-request comment, and post only on an OK.
-5. Never merge, push, approve on GitHub, enable auto-merge, or edit code.
+2. Hand the spec and the diff to the **reviewer agent** in `pr` mode, and nothing else. [ways-of-working.md](ways-of-working.md) §3 requires a reviewer that did not build the thing; running the review in an agent makes that true even when `/pr` is typed in the session that wrote the code.
+3. The reviewer checks four things: every acceptance criterion (met, not met, can't tell — "can't tell" counts as not met); the four product principles in [CLAUDE.md](../../CLAUDE.md); the fourteen lenses in [design-lenses.md](design-lenses.md) against what the diff actually does; and anything in the diff the spec did not ask for.
+4. **It sorts every finding into one tier** — must fix, follow-up or nit — by the definitions in [ways-of-working.md](ways-of-working.md) §3.1 (ww-D17), and ends with one line: ready to merge, or the must-fix list.
+5. Show the verdict. On an OK: post it as one pull-request comment, and create one issue per follow-up ([tracker.md](tracker.md), "Follow-ups from review"), after checking none already exists. Link the new issues in the comment.
+6. Never merge, push, approve on GitHub, enable auto-merge, or edit code.
 
-**Output:** a verdict the owner reads instead of the whole diff. The merge stays the owner's, as it is today.
+**Output:** a verdict the owner reads instead of the whole diff, and no finding that exists only in a comment. The merge stays the owner's.
+
+### 6.6 The spec review at the gate
+
+**When:** `/feature` has finished stage 4 and before the owner approves. Added 2026-11-13 (pipe-D9). It is not a command: `/feature` calls the reviewer agent in `spec` mode.
+
+The reviewer reads the spec and the lenses, and nothing from the conversation that wrote it. It answers: is each acceptance criterion testable as written; is each lens answer true of the design, not just present; does every build-order row name its criteria and frames, and does every criterion land in a row; is every number sourced or marked (ww-D16); does every open decision carry options and a recommendation. Findings use the same three tiers. The owner reads the verdict, then approves or sends the spec back. Spec 012 exists because a careful read of spec 002 found three regressions; this makes that read routine instead of lucky.
 
 ### 6.5 `/initiative` — the bet itself
 
@@ -184,7 +192,10 @@ and both templates are in [tracker.md](tracker.md), "Writing an initiative".
    the command says so and recommends not doing the initiative.
 3. It never invents a customer quote and presents it as real: draft wording is marked as the owner's
    to confirm.
-4. `check` mode reports what is missing across every open initiative, **plus whether any kill
+4. Before the owner approves the press release, the reviewer agent reads it in `press-release` mode:
+   the sceptic sys-D4 planned. It attacks the "so what?", the payer and the riskiest assumption, and
+   checks the release against [learnings.md](../product/learnings.md).
+5. `check` mode reports what is missing across every open initiative, **plus whether any kill
    condition has already happened**. It is the same read `/roadmap` step 4 does, available on its own.
 
 **Output:** the initiative file, the issue body, and nothing restated between them.
@@ -197,6 +208,7 @@ and both templates are in [tracker.md](tracker.md), "Writing an initiative".
 | By 27 Nov | `/milestone` | **Built 2026-11-11.** M0 Pilot retro falls on 27 Nov and nothing checked a measure before |
 | Before 20 Nov | The design lenses, `/pr`, and the three checks that run by themselves (spec lint, docs-only branches, session staleness) | **Built 2026-11-11.** The lenses apply to specs 005 onwards, so they have to exist before the next spec is written, not after |
 | Before 20 Nov | `/initiative`, `/roadmap`, `/audit` and `scripts/audit-checks.sh` | **Built 2026-11-11**, ahead of pipe-D3's December and January dates. The five changes to each (§6.1, §6.2) made them cheap enough to finish in one pass, and `/initiative` has to exist before the next initiative is written rather than after |
+| 13 Nov | The reviewer agent and its three modes; three-tier `/pr` with follow-up issues; the spec review at the gate; epics and stories that summarise done; learnings read and written by `/roadmap`, `/milestone`, `/audit` and `/initiative` | **Built 2026-11-13** from a product session (ww-D18). None of it touches the pilot build |
 | December | The Friday digest, if the audit script has earned it (sys-D4) | Board automation is settled: built-in workflows only (pipe-D1, §5) |
 
 ## 8. Open decisions
@@ -211,6 +223,7 @@ and both templates are in [tracker.md](tracker.md), "Writing an initiative".
 | pipe-D6 | The five changes to `/roadmap` before building it | Engineering | **Decided 2026-11-11** (§6.1): a work-in-progress limit that refuses, measures printed and checked for readability, kill conditions read weekly, the drift baseline moved from a point-in-time analysis to the initiatives' key results with the analysis's date printed, and Horizon moves recorded on the issue. Options considered and rejected: build it as originally drafted (it would recommend work while three epics were in flight, and report drift that was really a stale document) |
 | pipe-D7 | The five changes to `/audit` before building it | Engineering | **Decided 2026-11-11** (§6.2): the lenses added, the mechanical half split into a script, the script kept out of CI, a duplicate check before filing, and `features.md` given a route. "Monthly" dropped for ships and gates. Options rejected: build it as drafted (no lenses, no script, and one near-duplicate issue already proved the filing gap) |
 | pipe-D8 | Is `/initiative` its own command, or a mode on `/epic`? | Engineering | **Decided 2026-11-11: its own command.** Options were: a mode on `/epic` (rejected — writing a press release is a different conversation from setting fields, and §1 says a command is named after the object it owns); a skill that loads itself (rejected — initiatives are written a handful of times a year, and a skill would have to guess the moment); its own command (taken) |
+| pipe-D9 · One reviewer agent | Where does independent judgment live, now that three steps need it (the pull request, the spec at the gate, the press release)? | Product owner | **Decided 2026-11-13: one agent definition, [`.claude/agents/reviewer.md`](../../.claude/agents/reviewer.md), with three modes**, called by `/pr`, `/feature` and `/initiative`. It replaces the reviewer instructions written inline in `/pr` and is the sceptic sys-D4 planned. Options rejected: three agents (three copies of what "independent" means, drifting apart); keep the review inline in each command (pipe-D5's subagent stays, but its definition would live in three places). The agent reads the rules from the process docs, like every command (§3) |
 
 ## Appendix A. `/roadmap` and `/audit`
 
@@ -227,4 +240,4 @@ templates are in [tracker.md](tracker.md), "Writing an initiative".
 
 ## Appendix C. `/milestone`
 
-Built on 2026-11-11. The command is [`.claude/commands/milestone.md`](../../.claude/commands/milestone.md); it is not copied here. When `/roadmap` and `/audit` are built, Appendices A and B are replaced by the same kind of pointer.
+Built on 2026-11-11. The command is [`.claude/commands/milestone.md`](../../.claude/commands/milestone.md); it is not copied here.
