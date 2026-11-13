@@ -327,25 +327,31 @@ in the specs table, and back-filling closed issues adds noise.
 Outcome: the Madrid gathering runs on Trip Planner and we get the signals in spec 002 §11.
 12–25 Nov. Revenue Model: offsites (D).
 
-Epics are the eleven parts of [spec 002](../specs/002-hosted-event-pilot.md) §12, in build order.
-Parts 1–7 are **Must** and carry stories. Parts 8–11 are **Should** and may be cut on 17 Nov, so
-they are seeded as epics only.
+**Superseded 2026-11-13.** The eleven-part table this section held was seeded 2026-11-10, before
+specs 011 and 012 (approved 2026-11-12) regrouped the same rows into eight shippable slices
+([spec 012](../specs/012-joining-naming-and-the-first-trip.md) §12) and added work the original
+rows did not cover. The table below is that grouping, kept current; spec 012 §12 is the source if
+they ever differ.
 
-| # | Epic | Cut line | Layer | Phase |
+| Slice | Covers (spec 002 §12 rows) | Cut line | Layer | Epic |
 |---|---|---|---|---|
-| 1 | Organizations, trip roles and TripMember migration | Must | Host | 1 |
-| 2 | Google sign-in | Must | Core | 1 |
-| 3 | Invite link, requests and approval | Must | Core | 2 |
-| 4 | Pilot localization: event time zone and new strings | Must | Core | 7 |
-| 5 | Analytics events and CSV export | Must | Core | 7 |
-| 6 | Agenda import as a reviewable draft | Must | Host | 7 |
-| 7 | Announcements with pin and unread | Must | Host | 6 |
-| 8 | Notification categories | Should | Core | 6 |
-| 9 | Email-link sign-in | Should | Core | 1 |
-| 10 | Language saved to the account, localized push | Should | Core | 7 |
-| 11 | Generate itinerary as draft, Q&A context, web manifest | Should | Core | 7 |
+| S1 · Permissions foundation | 1, 011 block 1 (capability table, `can()`, migration, G3–G5) | Must | Host | [#20](https://github.com/Fogataz/trip-planner/issues/20) — building, PR [#124](https://github.com/Fogataz/trip-planner/pull/124) |
+| S2 · The door | 2, 3, 9 + three doors, bulk invite, attribution (012 §5.8–5.9) | Must | Core | [#29](https://github.com/Fogataz/trip-planner/issues/29) |
+| S3 · Localization of the new surface | 4, 10 + §6 mechanics (keys, zones, CI check, O8/O9) | Must | Core | [#36](https://github.com/Fogataz/trip-planner/issues/36), [#53](https://github.com/Fogataz/trip-planner/issues/53) |
+| S4 · Analytics | 5 + invited-path events, two funnels (012 §5.9.1) | Must | Core | [#40](https://github.com/Fogataz/trip-planner/issues/40) |
+| S5 · Agenda drafts and the app shell | 6, 11 — **11 elevated to Must 2026-11-13** (see below) | Must | Host | [#43](https://github.com/Fogataz/trip-planner/issues/43), [#54](https://github.com/Fogataz/trip-planner/issues/54) |
+| S6 · Announcements and notifications | 7 (Must), 8 (Should) | Must / Should | Host | [#48](https://github.com/Fogataz/trip-planner/issues/48), [#51](https://github.com/Fogataz/trip-planner/issues/51) |
+| S7 · Lifecycle hardening | 011 block 2 remainder (G1 last host, G2 last owner) | Should | Core | [#115](https://github.com/Fogataz/trip-planner/issues/115) |
+| S8 · After the pilot | Guest proposals, per-member overrides, org reach, member list, move screen | **Not for the pilot** | — | — |
 
-Plus two tasks on the initiative itself: the 13 lo-fi wireframe frames (§6) and the dry run on
+**2026-11-13: row 11 (#54) split in priority.** The web-manifest half of row 11 was Should and
+narrowly scoped to enabling iPhone push. The product owner separately asked for the phone
+experience to feel installed — no browser chrome, no accidental pinch-zoom — which is the same
+manifest work, broadened. #54 is now **Must** and retitled around that outcome; the original F23
+(generate-itinerary-as-draft button) and F24 (Q&A accommodation context) stay on it as Should.
+See #54 for the accessibility trade-off this raises (open, owner's call).
+
+Plus two tasks on the initiative itself: the 13 lo-fi wireframe frames (§6, done) and the dry run on
 Fri 20 Nov (§12.4).
 
 ### I2 Learn from the pilot and keep offsites as a benchmark
