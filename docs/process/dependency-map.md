@@ -75,6 +75,13 @@ register, regenerate `dependency-map/index.html` if the diagram changed, and com
 source with `mermaid.min.js` from a CDN, the same trade-off the wireframes' README already accepts
 for its webfont. Nothing here uses Mermaid to *generate* a different board format.
 
+**Clicking through to GitHub.** Every node below carries a Mermaid `click` directive to its issue or
+milestone. **This only activates where Mermaid's own script runs the diagram** —
+`dependency-map/index.html`, or pasting a block into the [Mermaid Live Editor](https://mermaid.live).
+**GitHub's markdown preview sanitizes `click` out of embedded Mermaid for security and will not make
+the boxes clickable there**, even though the same source renders the shapes and colors correctly. So
+the generated HTML page is the one to open when you want to click through, not the GitHub file view.
+
 **Keeping the picture and the register in sync:** they are sections of the same file, so there is
 exactly one place to edit and one commit changes both. There is no separate sync mechanism to build
 or maintain — that is deliberate, per the instruction not to build new synchronization machinery for
@@ -144,7 +151,6 @@ flowchart LR
     E91 --> M2
 
     classDef decision fill:#f1f5f9,stroke:#64748b,color:#0f172a;
-    classDef foundation fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e,stroke-dasharray: 0;
     classDef delivery fill:#ede9fe,stroke:#7c3aed,color:#3b0764;
     classDef gate fill:#fff7ed,stroke:#ea580c,color:#7c2d12;
     classDef milestone fill:#dcfce7,stroke:#16a34a,color:#14532d;
@@ -157,6 +163,24 @@ flowchart LR
     class I3,I7 decision;
     class DRYRUN,LIVE,SPIKE58 gate;
     class M0,M1,M2 milestone;
+
+    click S1 "https://github.com/Fogataz/trip-planner/issues/20" "#20 · Permissions foundation" _blank
+    click I1REST "https://github.com/Fogataz/trip-planner/issues/19" "#19 · I1 Run the hosted event pilot" _blank
+    click DRYRUN "https://github.com/Fogataz/trip-planner/issues/56" "#56 · Dry run" _blank
+    click SPIKE58 "https://github.com/Fogataz/trip-planner/issues/58" "#58 · What the pilot teaches us" _blank
+    click I3 "https://github.com/Fogataz/trip-planner/issues/62" "#62 · I3 What we have built works as documented" _blank
+    click E60 "https://github.com/Fogataz/trip-planner/issues/60" "#60 · Host home" _blank
+    click E87 "https://github.com/Fogataz/trip-planner/issues/87" "#87 · Charge a host" _blank
+    click OTHI6 "https://github.com/Fogataz/trip-planner/issues/59" "#59, #85, #86 · other I6 epics (opens #59)" _blank
+    click I7 "https://github.com/Fogataz/trip-planner/issues/83" "#83 · I7 discovery" _blank
+    click E88 "https://github.com/Fogataz/trip-planner/issues/88" "#88 · Spike: how hosts take payments" _blank
+    click E89 "https://github.com/Fogataz/trip-planner/issues/89" "#89 · Deposits & instalments" _blank
+    click E61 "https://github.com/Fogataz/trip-planner/issues/61" "#61 · Public sign-up page" _blank
+    click E90 "https://github.com/Fogataz/trip-planner/issues/90" "#90 · Host branding" _blank
+    click E91 "https://github.com/Fogataz/trip-planner/issues/91" "#91 · Offline schedule" _blank
+    click M0 "https://github.com/Fogataz/trip-planner/milestone/1" "M0 · Pilot retro" _blank
+    click M1 "https://github.com/Fogataz/trip-planner/milestone/2" "M1 · Phase 1 gate" _blank
+    click M2 "https://github.com/Fogataz/trip-planner/milestone/3" "M2 · Phase 2 gate" _blank
 ```
 
 **I3 is drawn unconnected on purpose.** "`features.md` matches the code" is real, Now-horizon work
@@ -228,6 +252,20 @@ flowchart LR
     class S2,S3,S4,S5,S6a,S6b,S7,P74 delivery;
     class DRY,LIVE gate;
     class M0 milestone;
+
+    click S1 "https://github.com/Fogataz/trip-planner/issues/20" "#20 · Permissions foundation" _blank
+    click G25 "https://github.com/Fogataz/trip-planner/issues/25" "#25 · Google sign-in" _blank
+    click G52 "https://github.com/Fogataz/trip-planner/issues/52" "#52 · Email-link sign-in" _blank
+    click S2 "https://github.com/Fogataz/trip-planner/issues/29" "#29 · The door" _blank
+    click S3 "https://github.com/Fogataz/trip-planner/issues/36" "#36 · Localization of the new surface" _blank
+    click S4 "https://github.com/Fogataz/trip-planner/issues/40" "#40 · Analytics & CSV export" _blank
+    click S5 "https://github.com/Fogataz/trip-planner/issues/43" "#43 · Agenda drafts + app shell" _blank
+    click S6a "https://github.com/Fogataz/trip-planner/issues/48" "#48 · Announcements" _blank
+    click S6b "https://github.com/Fogataz/trip-planner/issues/51" "#51 · Notification categories" _blank
+    click S7 "https://github.com/Fogataz/trip-planner/issues/115" "#115 · Lifecycle hardening" _blank
+    click P74 "https://github.com/Fogataz/trip-planner/issues/74" "#74 · Profiles & display names" _blank
+    click DRY "https://github.com/Fogataz/trip-planner/issues/56" "#56 · Dry run" _blank
+    click M0 "https://github.com/Fogataz/trip-planner/milestone/1" "M0 · Pilot retro" _blank
 ```
 
 **Reading this one:** every Must-priority box upstream of `LIVE` has to be done for the pilot to run
